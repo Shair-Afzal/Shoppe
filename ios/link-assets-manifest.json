@@ -1,0 +1,97 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "Src/assets/Font/NunitoSans-Black.ttf",
+      "sha1": "eef044868aa87369391e510f2dfc2d29aaa40e75"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-BlackItalic.ttf",
+      "sha1": "c7e9fad08400dcf7aeb23f5eafaebe1aaf8e26ea"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-Bold.ttf",
+      "sha1": "1657b1460f2a4abcacb010527c6519691b6f4e05"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-BoldItalic.ttf",
+      "sha1": "11cf1d2584da56b2a69cf1cf61c1a1ffdea282af"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-ExtraBold.ttf",
+      "sha1": "d65045bebb9414bd1a3a327a01717cd418332b1e"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-ExtraBoldItalic.ttf",
+      "sha1": "564979121e4efd98a6c369248b83edc223f3e596"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-ExtraLight.ttf",
+      "sha1": "cb9c43ff891afa2ec36d67c3285c7682ddcd3415"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-ExtraLightItalic.ttf",
+      "sha1": "de313b5611763e38e2aad892ecea6014bb0f5dfb"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-Italic.ttf",
+      "sha1": "47b042c3ec23bd49a65647284e9d01e793eeda69"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-Light.ttf",
+      "sha1": "d9251345aab95a0572e4ad49edfbde6cb37a0163"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-LightItalic.ttf",
+      "sha1": "3fb5bce02808a681d5071c747569141225661d6e"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-Regular.ttf",
+      "sha1": "b5dcea57b4b339f320a0d29930102346bd439a67"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-SemiBold.ttf",
+      "sha1": "39cfe5baa44fabd96d217ab714540ac9d8c64eaa"
+    },
+    {
+      "path": "Src/assets/Font/NunitoSans-SemiBoldItalic.ttf",
+      "sha1": "521f487ce8ab93d4f74df592a360e6fe14e27c74"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Bold.ttf",
+      "sha1": "b887eb952d1891535389db7d1d1c127d1734bd97"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-ExtraBold.ttf",
+      "sha1": "6db23ee9e016f3e0c30b223579026c6b00ab9ec5"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-ExtraLight.ttf",
+      "sha1": "06eabfa18adc2d884b83bc052f0eb2fdfc7afed4"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Heavy.ttf",
+      "sha1": "e1fca2daacf71e1ac6e397a5bbb9ef21019768ac"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Light.ttf",
+      "sha1": "e9eb86427eaa4fe7e05e32902fc35742dcee4ccb"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Medium.ttf",
+      "sha1": "6d7bd481efb4e28b13310d8f599f1a8a67b3fa87"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Regular.ttf",
+      "sha1": "f7c22a60e4bbae4e0b673de414108ec1a5a50edf"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-SemiBold.ttf",
+      "sha1": "68b768cec3815e7d4639d5f0dec54aeff913de53"
+    },
+    {
+      "path": "Src/assets/Font/Raleway-Thin.ttf",
+      "sha1": "627bf8be5fb4fa704e13562b401ffd6b07d8696c"
+    }
+  ]
+}
