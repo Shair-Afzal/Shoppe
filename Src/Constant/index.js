@@ -103,4 +103,6 @@ export const colors = {
   lightblue:"rgba(229, 235, 252, 1)",
   darkblack:"#202020",
   orange:"#FE7F00",
+  green:"#08C514",
+  darkgrey:"#F9F9F9"
 };

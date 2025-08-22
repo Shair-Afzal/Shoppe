@@ -3,10 +3,10 @@ import React from 'react'
 
 import GST from '../../Constant'
 
-const CustomButton = ({btnTitle,onPress,style}) => {
+const CustomButton = ({btnTitle,onPress,style,txtstyle}) => {
   return (
       <TouchableOpacity style={[styles.button,style]} onPress={onPress}>
-        <Text style={GST.btnTitle}>{btnTitle}</Text>
+        <Text style={[GST.btnTitle,txtstyle]}>{btnTitle}</Text>
       </TouchableOpacity>
   )
 }

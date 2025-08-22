@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     container:{
         backgroundColor:colors.DarkWhite,
         width:RF(150),
-        paddingVertical: RF(20),
+        paddingVertical: RF(22),
         borderRadius: RF(100),
         borderWidth: 1,
         borderColor:colors.DarkWhite,

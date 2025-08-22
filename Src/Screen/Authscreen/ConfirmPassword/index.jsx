@@ -18,13 +18,19 @@ import styles from './style';
 import { OtpInput } from 'react-native-otp-entry';
 import { Formik } from 'formik';
 import CustomOtpInput from '../../../Component/OtpInput/index.';
-import { ConfirmPasswordSchema, PasswordSchema } from '../../../utils/Schema';
+import { ConfirmPasswordSchema, ConfirmPasswordvalues, PasswordSchema } from '../../../utils/Schema';
 import CustomInput from '../../../Component/Custominput';
 import Loader from '../../../Component/Loader/Loader';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import { object } from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { forgetpassword } from '../../../Redux/slices/userslice';
 const ConfirmPassword = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const user=useSelector(state=>state.user)
+  const dispatch=useDispatch()
+  // const 
   const FormObserver = ({ errors, touched }) => {
     useEffect(() => {
       const firstErrorKey = Object.keys(errors).find(
@@ -38,7 +44,7 @@ const ConfirmPassword = ({ navigation }) => {
 
     return null;
   };
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () =>
@@ -81,14 +87,17 @@ const ConfirmPassword = ({ navigation }) => {
           </Text>
         )}
         <Formik
-          initialValues={ConfirmPasswordSchema}
+          initialValues={ConfirmPasswordvalues}
           validationSchema={ConfirmPasswordSchema}
-          onSubmit={()=>{setLoading(true);
+          onSubmit={(values)=>{
+            dispatch(forgetpassword(values.repeatPassword))
+            console.log("user",user)
+      setLoading(true);
     setTimeout(() => {
       setLoading(false);
       showSuccessToast('Password changed succcesfully');
       setTimeout(() => {
-        navigation.navigate('OnBonding');
+        navigation.navigate('Login');
       }, 1500);
     }, 1500);}}
         >

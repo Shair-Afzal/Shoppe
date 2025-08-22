@@ -3,12 +3,12 @@ import GST, { colors, RF } from "../../../Constant";
 
 const styles = StyleSheet.create({
   otpcontainer: {
-    height:RF(45),
-           width:RF(45),
-           borderRadius:10,
+    height:RF(20),
+           width:RF(20),
+           borderRadius:RF(100),
            backgroundColor:colors.grey,
            borderWidth:0,
-           marginTop:RF(10)
+           marginTop:RF(4)
   },
   otpwarapper:{
     width:"60%",

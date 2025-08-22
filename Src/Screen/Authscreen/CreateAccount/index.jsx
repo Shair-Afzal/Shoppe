@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import GST, { colors, RF } from '../../../Constant';
@@ -24,11 +25,15 @@ import userSchema from '../../../utils/Schema';
 import BotttomButtons from '../../../Component/BottomButtonContainer';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { createAccount } from '../../../Redux/slices/userslice';
 const CreateAccount = ({ navigation }) => {
+  const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const user=useSelector((state)=>state.user)
   const FormObserver = ({ errors, touched }) => {
+    
     useEffect(() => {
       const firstErrorKey = Object.keys(errors).find(
         key => touched[key] && errors[key],
@@ -46,6 +51,11 @@ const CreateAccount = ({ navigation }) => {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <StatusBar 
+              translucent 
+              backgroundColor="transparent" 
+              barStyle="dark-content" 
+            />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
@@ -57,6 +67,7 @@ const CreateAccount = ({ navigation }) => {
             width="100%"
             height={RF(300)}
             preserveAspectRatio="xMidYMid slice"
+            
           />
 
           <Text style={styles.txt}>
@@ -69,11 +80,13 @@ const CreateAccount = ({ navigation }) => {
               initialValues={initialValues}
               validationSchema={userSchema}
               onSubmit={values => {
+                dispatch(createAccount(values))
                 setLoading(true);
-
+                console.log("hi",user)
                 setTimeout(() => {
+                  
                   setLoading(false);
-                  showSuccessToast('Form submitted successfully');
+                  showSuccessToast('Account Created successfully');
                   setTimeout(() => {
                     navigation.navigate('OnBonding');
                   }, 1500);
@@ -104,12 +117,14 @@ const CreateAccount = ({ navigation }) => {
                       value={values.password}
                       onChangeText={handleChange('password')}
                       onBlur={handleBlur('password')}
+                      secureTextEntry={true}
                     />
 
                     <PhoneInputComponent
                       value={values.phone}
                       onChangeText={handleChange('phone')}
                       onChangeFormattedText={handleChange('phone')}
+                      
                       containerStyle={{
                         borderColor:
                           errors.phone && touched.phone ? 'red' : 'gray',

@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import GST, { RF } from '../../../Constant';
@@ -22,7 +23,11 @@ import { Formik } from 'formik';
 import BotttomButtons from '../../../Component/BottomButtonContainer';
 import Loader from '../../../Component/Loader/Loader';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoginEmail } from '../../../Redux/slices/userslice';
 const LoginScreen = ({ navigation }) => {
+  const emial=useSelector(state=>state.user.tempEmail)
+  const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
   const FormObserver = ({ errors, touched }) => {
     useEffect(() => {
@@ -40,6 +45,11 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={GST.FLEX}>
+      <StatusBar 
+        translucent 
+        backgroundColor="transparent" 
+        barStyle="dark-content" 
+      />
       <KeyboardAvoidingView
         style={GST.FLEX}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -65,6 +75,8 @@ const LoginScreen = ({ navigation }) => {
               initialValues={{ email: '' }}
               validationSchema={LoginSchema}
               onSubmit={values => {
+                dispatch(setLoginEmail(values.email))
+                console.log("email",emial)
                 setLoading(true);
                 setTimeout(() => {
                   setLoading(false);

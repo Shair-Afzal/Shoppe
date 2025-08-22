@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
   img:{
     height:RF(350),
     width:"100%",
-    resizeMode:"cover"
+    // resizeMode:"cover"
+    overflow:"hidden"
   },
   dot:{
     height:RF(15),

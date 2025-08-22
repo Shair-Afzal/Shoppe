@@ -17,6 +17,7 @@ const AuthStack = () => {
         headerShown: false,
         
       }}
+      initialRouteName='Welcome'
     >
       
       <Stack.Screen name="Welcome" component={WelcomeScreen} />

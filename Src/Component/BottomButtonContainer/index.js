@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
      btntxtcontainer:{
     width:"100%",
     position:"absolute",
-    bottom:RF(25),
-    gap:RF(10)
+    bottom:RF(20),
+    gap:RF(15)
   },
   rowcontainer:{
     ...GST.ROW,

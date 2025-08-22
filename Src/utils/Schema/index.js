@@ -3,7 +3,7 @@ import * as Yup from 'yup';
    
     email: Yup.string().email().required(),
     password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(8, 'Password must be at least 8 characters')
       .required('Password is required'),
     phone: Yup.string()
     .required('Phone number is required')
@@ -19,13 +19,12 @@ import * as Yup from 'yup';
 });
 const PasswordSchema = Yup.object().shape({
   password: Yup.string()
-     .trim()
-    .oneOf(['2234'], 'Invalid password')
-    
+    .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
 });
  const ConfirmPasswordSchema = Yup.object().shape({
   newPassword: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
+    .min(8, 'Password must be at least 6 characters')
     .required('New Password is required'),
 
   repeatPassword: Yup.string()
@@ -41,5 +40,11 @@ const ConfirmPasswordvalues = {
     newPassword: '',
     repeatPassword: '',
   };
-export { initialValues, userSchema, LoginSchema, PasswordSchema,ConfirmPasswordSchema,ConfirmPasswordvalues };
+  const otpSchema = Yup.object().shape({
+  otp: Yup.string()
+    .required('OTP is required')
+    // .matches(/^\d+$/, 'OTP must contain only digits')
+    .length(4, 'OTP must be exactly 4 digits '),
+});
+export { initialValues, userSchema, LoginSchema, PasswordSchema,ConfirmPasswordSchema,ConfirmPasswordvalues,otpSchema};
 export default userSchema;

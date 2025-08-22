@@ -3,6 +3,7 @@ import {
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import GST, { colors, RF } from '../../../Constant';
@@ -18,9 +19,10 @@ import { OtpInput } from 'react-native-otp-entry';
 import { Formik } from 'formik';
 import CustomOtpInput from '../../../Component/OtpInput/index.';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
-import { PasswordSchema } from '../../../utils/Schema';
+import { otpSchema, PasswordSchema } from '../../../utils/Schema';
 import Loader from '../../../Component/Loader/Loader';
 const ForgetPassword = ({ navigation }) => {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const formikRef = useRef();
   const [loading, setLoading] = useState(false);
   const FormObserver = ({ errors, touched }) => {
@@ -54,11 +56,24 @@ const ForgetPassword = ({ navigation }) => {
       navigation.goBack();
     }
   };
+   useEffect(() => {
+      const show = Keyboard.addListener('keyboardDidShow', () =>
+        setKeyboardVisible(true),
+      );
+      const hide = Keyboard.addListener('keyboardDidHide', () =>
+        setKeyboardVisible(false),
+      );
+      return () => {
+        show.remove();
+        hide.remove();
+      };
+    }, []);
+    
   return (
     <Formik
       innerRef={formikRef}
       initialValues={{ password: '' }}
-      validationSchema={PasswordSchema}
+      validationSchema={otpSchema}
       onSubmit={values => {
         console.log('Password Entered:', values.password);
         // Navigate or authenticate
@@ -174,6 +189,9 @@ const ForgetPassword = ({ navigation }) => {
                 )}
               </>
             )}
+            {
+              !keyboardVisible&&
+            
             <BotttomButtons
               onPress={() => Submit()}
               arrowpress={() => cancelsumbit()}
@@ -181,6 +199,7 @@ const ForgetPassword = ({ navigation }) => {
               containerStyle={{ paddingHorizontal: RF(20) }}
               btnStyle={count > 0 && styles.custombtn}
             />
+}
           </View>
         </KeyboardAvoidingView>
       )}

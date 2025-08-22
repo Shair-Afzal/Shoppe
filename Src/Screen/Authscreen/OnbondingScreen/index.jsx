@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Dimensions } from 'react-native';
 import React from 'react';
 import Swipperbackground from '../../../Component/SwipperBackground';
 import GST, { RF } from '../../../Constant';
@@ -8,6 +8,12 @@ import Swiper from 'react-native-swiper';
 import CustomButton from '../../../Component/Custombutton';
 
 const OnBondingScreen = () => {
+  const { width, height } = Dimensions.get("window");
+const isTablet = width >= 768;
+
+const isTabletWidth = width >= 768;
+const isTabletHeight = height >= 1000;
+  
   const slides = [
     {
       id: 1,
@@ -59,7 +65,9 @@ const OnBondingScreen = () => {
                 paddingBottom: i == 3 ? RF(25) : RF(50),
               }}
             >
-              <Image source={item.image} style={styles.img} />
+              <View style={styles.img}>
+              <Image source={item.image} style={{height:"100%",width:"100%",resizeMode:isTablet?"stretch":"cover"}} />
+              </View>
               <Text
                 style={{
                   ...GST.subHeading,

@@ -13,7 +13,7 @@ const PhoneInputComponent = ({value,onChangeText,onChangeFormattedText}) => {
             ref={phoneInput}
             defaultValue={value}
             defaultCode="PK"
-            layout="first"
+            layout="second"
             onChangeText={onChangeText}
             onChangeFormattedText={onChangeFormattedText}
             // withDarkTheme
@@ -22,9 +22,10 @@ const PhoneInputComponent = ({value,onChangeText,onChangeFormattedText}) => {
   //   width: 0,    // hides the number part
   //   marginLeft: -5, // adjust so flag stays aligned
   // }}
+  //  disableArrowIcon 
             withShadow
             autoFocus
-            flagButtonStyle={{padding:RF(10)}}
+            flagButtonStyle={{padding:RF(10),}}
             containerStyle={{width:"100%",backgroundColor:colors.grey,borderRadius:RF(30)}}
              textInputStyle={{backgroundColor:colors.grey,height:RF(50),borderRadius:RF(30)}}
              textContainerStyle={{backgroundColor:colors.grey,height:RF(50),borderRadius:RF(30)}}

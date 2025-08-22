@@ -1,9 +1,11 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
+import { RF } from "../../Constant";
+
 const RightBubble = (props) => (
   <Svg
-    width={355}
-    height={260}
+    width={RF(355)}
+    height={RF(260)}
     viewBox="0 0 355 262"
     fill="none"
   
