@@ -5,6 +5,8 @@ import Eyeicon from '../../assets/SVG/Eyeicon.svg'; // Adjust the path as necess
 import ImageIcon from '../../assets/SVG/ImageIcon.svg';
 import { Alert } from "react-native";
 import ImagePicker from "react-native-image-crop-picker";
+import Eyeopen from '../../assets/SVG/Eyeopen.svg'
+
 export const pickImage = async () => {
   return new Promise((resolve, reject) => {
     Alert.alert(
@@ -63,6 +65,8 @@ const CustomInput = ({
   cameraicon,
   onFocus,
   onSubmitEditing,
+  eyepress,
+  onimagepicked,
   ...rest
 }) => {
   const handlePick = async () => {
@@ -70,6 +74,10 @@ const CustomInput = ({
     const result = await pickImage();
     if (result) {
       console.log("Image Path:", result.path);
+      if (onimagepicked) {
+          onimagepicked(result); // 👈 send result back to parent
+        }
+      
     } else {
       console.log("No image selected");
     }
@@ -92,8 +100,13 @@ const CustomInput = ({
         {...rest}
       />
       {rightIcon && (
-        <TouchableOpacity>
-          <Eyeicon height={RF(20)} width={RF(20)} />
+        <TouchableOpacity
+        onPress={eyepress}
+        >
+          {secureTextEntry==true?
+          <Eyeicon height={RF(20)} width={RF(20)} />:
+          <Eyeopen height={RF(20)} width={RF(20)} />
+}
         </TouchableOpacity>
       )}
       {cameraicon&& (

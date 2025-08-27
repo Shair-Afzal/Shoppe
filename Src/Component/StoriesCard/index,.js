@@ -2,16 +2,23 @@ import { StyleSheet, Text, View,FlatList,TouchableOpacity,Image} from 'react-nat
 import React from 'react'
 import GST, { RF } from '../../Constant'
 import Video from '../../assets/SVG/Video.svg'
+import { useNavigation } from '@react-navigation/native'
 
 
 
 const StoriesCard = ({data}) => {
+  const navigation=useNavigation()
   return (
     <FlatList
     data={data}
     horizontal
+    contentContainerStyle={{paddingLeft:RF(15)}}
     renderItem={({item,i})=>(
-     <TouchableOpacity style={[styles.storyCard,]}>
+     <TouchableOpacity style={[styles.storyCard,]}
+     onPress={()=>navigation.navigate("Home",{
+      screen:"Live"
+     })}
+     >
           
             <Image 
               source={require("../../assets/Images/videoimg.png")} 
@@ -31,18 +38,17 @@ export default StoriesCard;
 
 const styles = StyleSheet.create({
      storyCard: {
-    
-    overflow: "hidden",
+    // overflow: "hidden",
     position:"relative",
     marginTop:RF(8),
     // backgroundColor:"red",
     // paddingLeft:RF(15),
-    marginLeft:RF(5),
+    // marginLeft:RF(5),
     borderRadius:RF(10),
   },
   img:{
-   width: RF(110),
-    height: RF(165),
+   width: RF(90),
+    height: RF(150),
     resizeMode:"cover",
   
   },

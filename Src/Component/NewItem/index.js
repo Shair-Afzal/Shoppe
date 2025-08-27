@@ -2,15 +2,26 @@ import { StyleSheet, Text, View,FlatList,Image, Touchable, TouchableOpacity} fro
 import React from 'react'
 import GST, { colors, RF } from '../../Constant';
 import { useNavigation } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
-const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,rowstyle,img}) => {
+const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,rowstyle,img,discount}) => {
   const navigation=useNavigation()
    const renderNewItem = ({ item}) => (
     <TouchableOpacity style={[styles.newItemContainer,style]}
     onPress={()=>navigation.navigate('Details')}
     >
      <View style={[styles.imgcontainer,imgstyle]}>
-      <Image source={{ uri: item.uri }} style={[styles.newItemImage,img]} />
+      <Image source={item.img} style={[styles.newItemImage,img]} />
+      {
+        discount&&
+      
+       <LinearGradient
+                    colors={['rgba(255, 87, 144, 1)', 'rgba(248, 17, 64, 1)']}
+                    style={styles.discountTag}
+                    >
+                      <Text style={styles.discountText}>-20%</Text>
+                    </LinearGradient>
+}
       </View>
       <Text style={{...GST.smallesttxt,fontSize:RF(12)}}>{item.desc}</Text>
       <Text style={{...GST.subdescription,fontFamily:"Raleway-Bold"}}>{item.price}</Text>
@@ -65,6 +76,21 @@ const styles = StyleSheet.create({
     elevation:5,
     borderRadius:RF(10),
     width:RF(130),
-    ...GST.CENTER,padding:5
-  }
+    ...GST.CENTER,
+    padding:RF(4)
+  },
+    discountTag: {
+    position: 'absolute',
+    top:RF(4),
+    right: RF(4),
+    // backgroundColor: '#DC3545',
+    borderRadius: RF(5),
+    paddingHorizontal: RF(8),
+    paddingVertical: RF(2),
+  },
+  discountText: {
+    fontSize: RF(12),
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
 })

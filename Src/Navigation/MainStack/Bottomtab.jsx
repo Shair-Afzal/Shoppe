@@ -18,6 +18,9 @@ import Profile from "../../Screen/MainScreen/ProfileScreens/Profile";
 import GST, { colors, RF } from "../../Constant";
 import { StyleSheet } from "react-native";
 import HomeStack from "./HomeStack";
+import FavouriteStack from "./Favouritestack";
+import CartStack from "./CartStack";
+import ProfileStack from "./ProfileStack";
 
 
 
@@ -46,7 +49,7 @@ const Bottomtab = () => {
       />
       <Tab.Screen
         name="Favourite"
-        component={Favourite}
+        component={FavouriteStack}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? <Activefavourite height={RF(30)} width={RF(30)}/> : <InactiveFavorite height={RF(30)} width={RF(20)}/>,
@@ -63,7 +66,7 @@ const Bottomtab = () => {
       />
       <Tab.Screen
         name="Cart"
-        component={Cart}
+        component={CartStack}
         options={{
           
           tabBarIcon: ({ focused }) =>
@@ -72,7 +75,7 @@ const Bottomtab = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? <Activeprofile height={RF(30)} width={RF(30)}/> : <InactiveProfile height={RF(30)} width={RF(20)}/>

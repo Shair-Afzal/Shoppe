@@ -6,11 +6,19 @@ const { width, height } = Dimensions.get("window");
  const aspectRatio = height / width;
  const isTablet = aspectRatio < 1.6;
 
-  const TopProduct=({data,style,contentContainerStyle,txt,numColumns,stylerow,check})=>{
+  const TopProduct=({data,style,contentContainerStyle,txt,numColumns,stylerow,check,onPress})=>{
+    const sumbit=(item)=>{
+    setSetlect(item.id)
+  }
     const [select, setSetlect]=useState(null)
      const renderTopProductItem = ({ item,i}) => (
     <TouchableOpacity style={[styles.imgconatiner,style]}
-    onPress={()=>setSetlect(item.id)}
+    onPress={() => {
+        sumbit(item);   
+        if (onPress) {  
+          onPress(item);
+        }
+      }}
     >
       
     <Image source={item.image} style={styles.topProductImage} />

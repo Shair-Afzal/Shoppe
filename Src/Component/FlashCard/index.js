@@ -30,7 +30,7 @@ const FlashCard = ({data}) => {
               ]}
               onPress={()=>navigation.navigate('FlashSales')}
             >
-              <Image source={{ uri: item.uri }} style={styles.flashItemImage} />
+              <Image source={item.img} style={styles.flashItemImage} />
               <LinearGradient
               colors={['rgba(255, 87, 144, 1)', 'rgba(248, 17, 64, 1)']}
               style={styles.discountTag}

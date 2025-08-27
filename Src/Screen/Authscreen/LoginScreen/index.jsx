@@ -52,7 +52,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <KeyboardAvoidingView
         style={GST.FLEX}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {loading && <Loader />}
 
@@ -96,10 +96,12 @@ const LoginScreen = ({ navigation }) => {
                   <FormObserver errors={errors} touched={touched} />
                   <CustomInput
                     placeholder={'Email'}
-                    containerStyle={{ marginTop: RF(20) }}
+                    containerStyle={{ marginTop: RF(20),paddingVertical:RF(5)}}
                     value={values.email}
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
+                    // containerStyle={{paddingVertical:RF(5)}}
+                    
                   />
 
                   <CustomButton

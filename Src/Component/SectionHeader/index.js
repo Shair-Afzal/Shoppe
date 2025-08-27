@@ -4,8 +4,9 @@ import GST, { colors, RF } from '../../Constant'
 import Button from "../../assets/SVG/Button.svg"
 import Clock from "../../assets/SVG/Clock.svg"
 import Close from "../../assets/SVG/Close.svg"
+import  Buttonicon from "../../assets/SVG/Buttonicon.svg"
 
-const SectionHeader = ({titile,clock,txt,img,txtstyle,onpress,btn}) => {
+const  SectionHeader = ({titile,clock,txt,img,txtstyle,onpress,btn,select}) => {
   return (
      <View style={styles.sectionHeader}>
       <View style={{...GST.mid_row,gap:RF(5)}}>
@@ -30,7 +31,7 @@ const SectionHeader = ({titile,clock,txt,img,txtstyle,onpress,btn}) => {
             :null
                }{
                 !img?
-            <Button height={RF(30)}  width={RF(30)}/>:<Close height={RF(15)} width={RF(15)}/>
+            <Button height={RF(30)}  width={RF(30)}/>:!select?<Close height={RF(15)} width={RF(15)}/>:<Buttonicon/>
                }
           </TouchableOpacity>:
           <View style={{...GST.mid_row,gap:RF(3)}}>

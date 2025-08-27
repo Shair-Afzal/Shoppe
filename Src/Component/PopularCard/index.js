@@ -1,13 +1,18 @@
-import { StyleSheet, Text, View,FlatList,Image} from 'react-native'
+import { StyleSheet, Text, View,FlatList,Image, Touchable} from 'react-native'
 import React from 'react'
 import GST, { colors, RF } from '../../Constant';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Blueheart from '../../assets/SVG/Blueheart.svg'
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const PopularCard = ({data}) => { 
+const PopularCard = ({data,onpress}) => { 
+  const navigation=useNavigation()
     const renderHotPopularItem = ({ item }) => (
-    <View style={styles.hotItemContainer}>
-      <Image source={{ uri: item.uri }} style={styles.hotItemImage} />
+    <TouchableOpacity style={styles.hotItemContainer}
+    onPress={()=>navigation.navigate('Details')}
+    >
+      <Image source={item.img} style={styles.hotItemImage} />
       <View style={GST.CENTERCONTAINER}>
       <View style={GST.ROW}>
       <Text style={{...GST.subdescription,fontFamily:"Raleway-Bold"}}>
@@ -17,7 +22,7 @@ const PopularCard = ({data}) => {
       </View>
       <Text style={GST.subdescription}>{item.tag}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
   return (
     <FlatList

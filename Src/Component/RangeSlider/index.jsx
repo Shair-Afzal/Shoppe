@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import RangeSlider from 'rn-range-slider';
-import GST, { colors, RF } from '../../Constant';
+import GST, { colors, fontFamily, fontSize, RF } from '../../Constant';
 
 const RangeSliderComponent = () => {
   const [low, setLow] = useState(10);
@@ -48,7 +48,7 @@ export default RangeSliderComponent;
 
 const styles = StyleSheet.create({
   container: { padding: 20 },
-  title: { fontSize: 18, fontWeight: '600',  },
+  title: { fontSize: fontSize.medium,fontFamily:fontFamily.bold,color:colors.darkblack  },
   slider: { marginTop: 20 },
   thumb: {
     width: RF(30),

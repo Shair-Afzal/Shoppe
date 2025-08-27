@@ -6,6 +6,8 @@ import Settings from '../../assets/SVG/Settings.svg';
 import Vouchers from '../../assets/SVG/Vouchers.svg';
 import CustomInput from '../Custominput';
 import Time from '../../assets/SVG/Time.svg';
+import { useNavigation } from '@react-navigation/native';
+import ActiveVourcher from '../../assets/SVG/ActiveVourcher.svg';
 
 const Leftcomponent = ({
   icon,
@@ -16,32 +18,41 @@ const Leftcomponent = ({
   value,
   onChangetxt,
   onSubmitEditing,
-  back
+  back,
+  onimagpicked,
+  Active,
 }) => {
+  const navigation = useNavigation();
   return (
     <View>
       {icon && (
         <View style={{ ...GST.mid_row, gap: RF(10) }}>
-          <TouchableOpacity>
-            <Vouchers height={RF(35)} width={RF(35)} />
+          <TouchableOpacity onPress={() => navigation.navigate('Voucher')}>
+            {Active ? (
+              <ActiveVourcher height={RF(35)} width={RF(35)} />
+            ) : (
+              <Vouchers height={RF(35)} width={RF(35)} />
+            )}
           </TouchableOpacity>
           <TouchableOpacity>
             <TopMenu height={RF(35)} width={RF(35)} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
             <Settings height={RF(35)} width={RF(35)} />
           </TouchableOpacity>
         </View>
       )}
       {input && (
         <CustomInput
-          style={{ width: '54%', paddingVertical: 4 }}
+          style={{ width: '54%', paddingVertical: RF(1) }}
           cameraicon
           placeholder={placeholder}
           onFocus={onFocus}
           value={value}
           onChangeText={onChangetxt}
           onSubmitEditing={onSubmitEditing}
+          onimagepicked={onimagpicked}
+
         />
       )}
       {time && (
@@ -58,7 +69,6 @@ const Leftcomponent = ({
           </View>
         </View>
       )}
-     
     </View>
   );
 };

@@ -1,8 +1,8 @@
-import { Dimensions, StyleSheet } from "react-native";
-import GST, { colors, RF } from "../../../../Constant";
-const { width, height } = Dimensions.get("window");
- const aspectRatio = height / width;
- const isTablet = aspectRatio < 1.6;
+import { Dimensions, StyleSheet } from 'react-native';
+import GST, { colors, RF } from '../../../../Constant';
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const isTablet = aspectRatio < 1.6;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     marginTop: RF(16),
     borderRadius: RF(10),
     overflow: 'hidden',
-    height: isTablet?RF(150):RF(130),
+    height: isTablet ? RF(150) : RF(130),
     width: '100%',
   },
   bannerImage: {
@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
   },
   categoriesList: {
     backgroundColor: colors.DarkWhite,
-    
   },
   categoryRow: {
     justifyContent: 'space-between',
@@ -104,5 +103,50 @@ const styles = StyleSheet.create({
     borderRadius: RF(8),
     marginRight: RF(8),
   },
+  producttxtstyle: {
+    marginTop: RF(15),
+  },
+  bg: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
+  maincontainer: {
+    ...GST.FLEX,
+    paddingTop: RF(15),
+    paddingLeft: RF(15),
+  },
+  activedot: {
+    backgroundColor: colors.blue,
+    paddingHorizontal: RF(13),
+  },
+  dot: {
+    backgroundColor: 'rgba(0, 66, 224, 0.2)',
+  },
+  slidercontainer: {
+    height: isTablet ? RF(200) : RF(170),
+  },
+  rowstyle: {
+    justifyContent: 'space-between',
+    paddingRight: RF(15),
+  },
+  con: {
+    width: isTablet ? RF(195) : RF(155),
+    marginLeft: RF(2),
+  },
+  imgcon: {
+    width: '100%',
+  },
+  img: {
+    height: isTablet ? RF(190) : RF(150),
+    width: '100%',
+    resizemode: 'cover',
+  },
+  concontainer:{
+    marginTop: RF(12) 
+  },
+  starstyle:{
+    color: colors.blue
+  }
 });
-export default styles
+export default styles;

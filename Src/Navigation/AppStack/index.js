@@ -17,6 +17,7 @@ import Bottomtab from '../MainStack/Bottomtab';
 import FilterScreen from '../../Screen/MainScreen/HomeScreens/FilterScreen';
 import DetailsScreen from '../../Screen/MainScreen/HomeScreens/DetailsScreen';
 import ReviewScreen from '../../Screen/MainScreen/HomeScreens/ReviewScreen';
+import ChatScreen from '../../Screen/MainScreen/ProfileScreens/ChatScreen';
 const AppStack = () => {
     const Stack = createNativeStackNavigator();
   return (
@@ -36,6 +37,7 @@ const AppStack = () => {
         <Stack.Screen name="home" component={Bottomtab}/>
        <Stack.Screen name='Filter' component={FilterScreen}/>
        <Stack.Screen name='Details' component={DetailsScreen}/>
+       <Stack.Screen name='Chat' component={ChatScreen}/>
        
            {/* <Stack.Screen name='Review' component={ReviewScreen}/> */}
 

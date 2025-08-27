@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   filtercontainer: {
     ...GST.CENTERCONTAINER,
     width: '100%',
-    backgroundColor: colors.grey,
+    backgroundColor: '#F4F6FE',
     height: RF(30),
     paddingHorizontal: RF(20),
     marginTop: RF(15),
@@ -41,9 +41,19 @@ const styles = StyleSheet.create({
     borderRadius: RF(5),
     paddingVertical: RF(3),
   },
-  btnContainer:{
+  btnContainer: {
     ...GST.CENTERCONTAINER,
-    marginTop:RF(25)
+    marginTop: RF(25),
+  },
+  maincontainer: {
+    ...GST.FLEX,
+    paddingTop: RF(25),
+  },
+  row:{
+    gap: RF(10) 
+  },
+  container:{
+    paddingVertical: RF(3) 
   }
 });
 export default styles;

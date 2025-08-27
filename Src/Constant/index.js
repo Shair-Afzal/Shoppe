@@ -2,6 +2,14 @@ import { StyleSheet } from "react-native";
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
 export {RFValue as RF};
 export {RFPercentage as RFP};
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+
+export const DEVICE_WIDTH = width;
+export const DEVICE_HEIGHT = height;
+export const IS_TABLET = aspectRatio < 1.6
  const GST=StyleSheet.create({
   FLEXGROW:{
     flexGrow:1,
@@ -105,4 +113,28 @@ export const colors = {
   orange:"#FE7F00",
   green:"#08C514",
   darkgrey:"#F9F9F9"
+};
+export const radius = {
+  radius1: RFValue(2),
+  radius2: RFValue(5),
+  radius3: RFValue(10),
+  radius4: RFValue(20),
+  radius5: RFValue(100),
+};
+export const fontSize = {
+  extraSmall: RFValue(10),
+  regSmall: RFValue(12),
+  avgSmall: RFValue(14),
+  small: RFValue(16),
+  medium: RFValue(18),
+  large: RFValue(20),
+  mediumLarge: RFValue(22),
+  extraLarge: RFValue(24),
+  doubleXLarge: RFValue(28),
+  superLarge: RFValue(50),
+};
+export const fontFamily = {
+  medium: 'Raleway-Medium',
+  bold: 'Raleway-Bold',
+  DMreg: 'Raleway-Regular',
 };

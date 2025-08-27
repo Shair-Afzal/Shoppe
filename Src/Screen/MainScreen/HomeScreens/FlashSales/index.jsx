@@ -1,52 +1,82 @@
-import { View, Text, StatusBar, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native'
-import React from 'react'
-import GST, { RF } from '../../../../Constant'
-import RightBubble from '../../../../Component/RightBubblecomponent'
-import CustomHeader from '../../../../Component/CustomHeader'
-import FilterBar from '../../../../Component/Filterbar'
-import Filter from "../../../../assets/SVG/Filter.svg"
-import NewItem from '../../../../Component/NewItem'
-import { hotPopularData, newItemsData } from '../../../../utils/Dummydata'
-import SectionHeader from '../../../../Component/SectionHeader'
-import PopularCard from '../../../../Component/PopularCard'
+import {
+  View,
+  Text,
+  StatusBar,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import React from 'react';
+import GST, { RF } from '../../../../Constant';
+import RightBubble from '../../../../Component/RightBubblecomponent';
+import CustomHeader from '../../../../Component/CustomHeader';
+import FilterBar from '../../../../Component/Filterbar';
+import Filter from '../../../../assets/SVG/Filter.svg';
+import NewItem from '../../../../Component/NewItem';
+import { hotPopularData, newItemsData } from '../../../../utils/Dummydata';
+import SectionHeader from '../../../../Component/SectionHeader';
+import PopularCard from '../../../../Component/PopularCard';
+import styles from "./style"
 
-const  FlashSales= ({navigation}) => {
-  const { width, height } = Dimensions.get("window");
-   const aspectRatio = height / width;
-   const isTablet = aspectRatio < 1.6;
+const FlashSales = ({ navigation }) => {
+  const { width, height } = Dimensions.get('window');
+  const aspectRatio = height / width;
+  const isTablet = aspectRatio < 1.6;
   return (
     <View style={GST.FLEX}>
-      <StatusBar  translucent backgroundColor="transparent" 
-        barStyle="light-content" />
-      <RightBubble style={{position:"absolute",top:0,right:0,}}/>
-      <ScrollView contentContainerStyle={{flexGrow:1,paddingHorizontal:RF(15),paddingTop:RF(40),paddingBottom:RF(20)}}
-      showsVerticalScrollIndicator={false}
-      >
-      <CustomHeader 
-      name={"Flash Sale"}
-      descrip={"Choose Your Discount"}
-      Time={true}
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="light-content"
       />
-     <FilterBar/>
-     <TouchableOpacity style={{marginTop:RF(20)}}
-     onPress={()=>navigation.navigate("Live")}
-     >
-     <Image source={require("../../../../assets/Images/Live.png")} style={{height:isTablet?RF(190):RF(160),width:"100%",resizeMode:"conatin"}}/>
-      </TouchableOpacity>
-      <View style={{...GST.CENTERCONTAINER,marginTop:RF(15)}}>
-        <Text style={{...GST.description,fontFamily:"Raleway-Bold"}}>20% Discount</Text>
+      <RightBubble style={styles.bg} />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <CustomHeader
+          name={'Flash Sale'}
+          descrip={'Choose Your Discount'}
+          Time={true}
+        />
+        <FilterBar />
         <TouchableOpacity
-        onPress={()=>navigation.navigate("Filter")}
+          style={styles.imgcon}
+          onPress={() => navigation.navigate('Live')}
         >
-          <Filter height={RF(25)} width={RF(25)}/>
+          <Image
+            source={require('../../../../assets/Images/Live.png')}
+            style={styles.img}
+          />
         </TouchableOpacity>
-      </View>
-        <NewItem data={newItemsData} justfor numofcolumn={2} contentContainerStyle={{marginTop:RF(12)}} rowstyle={{justifyContent:"space-between",paddingRight:RF(1)}}style={{width:isTablet?RF(195):RF(155),marginLeft:RF(2),}} imgstyle={{width:"100%"}} img={{height:isTablet?RF(190):RF(150),width:"100%",resizemode:"cover"}}/>
-        <SectionHeader titile={"Most Popular"}/>
-        <PopularCard data={hotPopularData}/>
+        <View style={styles.discontcon}>
+          <Text style={{ ...GST.description, fontFamily: 'Raleway-Bold' }}>
+            20% Discount
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Filter')}>
+            <Filter height={RF(25)} width={RF(25)} />
+          </TouchableOpacity>
+        </View>
+        <NewItem
+          data={newItemsData}
+          justfor
+          numofcolumn={2}
+          contentContainerStyle={styles.itemcontainer}
+          rowstyle={styles.rowstyle}
+          style={styles.itemstyle}
+          imgstyle={styles.itemimgcon}
+          img={styles.imgconitem}
+          discount={true}
+        />
+         <Image source={require('../../../../assets/Images/bigsalecard.png')}
+         style={{width:"100%",height:RF(130),resizeMode:"contain",marginTop:RF(10)}}
+         />
+        <SectionHeader titile={'Most Popular'} />
+        <PopularCard data={hotPopularData} />
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default FlashSales
+export default FlashSales;

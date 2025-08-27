@@ -51,6 +51,7 @@ const styles=StyleSheet.create({
         padding:RF(3),
         borderRadius:RF(10),
         paddingHorizontal:RF(8)
-    }
+    },
+    
 })
 export default styles

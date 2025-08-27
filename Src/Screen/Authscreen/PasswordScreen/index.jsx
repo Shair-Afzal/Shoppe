@@ -113,7 +113,7 @@ const PasswordScreen = ({ navigation }) => {
                         setLoading(false);
                         showSuccessToast('Login Successfully');
                         setTimeout(() => {
-                          navigation.navigate('ForgetPassword');
+                          navigation.navigate('home');
                         }, 1500);
                       }, 1500);
                     } catch (err) {

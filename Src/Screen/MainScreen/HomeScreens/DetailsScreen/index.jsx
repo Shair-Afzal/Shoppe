@@ -5,6 +5,9 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  Touchable,
+  TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import React, { useState } from 'react';
 import Swiper from 'react-native-swiper';
@@ -25,14 +28,23 @@ import PopularCard from '../../../../Component/PopularCard';
 import NewItem from '../../../../Component/NewItem';
 import StarRating from 'react-native-star-rating-widget';
 import CustomButton from '../../../../Component/Custombutton';
+import UnLike from "../../../../assets/SVG/UnLike.svg"
+import Like from "../../../../assets/SVG/Like.svg"
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DetailsScreen = ({navigation}) => {
   const [rating, setRating] = useState(0);
+  const [fav,setfav]=useState(false)
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
+  const insert=useSafeAreaInsets()
   return (
-    <ScrollView contentContainerStyle={GST.FLEXGROW}>
+    <View style={{...GST.FLEX,}}>
+      <StatusBar   translucent backgroundColor={"transparent"}/>
+    <ScrollView contentContainerStyle={{...GST.FLEXGROW,paddingBottom:RF(50)}}
+    showsVerticalScrollIndicator={false}
+    >
       <View style={{ height: RF(370) }}>
         <Swiper
           loop={false}
@@ -211,6 +223,22 @@ const DetailsScreen = ({navigation}) => {
         </View>
       </View>
     </ScrollView>
+    <View style={{...GST.CENTERCONTAINER,position:"absolute",bottom:0,width:"100%",backgroundColor:colors.DarkWhite,paddingHorizontal:RF(15),paddingVertical:RF(10)}}>
+<TouchableOpacity
+onPress={()=>setfav(!fav)}
+>
+  {!fav?
+  <UnLike height={RF(40)} width={RF(40)}/>:
+  <Like height={RF(40)} width={RF(40)}/>}
+</TouchableOpacity>
+<View style={{width:"35%"}}>
+  <CustomButton btnTitle={"Add to cart"} style={{padding:RF(10),borderRadius:RF(10),backgroundColor:colors.darkblack}} txtstyle={{...GST.subdescription,color:colors.DarkWhite}}/>
+</View>
+<View style={{width:"35%",paddingHorizontal:RF(5)}}>
+  <CustomButton btnTitle={"Buy now"} style={{padding:RF(10),borderRadius:RF(10),}} txtstyle={{...GST.subdescription,color:colors.DarkWhite}}/>
+</View>
+    </View>
+    </View>
   );
 };
 

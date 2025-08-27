@@ -6,28 +6,41 @@ import { useNavigation } from '@react-navigation/native';
  const aspectRatio = height / width;
  const isTablet = aspectRatio < 1.6;
     
- const CategoriesList = ({ item,press }) => {
+ const CategoriesList = ({ item,press,style,catimg, txt,num}) => {
   const navigation=useNavigation()
   
   
   return(
-    <TouchableOpacity style={styles.categoryItem}
-    onPress={()=>navigation.navigate("Shop")}
+    <TouchableOpacity style={[styles.categoryItem,style]}
+    onPress={()=>{
+      if(!press){
+      navigation.navigate("Shop")
+      }else {
+        navigation.navigate("Home",{
+          screen:"Shop"
+        })
+      }
+    }}
     >
        <FlatList
        data={item.items}
        numColumns={2}
        renderItem={({item:subitem,i})=>(
-        <Image key={i}source={subitem.image} style={styles.categoryImage} />
+        <Image key={i}source={subitem.image} style={[styles.categoryImage,catimg]} />
        )}
        />
         
       
       <View style={styles.categoryCount}>
+        {!txt&& (
       <Text style={styles.categoryName}>{item.name}</Text>
+        )}
+        {!num&&
        <View style={{backgroundColor:"rgba(223, 233, 255, 1)",paddingTop:RF(0.5),paddingHorizontal:RF(6),borderRadius:RF(10)}}>
         <Text style={styles.categoryCountText}>{item.count}</Text>
         </View>
+ }
+ 
       </View>
     </TouchableOpacity>
   )

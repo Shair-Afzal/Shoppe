@@ -12,6 +12,7 @@ import Swiper from 'react-native-swiper';
 import { storydata } from '../../../../utils/Dummydata';
 import styles from './style';
 import CustomButton from '../../../../Component/Custombutton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const StoryScreen = ({ navigation }) => {
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
@@ -19,8 +20,9 @@ const StoryScreen = ({ navigation }) => {
   const handlesumbit = () => {
     navigation.navigate('Shop');
   };
+  const insert=useSafeAreaInsets();
   return (
-    <View style={{ ...GST.MAIN, paddingTop: RF(30) }}>
+    <View style={{ ...GST.MAIN, paddingTop: RF(5),paddingTop:insert.top}}>
       <Swiper
         loop={false}
         showsButtons={false}

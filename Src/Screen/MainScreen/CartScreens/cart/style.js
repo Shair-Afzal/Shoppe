@@ -4,7 +4,7 @@ const styles=StyleSheet.create({
   announcementCard: {
     backgroundColor:colors.grey,
     borderRadius: RF(10),
-    padding: RF(16),
+    padding: RF(12),
     marginTop:RF(10)
   },
 elipsecircle:{

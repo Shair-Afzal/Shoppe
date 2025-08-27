@@ -4,11 +4,13 @@ import GST, { colors, RF } from '../../../../Constant'
 import Liveicon from "../../../../assets/SVG/Liveicon.svg"
 import ForwardIcon from "../../../../assets/SVG/ForwardIcon.svg"
 import styles from './style'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 
 const Live = ({navigation}) => {
+  const insert=useSafeAreaInsets()
   return (
-    <View style={GST.MAIN}>
+    <View style={{...GST.MAIN,paddingTop:insert.top}}>
         <View style={styles.imgcontainer}>
         <Image source={require("../../../../assets/Images/liveimg.png")}
          style={styles.img}

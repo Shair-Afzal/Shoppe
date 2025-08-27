@@ -7,12 +7,15 @@ import { hotPopularData, topProductsData } from '../../../../utils/Dummydata'
 import Empty from "../../../../assets/SVG/Empty.svg"
 import PopularCard from '../../../../Component/PopularCard'
 import styles from './style'
-const Favourite = () => {
+import CartItem from '../../../../Component/Cartitem'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+const Favourite = ({navigation}) => {
+  const insert=useSafeAreaInsets()
   return (
-    <View style={GST.FLEX}>
+    <View style={{...GST.FLEX,paddingTop:insert.top}}>
       <View style={styles.container}>
         <Text style={GST.subHeading}>Wishlist</Text>
-        <SectionHeader titile={"Recently viewed"} txt/>
+        <SectionHeader titile={"Recently viewed"} txt onpress={()=>navigation.navigate("RecenltyView")}/>
         <View style={styles.listconatiner}>
         <TopProduct data={topProductsData} />
         </View>
@@ -22,7 +25,7 @@ const Favourite = () => {
        </View>
        </View>
       
-        
+        {/* <CartItem/> */}
        
        
        

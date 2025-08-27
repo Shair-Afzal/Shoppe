@@ -21,10 +21,13 @@ import CustomOtpInput from '../../../Component/OtpInput/index.';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import { otpSchema, PasswordSchema } from '../../../utils/Schema';
 import Loader from '../../../Component/Loader/Loader';
+import CustomButton from '../../../Component/Custombutton';
+import CustomModel from '../../../Component/CustomModel';
 const ForgetPassword = ({ navigation }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const formikRef = useRef();
   const [loading, setLoading] = useState(false);
+  const [showmodel,setmodel]=useState(false)
   const FormObserver = ({ errors, touched }) => {
     useEffect(() => {
       const firstErrorKey = Object.keys(errors).find(
@@ -43,9 +46,13 @@ const ForgetPassword = ({ navigation }) => {
   const Submit = () => {
     if (selectedOption === 'SMS') {
       setcount(count + 1);
+      if(count==1){
+        setmodel(true)
+      }
     } else if (selectedOption === 'Email') {
       navigation.navigate('ConfirmPassword');
       setcount(0);
+      
     }
     formikRef.current.submitForm();
   };
@@ -83,9 +90,10 @@ const ForgetPassword = ({ navigation }) => {
       {({ handleSubmit, errors, touched, setFieldValue, setFieldTouched }) => (
         <KeyboardAvoidingView
           style={GST.FLEX}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           // keyboardVerticalOffset={Platform.OS === "ios" ? 0 : RF(20)}
         >
+          <CustomModel visible={showmodel} onClose={()=>setmodel(false)}/>
           {loading && <Loader />}
           <FormObserver errors={errors} touched={touched} />
           <View style={GST.FLEX}>

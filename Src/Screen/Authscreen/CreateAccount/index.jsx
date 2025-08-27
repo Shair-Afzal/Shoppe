@@ -11,7 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import GST, { colors, RF } from '../../../Constant';
+import GST, { colors, IS_TABLET, RF } from '../../../Constant';
 import Bubbles from '../../../assets/SVG/Bubbles.svg';
 import Cameraicon from '../../../assets/SVG/Cameraicon.svg';
 import styles from './style';
@@ -27,10 +27,12 @@ import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAccount } from '../../../Redux/slices/userslice';
+
 const CreateAccount = ({ navigation }) => {
   const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [show,setshow]=useState(true)
   const user=useSelector((state)=>state.user)
   const FormObserver = ({ errors, touched }) => {
     
@@ -47,25 +49,23 @@ const CreateAccount = ({ navigation }) => {
     return null;
   };
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <StatusBar 
+    
+     <View style={GST.FLEX}>
+      <ScrollView
+        contentContainerStyle={GST.FLEXGROW}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+         <StatusBar 
               translucent 
               backgroundColor="transparent" 
               barStyle="dark-content" 
             />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
         {loading && <Loader />}
         <View style={styles.container}>
           <Bubbles
             width="100%"
-            height={RF(300)}
+            height={IS_TABLET?RF(360):RF(300)}
             preserveAspectRatio="xMidYMid slice"
             
           />
@@ -109,6 +109,7 @@ const CreateAccount = ({ navigation }) => {
                       value={values.email}
                       onChangeText={handleChange('email')}
                       onBlur={handleBlur('email')}
+                      containerStyle={{paddingVertical:RF(5)}}
                     />
 
                     <CustomInput
@@ -117,7 +118,9 @@ const CreateAccount = ({ navigation }) => {
                       value={values.password}
                       onChangeText={handleChange('password')}
                       onBlur={handleBlur('password')}
-                      secureTextEntry={true}
+                      secureTextEntry={show}
+                      eyepress={()=>setshow(!show)}
+                      containerStyle={{paddingVertical:RF(5)}}
                     />
 
                     <PhoneInputComponent
@@ -135,7 +138,7 @@ const CreateAccount = ({ navigation }) => {
                     <CustomButton
                       btnTitle={'Done'}
                       onPress={handleSubmit}
-                      style={{ marginTop: RF(30) }}
+                      style={{ marginTop: RF(60) }}
                     />
                     <TouchableOpacity
                       style={styles.cancelbtn}
@@ -149,8 +152,10 @@ const CreateAccount = ({ navigation }) => {
             </Formik>
           </View>
         </View>
+
       </ScrollView>
-    </KeyboardAvoidingView>
+      </View>
+   
   );
 };
 

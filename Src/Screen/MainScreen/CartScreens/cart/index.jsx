@@ -8,11 +8,13 @@ import SectionHeader from '../../../../Component/SectionHeader'
 import { hotPopularData } from '../../../../utils/Dummydata'
 import Logo from "../../../../assets/SVG/Logo.svg"
 import PaymentFooter from '../../../../Component/PaymentFooter'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Cart = () => {
+   const insert=useSafeAreaInsets()
   return (
     <View style={GST.FLEX}>
-      <View style={{...GST.MAIN,paddingTop:RF(10)}}>
+      <View style={{...GST.MAIN,paddingTop:RF(10),paddingTop:insert.top}}>
         <View style={styles.txtcontainer}>
         <Text style={GST.subHeading}>Cart</Text>
         <View style={styles.elipsecircle}>

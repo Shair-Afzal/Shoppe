@@ -5,7 +5,7 @@ const { width, height } = Dimensions.get("window");
  const isTablet = aspectRatio < 1.6;
 const styles = StyleSheet.create({
   imgcontainer: {
-    paddingVertical: RF(30),
+    paddingVertical: RF(20),
     paddingBottom: RF(35),
   },
   img: {
