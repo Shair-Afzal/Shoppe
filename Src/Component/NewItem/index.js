@@ -8,6 +8,7 @@ const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,
   const navigation=useNavigation()
    const renderNewItem = ({ item}) => (
     <TouchableOpacity style={[styles.newItemContainer,style]}
+     activeOpacity={0.9}
     onPress={()=>navigation.navigate('Details')}
     >
      <View style={[styles.imgcontainer,imgstyle]}>

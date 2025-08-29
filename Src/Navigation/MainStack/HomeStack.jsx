@@ -21,8 +21,6 @@ const HomeStack = () => {
     >
     <Stack.Screen name='Home' component={Home}/>
     <Stack.Screen name='FlashSales' component={FlashSales}/>
-    <Stack.Screen name='Live' component={Live}/>
-    <Stack.Screen name='Story' component={StoryScreen}/>
     <Stack.Screen name='Shop' component={ShopeScreen}/>
     <Stack.Screen name='Search'component={SearchScreen}/>
     <Stack.Screen name='Review' component={ReviewScreen}/>

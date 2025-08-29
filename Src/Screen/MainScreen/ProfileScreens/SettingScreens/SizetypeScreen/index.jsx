@@ -4,11 +4,13 @@ import GST, { colors, RF } from '../../../../../Constant';
 import CustomHeader from '../../../../../Component/CustomHeader';
 import Check from '../../../../../assets/SVG/Check.svg';
 import { languageData, sizes } from '../../../../../utils/Dummydata';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SizeScreen = () => {
      const [select, setselct]=useState("US")
+     const  insert=useSafeAreaInsets()
   return (
-      <View style={{...GST.MAIN,paddingTop:RF(15)}}>
+      <View style={{...GST.MAIN,paddingTop:RF(15),paddingTop:insert.top}}>
       <CustomHeader name={'Settings'} descrip={'Language'} />
       <FlatList
         data={sizes}

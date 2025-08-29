@@ -15,9 +15,8 @@ const StoriesCard = ({data}) => {
     contentContainerStyle={{paddingLeft:RF(15)}}
     renderItem={({item,i})=>(
      <TouchableOpacity style={[styles.storyCard,]}
-     onPress={()=>navigation.navigate("Home",{
-      screen:"Live"
-     })}
+      activeOpacity={0.9}
+     onPress={()=>navigation.navigate("Live")}
      >
           
             <Image 

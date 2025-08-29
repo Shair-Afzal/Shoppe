@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import React, { useState } from 'react';
-import GST, { colors, RF } from '../../../../Constant';
+import GST, { colors, fontFamily, RF } from '../../../../Constant';
 import SectionHeader from '../../../../Component/SectionHeader';
 import styles from './style';
 import CustomSelector from '../../../../Component/CustomSelector';
@@ -10,6 +10,11 @@ import Button from '../../../../assets/SVG/Button.svg';
 
 const Categories = ({ navigation }) => {
   const [select, setselect] = useState('all');
+  const handlepress=()=>{
+    navigation.navigate("Home",{
+      screen:"Shop"
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -21,8 +26,7 @@ const Categories = ({ navigation }) => {
         onpress={() => navigation.goBack()}
       />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: RF(20) }}>
-        {/* Top Buttons */}
+      <ScrollView contentContainerStyle={styles.scrollcontainer}>
         <View style={styles.btncontainer}>
           <TouchableOpacity
             style={select === 'all' ? styles.onbtn : styles.btn}
@@ -53,7 +57,9 @@ const Categories = ({ navigation }) => {
             keyExtractor={(item, index) => index.toString()}
             columnWrapperStyle={{ justifyContent: 'space-between' }}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.selectbtn}>
+              <TouchableOpacity style={styles.selectbtn}
+              onPress={()=>handlepress()}
+              >
                 <Text style={{ ...GST.subdescription, fontFamily: 'Raleway' }}>
                   {item.name}
                 </Text>
@@ -70,21 +76,12 @@ const Categories = ({ navigation }) => {
 
         {/* Just For You */}
         <TouchableOpacity
-          style={{
-            height: RF(45),
-            width: '100%',
-            backgroundColor: colors.DarkWhite,
-            paddingHorizontal: RF(5),
-            borderRadius: RF(10),
-            elevation: 5,
-            marginTop: RF(10),
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+          style={styles.justforcontainer}
+          onPress={handlepress}
+          >
           <View style={{ ...GST.ROW, gap: RF(10), alignItems: 'center' }}>
-            <Dropimg height={RF(35)} width={RF(35)} />
-            <Text style={{ ...GST.subdescription, fontFamily: 'Raleway' }}>
+            <Dropimg height={RF(38)} width={RF(38)} />
+            <Text style={{ ...GST.subdescription, fontFamily:fontFamily.raleway}}>
               Just For You <Text style={{ color: colors.blue }}>★</Text>
             </Text>
           </View>

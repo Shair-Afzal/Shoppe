@@ -34,7 +34,9 @@ const Leftcomponent = ({
               <Vouchers height={RF(35)} width={RF(35)} />
             )}
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity
+          onPress={()=>navigation.navigate("order")}
+          >
             <TopMenu height={RF(35)} width={RF(35)} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Setting')}>

@@ -112,7 +112,8 @@ export const colors = {
   darkblack:"#202020",
   orange:"#FE7F00",
   green:"#08C514",
-  darkgrey:"#F9F9F9"
+  darkgrey:"#F9F9F9",
+  red:"#FF0000"
 };
 export const radius = {
   radius1: RFValue(2),
@@ -137,4 +138,5 @@ export const fontFamily = {
   medium: 'Raleway-Medium',
   bold: 'Raleway-Bold',
   DMreg: 'Raleway-Regular',
+  raleway:"Raleway"
 };

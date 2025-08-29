@@ -7,23 +7,23 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React from 'react';
-import GST, { colors, radius, RF } from '../../Constant';
+import React, { useState } from 'react';
+import GST, { colors, fontFamily, radius, RF } from '../../Constant';
 import DisableButton from '../../assets/SVG/DisableButton.svg';
 import CustomInput from '../Custominput';
 import CustomButton from '../Custombutton';
 import { orderHistoryData } from '../../utils/Dummydata';
 import { useNavigation } from '@react-navigation/native';
 import CustomTicket from '../TicketComponent';
-import Icon from "../.../../../assets/SVG/Icon.svg"
+import Icon from '../.../../../assets/SVG/Icon.svg';
+import RatingComponent from '../RatingComponent';
+import StarRating from 'react-native-star-rating-widget';
 
-
-const ReviewModel = ({ visible, onclose, unsuccessful,Voucher}) => {
+const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress}) => {
+   const [rating, setRating] = useState(0);
   const navigation = useNavigation();
   const sumbit = () => {
-    navigation.navigate('Home', {
-      screen: 'Shop',
-    });
+    navigation.navigate('Track');
     onclose();
   };
   return (
@@ -50,12 +50,16 @@ const ReviewModel = ({ visible, onclose, unsuccessful,Voucher}) => {
               style={{
                 ...GST.description,
                 fontFamily: 'Raleway-Bold',
-                textAlign: unsuccessful||Voucher ? null : 'center',
+                textAlign: unsuccessful || Voucher || review ? null : 'center',
               }}
             >
               {unsuccessful
                 ? 'Delivery was not successful'
-                :Voucher?"Active Vouchers": 'Which item you want to review?'}
+                : Voucher
+                ? 'Active Vouchers'
+                : review
+                ? 'Review'
+                : 'Which item you want to review?'}
             </Text>
           </View>
           <View
@@ -66,7 +70,7 @@ const ReviewModel = ({ visible, onclose, unsuccessful,Voucher}) => {
               height: unsuccessful ? null : RF(300),
             }}
           >
-            {!unsuccessful &&!Voucher&& (
+            {!unsuccessful && !Voucher && !review && (
               <FlatList
                 data={orderHistoryData}
                 contentContainerStyle={{ paddingBottom: RF(10) }}
@@ -148,144 +152,234 @@ const ReviewModel = ({ visible, onclose, unsuccessful,Voucher}) => {
                 />
               </>
             )}
-            {Voucher&&
-            <>
+            {Voucher && (
+              <>
                 <View style={{ marginTop: RF(15) }}>
-            <CustomTicket>
-              <View
-                style={{
-                  ...GST.CENTERCONTAINER,
-                  width: '94%',
-                  padding: RF(5),
-                  borderBottomWidth: 1,
-                  borderStyle: 'dashed',
-                  alignSelf: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    ...GST.subdescription,
-                    color: colors.blue,
-                    fontFamily: 'Raleway-Bold',
-                  }}
-                >
-                  Voucher
-                </Text>
-                  <View style={{backgroundColor:colors.lightpink,padding:RF(1),borderRadius:radius.radius2,paddingHorizontal:RF(5)}}>
-                <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  ...GST.ROW,
-                  gap: RF(8),
-                  marginTop: RF(10),
-                  marginLeft: RF(20),
-                }}
-              >
-                <Icon height={RF(15)} width={RF(15)} />
-                <Text
-                  style={{ ...GST.subdescription, fontFamily: 'Raleway-Bold' }}
-                >
-                  First Purchase
-                </Text>
-              </View>
-              <View
-                style={{
-                  ...GST.CENTERCONTAINER,
-                  width: '97%',
-                  padding: RF(2),
-                  paddingHorizontal: RF(15),
-                }}
-              >
-                <Text style={GST.smallesttxt}>5% off for your next order</Text>
+                  <CustomTicket>
+                    <View
+                      style={{
+                        ...GST.CENTERCONTAINER,
+                        width: '94%',
+                        padding: RF(5),
+                        borderBottomWidth: 1,
+                        borderStyle: 'dashed',
+                        alignSelf: 'center',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...GST.subdescription,
+                          color: colors.blue,
+                          fontFamily: 'Raleway-Bold',
+                        }}
+                      >
+                        Voucher
+                      </Text>
+                      <View
+                        style={{
+                          backgroundColor: colors.lightpink,
+                          padding: RF(1),
+                          borderRadius: radius.radius2,
+                          paddingHorizontal: RF(5),
+                        }}
+                      >
+                        <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        ...GST.ROW,
+                        gap: RF(8),
+                        marginTop: RF(10),
+                        marginLeft: RF(20),
+                      }}
+                    >
+                      <Icon height={RF(15)} width={RF(15)} />
+                      <Text
+                        style={{
+                          ...GST.subdescription,
+                          fontFamily: 'Raleway-Bold',
+                        }}
+                      >
+                        First Purchase
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        ...GST.CENTERCONTAINER,
+                        width: '97%',
+                        padding: RF(2),
+                        paddingHorizontal: RF(15),
+                      }}
+                    >
+                      <Text style={GST.smallesttxt}>
+                        5% off for your next order
+                      </Text>
 
-                <TouchableOpacity
-                  style={{
-                    ...GST.CENTER,
-                    width: '30%',
-                    backgroundColor: colors.blue,
-                    padding: RF(8),
-                    borderRadius: RF(10),
-                  }}
-                  onPress={onclose}
-                >
-                  <Text style={{ ...GST.smallesttxt, color: colors.DarkWhite }}>
-                    Apply
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </CustomTicket>
-          </View>
-          <View style={{ marginTop: RF(15) }}>
-            <CustomTicket>
-              <View
-                style={{
-                  ...GST.CENTERCONTAINER,
-                  width: '94%',
-                  padding: RF(5),
-                  borderBottomWidth: 1,
-                  borderStyle: 'dashed',
-                  alignSelf: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    ...GST.subdescription,
-                    color: colors.blue,
-                    fontFamily: 'Raleway-Bold',
-                  }}
-                >
-                  Voucher
-                </Text>
-                <View style={{backgroundColor:colors.lightpink,padding:RF(1),borderRadius:radius.radius2,paddingHorizontal:RF(5)}}>
-                <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
+                      <TouchableOpacity
+                        style={{
+                          ...GST.CENTER,
+                          width: '30%',
+                          backgroundColor: colors.blue,
+                          padding: RF(8),
+                          borderRadius: RF(10),
+                        }}
+                        onPress={onclose}
+                      >
+                        <Text
+                          style={{
+                            ...GST.smallesttxt,
+                            color: colors.DarkWhite,
+                          }}
+                        >
+                          Apply
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </CustomTicket>
                 </View>
-              </View>
-              <View
-                style={{
-                  ...GST.ROW,
-                  gap: RF(8),
-                  marginTop: RF(10),
-                  marginLeft: RF(20),
-                }}
-              >
-                <Icon height={RF(15)} width={RF(15)} />
-                <Text
-                  style={{ ...GST.subdescription, fontFamily: 'Raleway-Bold' }}
-                >
-                  First Purchase
-                </Text>
-              </View>
-              <View
-                style={{
-                  ...GST.CENTERCONTAINER,
-                  width: '97%',
-                  padding: RF(2),
-                  paddingHorizontal: RF(15),
-                }}
-              >
-                <Text style={GST.smallesttxt}>5% off for your next order</Text>
+                <View style={{ marginTop: RF(15) }}>
+                  <CustomTicket>
+                    <View
+                      style={{
+                        ...GST.CENTERCONTAINER,
+                        width: '94%',
+                        padding: RF(5),
+                        borderBottomWidth: 1,
+                        borderStyle: 'dashed',
+                        alignSelf: 'center',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...GST.subdescription,
+                          color: colors.blue,
+                          fontFamily: 'Raleway-Bold',
+                        }}
+                      >
+                        Voucher
+                      </Text>
+                      <View
+                        style={{
+                          backgroundColor: colors.lightpink,
+                          padding: RF(1),
+                          borderRadius: radius.radius2,
+                          paddingHorizontal: RF(5),
+                        }}
+                      >
+                        <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
+                      </View>
+                    </View>
+                    <View
+                      style={{
+                        ...GST.ROW,
+                        gap: RF(8),
+                        marginTop: RF(10),
+                        marginLeft: RF(20),
+                      }}
+                    >
+                      <Icon height={RF(15)} width={RF(15)} />
+                      <Text
+                        style={{
+                          ...GST.subdescription,
+                          fontFamily: 'Raleway-Bold',
+                        }}
+                      >
+                        First Purchase
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        ...GST.CENTERCONTAINER,
+                        width: '97%',
+                        padding: RF(2),
+                        paddingHorizontal: RF(15),
+                      }}
+                    >
+                      <Text style={GST.smallesttxt}>
+                        5% off for your next order
+                      </Text>
 
-                <TouchableOpacity
-                  style={{
-                    ...GST.CENTER,
-                    width: '30%',
-                    backgroundColor: colors.blue,
-                    padding: RF(8),
+                      <TouchableOpacity
+                        style={{
+                          ...GST.CENTER,
+                          width: '30%',
+                          backgroundColor: colors.blue,
+                          padding: RF(8),
+                          borderRadius: RF(10),
+                        }}
+                        onPress={onclose}
+                      >
+                        <Text
+                          style={{
+                            ...GST.smallesttxt,
+                            color: colors.DarkWhite,
+                          }}
+                        >
+                          Apply
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </CustomTicket>
+                </View>
+              </>
+            )}
+            {review && (
+              <View>
+                <View style={{ ...GST.ROW, alignItems: 'center', gap: RF(5) }}>
+                  <View style={styles.reviewimgcontainer}>
+                    <Image
+                      source={require('../../assets/Images/Reviewimg.png')}
+                      style={styles.reviewimg}
+                    />
+                  </View>
+                  <View>
+                    <Text style={GST.smallesttxt}>
+                      Lorem ipsum dolor sit amet consectetur.
+                    </Text>
+                    <Text
+                      style={{
+                        ...GST.subdescription,
+                        fontFamily: fontFamily.bold,
+                      }}
+                    >
+                      Order #92287157
+                    </Text>
+                  </View>
+                </View>
+                <StarRating
+                  rating={rating}
+                  starSize={RF(40)}
+                  onChange={(value) => {
+    setRating(value)}}
+                  style={{ marginTop: RF(5) }}
+                  enableHalfStar={false}
+                />
+                <CustomInput
+                  containerStyle={{
                     borderRadius: RF(10),
+                    paddingVertical: RF(0),
+                    marginTop: RF(5),
                   }}
-                  onPress={onclose}
-                >
-                  <Text style={{ ...GST.smallesttxt, color: colors.DarkWhite }}>
-                    Apply
-                  </Text>
-                </TouchableOpacity>
+                  multiline={true}
+                  numberOfLines={5}
+                  inputStyle={{ textAlignVertical: 'top' }}
+                  placeholder={'Your comment'}
+                />
               </View>
-            </CustomTicket>
-          </View>
-          </>
-            }
+            )}
+            {review && (
+              <CustomButton
+                btnTitle={'Say it!'}
+                style={{
+                  paddingVertical: RF(15),
+                  position: 'absolute',
+                  bottom: RF(10),
+                  marginLeft: RF(15),
+                }}
+                onPress={onclose}
+              />
+            )}
           </View>
         </View>
       </View>
@@ -371,5 +465,18 @@ const styles = StyleSheet.create({
   selectedOptionText: {
     color: colors.darkblack,
     fontFamily: 'NunitoSans-SemiBold',
+  },
+  reviewimgcontainer: {
+    height: RF(50),
+    width: RF(50),
+    borderRadius: RF(100),
+    backgroundColor: colors.DarkWhite,
+    padding: RF(3),
+    elevation: 5,
+  },
+  reviewimg: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'cover',
   },
 });

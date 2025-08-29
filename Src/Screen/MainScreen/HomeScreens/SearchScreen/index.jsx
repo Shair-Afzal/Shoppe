@@ -16,7 +16,7 @@ const recommendations = [
   { id: 5, name: 'Sunglasses' },
 ];
 
-const SearchScreen = () => {
+const SearchScreen = ({navigation}) => {
   // history entries are objects: { id: string, term: string }
   const [history, setHistory] = useState([]);
   const [show, setShow] = useState(false);
@@ -36,6 +36,7 @@ const SearchScreen = () => {
       return [{ id, term }, ...withoutDup];
     });
     setValue('');
+    navigation.navigate('Shop')
   };
 
   const clearHistory = () => setHistory([]);
@@ -51,7 +52,7 @@ const SearchScreen = () => {
         onChangetxt={setValue}
         onSubmitEditing={handleSubmit}
         onimagpicked={() => setShow(true)}
-        placholder="Search products..."
+        placholder="Search..."
       />
 
       <View style={{ ...GST.CENTERCONTAINER, marginTop: RF(10) }}>

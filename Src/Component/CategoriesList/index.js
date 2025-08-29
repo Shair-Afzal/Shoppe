@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
   
   return(
     <TouchableOpacity style={[styles.categoryItem,style]}
+    activeOpacity={0.9}
     onPress={()=>{
       if(!press){
       navigation.navigate("Shop")

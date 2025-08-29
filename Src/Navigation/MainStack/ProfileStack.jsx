@@ -17,6 +17,9 @@ import About from '../../Screen/MainScreen/ProfileScreens/SettingScreens/About';
 import VoucherScreen from '../../Screen/MainScreen/ProfileScreens/VoucherScreen';
 import TrackScreen from '../../Screen/MainScreen/ProfileScreens/TrackScreen';
 import ChatScreen from '../../Screen/MainScreen/ProfileScreens/ChatScreen';
+import Live from '../../Screen/MainScreen/ProfileScreens/Live';
+import StoryScreen from '../../Screen/MainScreen/ProfileScreens/StoryScreen';
+import TermCondition from '../../Screen/MainScreen/ProfileScreens/SettingScreens/TermCondition';
 const ProfileStack = () => {
   const Stack = createNativeStackNavigator();
   return (
@@ -40,6 +43,9 @@ const ProfileStack = () => {
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="Voucher" component={VoucherScreen} />
       <Stack.Screen name="Track" component={TrackScreen} />
+      <Stack.Screen name='Live' component={Live}/>
+    <Stack.Screen name='Story' component={StoryScreen}/>
+    <Stack.Screen name='Termcondition' component={TermCondition}/>
     </Stack.Navigator>
   );
 };

@@ -14,6 +14,7 @@ import PaymentModel from './Src/Component/PaymentModel';
 import CustomModel from './Src/Component/CustomModel';
 import ReviewModel from './Src/Component/ReviewModel';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import VariationModal from './Src/Component/VaritaionModal';
 
 
 
@@ -33,6 +34,10 @@ const App = () => {
       {/* <AuthStack /> */}
       {/* <Bottomtab/> */}
       <AppStack/>
+      
+      
+      
+       
       
       
       

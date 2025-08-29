@@ -10,6 +10,7 @@ const PopularCard = ({data,onpress}) => {
   const navigation=useNavigation()
     const renderHotPopularItem = ({ item }) => (
     <TouchableOpacity style={styles.hotItemContainer}
+     activeOpacity={0.9}
     onPress={()=>navigation.navigate('Details')}
     >
       <Image source={item.img} style={styles.hotItemImage} />

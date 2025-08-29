@@ -17,19 +17,7 @@ const PasswordScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const email = useSelector(state => state.user.user);
-  const FormObserver = ({ errors, touched }) => {
-    useEffect(() => {
-      const firstErrorKey = Object.keys(errors).find(
-        key => touched[key] && errors[key],
-      );
 
-      if (firstErrorKey) {
-        showErrorToast(errors[firstErrorKey]);
-      }
-    }, [errors, touched]);
-
-    return null;
-  };
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () =>
       setKeyboardVisible(true),
@@ -53,20 +41,7 @@ const PasswordScreen = ({ navigation }) => {
         initialValues={{ password: '' }}
         validationSchema={PasswordSchema}
         onSubmit={values => {
-          // try {
-          //   dispatch(loginWithPassword(values));
-          //   setLoading(true);
-          //   setTimeout(() => {
-          //     setLoading(false);
-          //     showSuccessToast('Login Successfully');
-          //     setTimeout(() => {
-          //       navigation.navigate('ForgetPassword');
-          //     }, 1500);
-          //   }, 1500);
-          // } catch (err) {
-          //   showErrorToast(err);
-          console.log(values)
-          // }
+         
         }}
       >
         {({
@@ -77,7 +52,6 @@ const PasswordScreen = ({ navigation }) => {
           setFieldTouched,
         }) => (
           <>
-            <FormObserver errors={errors} touched={touched} />
 
             <View style={styles.container}>
               <Text style={GST.subdescription}>Type your password</Text>
@@ -104,7 +78,7 @@ const PasswordScreen = ({ navigation }) => {
                   onTextChange={text => setFieldValue('password', text)}
                   onFilled={text => {
                     try {
-                      dispatch(loginWithPassword(text));
+                      // dispatch(loginWithPassword(text));
                       setLoading(true);
                       setFieldTouched('password', true);
                       setFieldValue('password', text);
@@ -113,16 +87,19 @@ const PasswordScreen = ({ navigation }) => {
                         setLoading(false);
                         showSuccessToast('Login Successfully');
                         setTimeout(() => {
+                          console.log("user",email)
                           navigation.navigate('home');
                         }, 1500);
                       }, 1500);
                     } catch (err) {
                       showErrorToast('your email and password is not correct');
-                      console.log('hi', email);
                     }
                   }}
                 />
-
+            {
+              errors.password&&touched.password&&
+              <Text style={{...GST.subdescription,color:colors.red}}>{errors.password}</Text>
+            }
                 {errors.password && (
                   <TouchableOpacity
                     onPress={() => navigation.navigate('ForgetPassword')}

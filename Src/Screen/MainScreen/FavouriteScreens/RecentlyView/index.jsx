@@ -8,6 +8,7 @@ import Options from '../../../../assets/SVG/Options.svg';
 import CustomCalendar from '../../../../Component/CustomCalender';
 import NewItem from '../../../../Component/NewItem';
 import { newItemsData } from '../../../../utils/Dummydata';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const RecentlyView = () => {
   const [model, setmodel] = useState(false);
@@ -15,8 +16,9 @@ const RecentlyView = () => {
    const { width, height } = Dimensions.get('window');
     const aspectRatio = height / width;
     const isTablet = aspectRatio < 1.6;
+    const insert=useSafeAreaInsets();
   return (
-    <View style={{ ...GST.MAIN, paddingTop: RF(5) }}>
+    <View style={{ ...GST.MAIN, paddingTop: RF(5),paddingTop:insert.top}}>
       <CustomCalendar visible={model} close={() => setmodel(false)} />
       <CustomHeader name={'Recently viewed'} />
       <View style={{ ...GST.CENTERCONTAINER, marginTop: RF(10) }}>

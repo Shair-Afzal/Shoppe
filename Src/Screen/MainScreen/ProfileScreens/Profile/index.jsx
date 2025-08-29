@@ -37,6 +37,10 @@ const Profile = ({ navigation }) => {
   const sumbit = index => {
     if (index === 1) {
       navigation.navigate('Recive');
+    } else if(index==0){
+      navigation.navigate('Cart',{screen:'Payment'})
+    }else{
+      navigation.navigate('order')
     }
   };
 
@@ -148,7 +152,9 @@ const Profile = ({ navigation }) => {
               />
 
               <SectionHeader titile={'Flash Sale'} clock />
-              <FlashCard data={flashSaleData} />
+              <FlashCard data={flashSaleData} onPress={()=>navigation.navigate("Home",{
+                screen:"FlashSales"
+              })}/>
 
               <Text style={{ ...styles.sectionTitle, marginTop: RF(10) }}>
                 Top Products

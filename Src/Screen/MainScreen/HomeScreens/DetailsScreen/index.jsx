@@ -4,10 +4,9 @@ import {
   View,
   Image,
   Dimensions,
-  ScrollView,
-  Touchable,
   TouchableOpacity,
   StatusBar,
+  FlatList,
 } from 'react-native';
 import React, { useState } from 'react';
 import Swiper from 'react-native-swiper';
@@ -28,46 +27,42 @@ import PopularCard from '../../../../Component/PopularCard';
 import NewItem from '../../../../Component/NewItem';
 import StarRating from 'react-native-star-rating-widget';
 import CustomButton from '../../../../Component/Custombutton';
-import UnLike from "../../../../assets/SVG/UnLike.svg"
-import Like from "../../../../assets/SVG/Like.svg"
+import UnLike from '../../../../assets/SVG/UnLike.svg';
+import Like from '../../../../assets/SVG/Like.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import VariationModal from '../../../../Component/VaritaionModal';
 
-const DetailsScreen = ({navigation}) => {
-  const [rating, setRating] = useState(0);
-  const [fav,setfav]=useState(false)
+const DetailsScreen = ({ navigation }) => {
+  const [rating, setRating] = useState(4);
+  const [fav, setfav] = useState(false);
+  const [model,setmodel]=useState(false)
+
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
-  const insert=useSafeAreaInsets()
-  return (
-    <View style={{...GST.FLEX,}}>
-      <StatusBar   translucent backgroundColor={"transparent"}/>
-    <ScrollView contentContainerStyle={{...GST.FLEXGROW,paddingBottom:RF(50)}}
-    showsVerticalScrollIndicator={false}
-    >
+  const insert = useSafeAreaInsets();
+
+  const renderContent = () => (
+    <>
       <View style={{ height: RF(370) }}>
         <Swiper
           loop={false}
           showsButtons={false}
           showsPagination={true}
-          //   paginationStyle={{ bottom: 10 }}
           dotStyle={styles.dot}
           activeDotStyle={styles.activeDot}
         >
-          {detailsdata.map(
-            (item, i) => (
-              <Image
-                source={item.img}
-                style={{
-                  height: '100%',
-                  width: '100%',
-                  resizeMode: isTablet ? 'stretch' : 'cover',
-                }}
-              />
-            ),
-
-            //   </View>
-          )}
+          {detailsdata.map((item, i) => (
+            <Image
+              key={i}
+              source={item.img}
+              style={{
+                height: '100%',
+                width: '100%',
+                resizeMode: isTablet ? 'stretch' : 'cover',
+              }}
+            />
+          ))}
         </Swiper>
       </View>
       <View
@@ -87,7 +82,7 @@ const DetailsScreen = ({navigation}) => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam arcu
           mauris, scelerisque eu mauris id, pretium pulvinar sapien.
         </Text>
-        <SectionHeader titile={'Variations'} txt btn />
+        <SectionHeader titile={'Variations'} txt btn onpress={()=>setmodel(true)} />
         <View style={{ ...GST.ROW, gap: RF(8) }}>
           <Image
             source={require('../../../../assets/Images/variationsimg.png')}
@@ -132,7 +127,7 @@ const DetailsScreen = ({navigation}) => {
         </Text>
         <View style={styles.deliverbottomcontainer}>
           <View style={styles.deliverdtxtconatiner}>
-            <Text style={GST.subdescription}>Standart</Text>
+            <Text style={GST.subdescription}>Standard</Text>
             <View style={styles.daysconatiner}>
               <Text style={{ ...GST.subdescription, color: colors.blue }}>
                 5-7 days
@@ -145,7 +140,7 @@ const DetailsScreen = ({navigation}) => {
         </View>
         <View style={styles.deliverbottomcontainer}>
           <View style={styles.deliverdtxtconatiner}>
-            <Text style={GST.subdescription}>Standart</Text>
+            <Text style={GST.subdescription}>Standard</Text>
             <View style={styles.daysconatiner}>
               <Text style={{ ...GST.subdescription, color: colors.blue }}>
                 5-7 days
@@ -160,7 +155,7 @@ const DetailsScreen = ({navigation}) => {
           Rating & Reviews
         </Text>
         <View style={{ ...GST.ROW }}>
-          <StarRating rating={4} starSize={RF(25)} />
+          <StarRating rating={rating} starSize={RF(25)} onChange={()=>setRating(4)} />
           <View
             style={{
               backgroundColor: colors.lightblue,
@@ -180,7 +175,7 @@ const DetailsScreen = ({navigation}) => {
             <Text style={{ ...GST.subdescription, fontFamily: 'Raleway-Bold' }}>
               Veronika
             </Text>
-            <StarRating rating={4} starSize={20} />
+            <StarRating rating={rating} starSize={20} onChange={()=>setRating(4)}/>
             <Text style={GST.smallesttxt}>
               Lorem ipsum dolor sit amet, consetetur sadipscing elitr,{'\n'} sed
               diam nonumy eirmod tempor invidunt ut labore et dolore{'\n'} magna
@@ -191,12 +186,14 @@ const DetailsScreen = ({navigation}) => {
         <CustomButton
           btnTitle={'View All Reviews'}
           style={{ paddingVertical: RF(15), marginTop: RF(10) }}
-          onPress={()=> navigation.navigate('home', { 
-      screen: 'Home', 
-      params: { 
-        screen: 'Review' 
-      }
-    })}
+          onPress={() =>
+            navigation.navigate('home', {
+              screen: 'Home',
+              params: {
+                screen: 'Review',
+              },
+            })
+          }
         />
         <SectionHeader titile={'Most Popular'} />
       </View>
@@ -222,22 +219,74 @@ const DetailsScreen = ({navigation}) => {
           />
         </View>
       </View>
-    </ScrollView>
-    <View style={{...GST.CENTERCONTAINER,position:"absolute",bottom:0,width:"100%",backgroundColor:colors.DarkWhite,paddingHorizontal:RF(15),paddingVertical:RF(10)}}>
-<TouchableOpacity
-onPress={()=>setfav(!fav)}
->
-  {!fav?
-  <UnLike height={RF(40)} width={RF(40)}/>:
-  <Like height={RF(40)} width={RF(40)}/>}
-</TouchableOpacity>
-<View style={{width:"35%"}}>
-  <CustomButton btnTitle={"Add to cart"} style={{padding:RF(10),borderRadius:RF(10),backgroundColor:colors.darkblack}} txtstyle={{...GST.subdescription,color:colors.DarkWhite}}/>
-</View>
-<View style={{width:"35%",paddingHorizontal:RF(5)}}>
-  <CustomButton btnTitle={"Buy now"} style={{padding:RF(10),borderRadius:RF(10),}} txtstyle={{...GST.subdescription,color:colors.DarkWhite}}/>
-</View>
-    </View>
+    </>
+  );
+  const buyerfunction=()=>{
+     setmodel(false)
+   navigation.navigate('home', {
+  screen: 'Cart',
+  params: {
+    screen: 'Payment',
+  },
+});
+  }
+  const cartfunction=()=>{
+      setmodel(false)
+      navigation.navigate('home', {
+  screen: 'Cart',
+ })
+  }
+  return (
+    <View style={{ ...GST.FLEX }}>
+      <StatusBar translucent backgroundColor={'transparent'}  />
+      <VariationModal visible={model} buypress={buyerfunction} cartpress={cartfunction}/>
+      <FlatList
+        data={[]}
+        renderItem={null}
+        ListHeaderComponent={renderContent()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: RF(70) }}
+        keyExtractor={() => 'dummy'}
+      />
+      <View
+        style={{
+          ...GST.CENTERCONTAINER,
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          backgroundColor: colors.DarkWhite,
+          paddingHorizontal: RF(15),
+          paddingVertical: RF(10),
+        }}
+      >
+        <TouchableOpacity onPress={() => setfav(!fav)}>
+          {!fav ? (
+            <UnLike height={RF(40)} width={RF(40)} />
+          ) : (
+            <Like height={RF(40)} width={RF(40)} />
+          )}
+        </TouchableOpacity>
+        <View style={{ width: '35%' }}>
+          <CustomButton
+            btnTitle={'Add to cart'}
+            style={{
+              padding: RF(10),
+              borderRadius: RF(10),
+              backgroundColor: colors.darkblack,
+            }}
+            txtstyle={{ ...GST.subdescription, color: colors.DarkWhite }}
+            onPress={cartfunction}
+          />
+        </View>
+        <View style={{ width: '35%', paddingHorizontal: RF(5) }}>
+          <CustomButton
+            btnTitle={'Buy now'}
+            style={{ padding: RF(10), borderRadius: RF(10) }}
+            txtstyle={{ ...GST.subdescription, color: colors.DarkWhite }}
+            onPress={buyerfunction}
+          />
+        </View>
+      </View>
     </View>
   );
 };

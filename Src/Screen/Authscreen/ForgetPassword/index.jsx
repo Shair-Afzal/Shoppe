@@ -28,19 +28,8 @@ const ForgetPassword = ({ navigation }) => {
   const formikRef = useRef();
   const [loading, setLoading] = useState(false);
   const [showmodel,setmodel]=useState(false)
-  const FormObserver = ({ errors, touched }) => {
-    useEffect(() => {
-      const firstErrorKey = Object.keys(errors).find(
-        key => touched[key] && errors[key],
-      );
+  const [error,seterror]=useState(false)
 
-      if (firstErrorKey) {
-        showErrorToast(errors[firstErrorKey]);
-      }
-    }, [errors, touched]);
-
-    return null;
-  };
   const [selectedOption, setSelectedOption] = useState('SMS');
   const [count, setcount] = useState(0);
   const Submit = () => {
@@ -82,20 +71,16 @@ const ForgetPassword = ({ navigation }) => {
       initialValues={{ password: '' }}
       validationSchema={otpSchema}
       onSubmit={values => {
-        console.log('Password Entered:', values.password);
-        // Navigate or authenticate
-        // navigation.navigate("Home"); // Change to your next screen
+        
       }}
     >
       {({ handleSubmit, errors, touched, setFieldValue, setFieldTouched }) => (
         <KeyboardAvoidingView
           style={GST.FLEX}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          // keyboardVerticalOffset={Platform.OS === "ios" ? 0 : RF(20)}
         >
           <CustomModel visible={showmodel} onClose={()=>setmodel(false)}/>
           {loading && <Loader />}
-          <FormObserver errors={errors} touched={touched} />
           <View style={GST.FLEX}>
             <View style={{ height: RF(140) }}>
               <RightBubble style={styles.bg} />
@@ -186,13 +171,14 @@ const ForgetPassword = ({ navigation }) => {
                       } else {
                         setFieldTouched('password', true);
                         setFieldValue('password', text);
+                        seterror(true)
                       }
                     }}
                   />
                 </View>
-                {errors.password && touched.password && (
+                {error&& (
                   <Text style={[GST.subdescription, styles.errortxt]}>
-                    {errors.password}
+                    {" otp is invalid"}
                   </Text>
                 )}
               </>

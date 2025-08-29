@@ -30,20 +30,6 @@ const ConfirmPassword = ({ navigation }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const user=useSelector(state=>state.user)
   const dispatch=useDispatch()
-  // const 
-  const FormObserver = ({ errors, touched }) => {
-    useEffect(() => {
-      const firstErrorKey = Object.keys(errors).find(
-        key => touched[key] && errors[key],
-      );
-
-      if (firstErrorKey) {
-        showErrorToast(errors[firstErrorKey]);
-      }
-    }, [errors, touched]);
-
-    return null;
-  };
   
 
   useEffect(() => {
@@ -91,7 +77,6 @@ const ConfirmPassword = ({ navigation }) => {
           validationSchema={ConfirmPasswordSchema}
           onSubmit={(values)=>{
             dispatch(forgetpassword(values.repeatPassword))
-            console.log("user",user)
       setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -110,7 +95,7 @@ const ConfirmPassword = ({ navigation }) => {
             touched,
           }) => (
             <>
-              <FormObserver errors={errors} touched={touched} />
+             
               <View style={styles.inputcontainer}>
                 <CustomInput
                   placeholder={'New Password'}
@@ -121,6 +106,11 @@ const ConfirmPassword = ({ navigation }) => {
                   onBlur={handleBlur('newPassword')}
                   value={values.newPassword}
                 />
+                {
+                  errors.newPassword&&touched.newPassword&&(
+                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.newPassword}</Text>
+                  )
+                }
                 
                 <CustomInput
                   placeholder={'Repeat Password'}
@@ -131,6 +121,11 @@ const ConfirmPassword = ({ navigation }) => {
                   onBlur={handleBlur('repeatPassword')}
                   value={values.repeatPassword}
                 />
+                {
+                  errors.repeatPassword&&touched.repeatPassword&&(
+                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.repeatPassword}</Text>
+                  )
+                }
                
               </View>
 

@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   discontcon: {
     ...GST.CENTERCONTAINER,
     marginTop: RF(15),
+    marginBottom:RF(12),
   },
   discounttxt: {
     ...GST.description,

@@ -18,7 +18,9 @@ const StoryScreen = ({ navigation }) => {
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
   const handlesumbit = () => {
-    navigation.navigate('Shop');
+    navigation.navigate('Home',{
+      screen:"Shop"
+    });
   };
   const insert=useSafeAreaInsets();
   return (

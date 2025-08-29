@@ -16,7 +16,7 @@ const ActivityScreen = ({navigation}) => {
     <View style={{...GST.MAIN,paddingTop:insert.top}}>
       <CustomHeader
         profilepic
-        source={require('../../../../assets/Images/profilepic.png')}
+        source={require('../../../../assets/Images/avatar.png')}
         btn
         txt={'My Activity'}
         icon

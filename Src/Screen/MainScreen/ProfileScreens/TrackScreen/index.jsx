@@ -23,7 +23,7 @@ const TrackScreen = ({navigation}) => {
         <ReviewModel unsuccessful visible={model} onclose={sumbit}/>
       <CustomHeader
         name={'To Recieve'}
-        descrip={'My Orders'}
+        descrip={'Track Your Order'}
         icon
         recimg={true}
         source={require('../../../../assets/Images/Reviewimg.png')}
@@ -62,6 +62,7 @@ const TrackScreen = ({navigation}) => {
       <View style={{height:RF(300)}}>
       <FlatList data={TrackData} 
       contentContainerStyle={{marginTop:RF(10),}}
+      showsVerticalScrollIndicator={false}
       renderItem={({item,index})=>(
         <View style={{marginTop:RF(15)}}>
           <View style={GST.CENTERCONTAINER}>
@@ -98,7 +99,7 @@ was not successful</Text>
         )
       }
       {
-        step==3&&
+        step>=3&&
         <>
         <View style={{...GST.ROW,gap:RF(5),marginTop:RF(12)}}>
         <Text style={{...GST.subdescription,fontWeight:"700",}}>Delivered</Text>

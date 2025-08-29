@@ -26,14 +26,16 @@ const AppStack = () => {
         headerShown: false,
         
       }}
+      initialRouteName='OnBonding'
     >
-        {/* <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="OnBonding" component={OnBondingScreen}/>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Create" component={CreateAccount} />
       <Stack.Screen name="Password" component={PasswordScreen} />
        <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
        <Stack.Screen name="ConfirmPassword" component={ConfirmPassword}/>
-        <Stack.Screen name="OnBonding" component={OnBondingScreen}/> */}
+        
         <Stack.Screen name="home" component={Bottomtab}/>
        <Stack.Screen name='Filter' component={FilterScreen}/>
        <Stack.Screen name='Details' component={DetailsScreen}/>

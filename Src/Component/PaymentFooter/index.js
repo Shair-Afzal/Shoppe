@@ -4,7 +4,7 @@ import GST, { colors, RF } from '../../Constant'
 import CustomButton from '../Custombutton'
 import { useNavigation } from '@react-navigation/native'
 
-const PaymentFooter = ({title,price,btnstyle,txtstyle}) => {
+const PaymentFooter = ({title,price,btnstyle,txtstyle,onPress}) => {
   const navigation=useNavigation()
   return (
     <View style={{backgroundColor:colors.grey,padding:RF(10),paddingLeft:RF(15)}}>
@@ -12,7 +12,7 @@ const PaymentFooter = ({title,price,btnstyle,txtstyle}) => {
        <Text style={styles.totattxt}>Totat<Text style={GST.description}>$34,00</Text></Text>
           {/* <CustomButton btnTitle={title} style={[styles.btn,btnstyle]} txtstyle={colors.darkblack}/> */}
           <TouchableOpacity style={[styles.btn,btnstyle]}
-          onPress={()=>navigation.navigate("Payment")}
+          onPress={onPress}
           >
             <Text style={[GST.subdescription,txtstyle]}>{title}</Text>
           </TouchableOpacity>

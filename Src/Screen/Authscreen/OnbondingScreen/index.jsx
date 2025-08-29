@@ -81,7 +81,7 @@ const isTabletHeight = height >= 1000;
                 {item.description}
               </Text>
               {i === 3 && (
-                <CustomButton btnTitle={item.buttonTitle} style={styles.btn} onPress={()=>navigation.navigate('home')} />
+                <CustomButton btnTitle={item.buttonTitle} style={styles.btn} onPress={()=>navigation.navigate('Welcome')} />
               )}
             </View>
           </View>

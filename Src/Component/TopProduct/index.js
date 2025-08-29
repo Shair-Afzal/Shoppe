@@ -13,6 +13,7 @@ const { width, height } = Dimensions.get("window");
     const [select, setSetlect]=useState(null)
      const renderTopProductItem = ({ item,i}) => (
     <TouchableOpacity style={[styles.imgconatiner,style]}
+     activeOpacity={0.9}
     onPress={() => {
         sumbit(item);   
         if (onPress) {  
@@ -52,10 +53,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: RF(100),
-    // backgroundColor: '#F0F0F0',
-    
-    // gap:16
-
   },
   topProductsList:{
     gap:RF(10),

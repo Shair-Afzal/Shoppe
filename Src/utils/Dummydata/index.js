@@ -233,7 +233,7 @@ export const menuData = [
       { id: 'm-2-1', name: 'Country', navigateTo: 'Country', txt: 'Vietnam' },
       { id: 'm-2-2', name: 'Currency', navigateTo: 'Currency', txt: '$ USD' },
       { id: 'm-2-3', name: 'Sizes', navigateTo: 'Size', txt: 'UK' },
-      { id: 'm-2-4', name: 'Terms and Conditions', navigateTo: 'LingerieScreen' },
+      { id: 'm-2-4', name: 'Terms and Conditions', navigateTo: 'Termcondition' },
     ],
   },
   {

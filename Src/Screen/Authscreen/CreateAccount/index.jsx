@@ -1,73 +1,49 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
   ScrollView,
-  Platform,
-  ActivityIndicator,
+  TouchableOpacity,
   StatusBar,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import GST, { colors, IS_TABLET, RF } from '../../../Constant';
 import Bubbles from '../../../assets/SVG/Bubbles.svg';
 import Cameraicon from '../../../assets/SVG/Cameraicon.svg';
 import styles from './style';
 import CustomInput from '../../../Component/Custominput';
-import Eyeicon from '../../../assets/SVG/Eyeicon.svg';
 import PhoneInputComponent from '../../../Component/PhoneInputComponent';
 import CustomButton from '../../../Component/Custombutton';
-import initialValues from '../../../utils/Schema';
+import { initialValues, userSchema } from '../../../utils/Schema';
 import { Formik } from 'formik';
-import userSchema from '../../../utils/Schema';
-import BotttomButtons from '../../../Component/BottomButtonContainer';
-import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import { showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAccount } from '../../../Redux/slices/userslice';
 
 const CreateAccount = ({ navigation }) => {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
-  const [show,setshow]=useState(true)
-  const user=useSelector((state)=>state.user)
-  const FormObserver = ({ errors, touched }) => {
-    
-    useEffect(() => {
-      const firstErrorKey = Object.keys(errors).find(
-        key => touched[key] && errors[key],
-      );
+  const [show, setshow] = useState(true);
+  const user = useSelector((state) => state.user);
 
-      if (firstErrorKey) {
-        showErrorToast(errors[firstErrorKey]);
-      }
-    }, [errors, touched]);
-
-    return null;
-  };
   return (
-    
-     <View style={GST.FLEX}>
+    <View style={GST.FLEX}>
       <ScrollView
         contentContainerStyle={GST.FLEXGROW}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-         <StatusBar 
-              translucent 
-              backgroundColor="transparent" 
-              barStyle="dark-content" 
-            />
+        <StatusBar 
+          translucent 
+          backgroundColor="transparent" 
+          barStyle="dark-content" 
+        />
         {loading && <Loader />}
         <View style={styles.container}>
           <Bubbles
             width="100%"
-            height={IS_TABLET?RF(360):RF(300)}
+            height={IS_TABLET ? RF(360) : RF(300)}
             preserveAspectRatio="xMidYMid slice"
-            
           />
 
           <Text style={styles.txt}>
@@ -80,15 +56,14 @@ const CreateAccount = ({ navigation }) => {
               initialValues={initialValues}
               validationSchema={userSchema}
               onSubmit={values => {
-                dispatch(createAccount(values))
+                dispatch(createAccount(values));
                 setLoading(true);
-                console.log("hi",user)
                 setTimeout(() => {
-                  
                   setLoading(false);
                   showSuccessToast('Account Created successfully');
                   setTimeout(() => {
-                    navigation.navigate('OnBonding');
+                    navigation.navigate('Login');
+                    console.log("user",user)
                   }, 1500);
                 }, 2000);
               }}
@@ -97,20 +72,25 @@ const CreateAccount = ({ navigation }) => {
                 handleChange,
                 handleBlur,
                 handleSubmit,
+                setFieldValue,
                 values,
                 errors,
                 touched,
               }) => {
                 return (
                   <View style={styles.inputwrapper}>
-                    <FormObserver errors={errors} touched={touched} />
                     <CustomInput
                       placeholder={'Email'}
                       value={values.email}
                       onChangeText={handleChange('email')}
                       onBlur={handleBlur('email')}
-                      containerStyle={{paddingVertical:RF(5)}}
+                      containerStyle={{ paddingVertical: RF(2) }}
                     />
+                    {errors.email && touched.email && (
+                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                        {errors.email}
+                      </Text>
+                    )}
 
                     <CustomInput
                       placeholder={'Password'}
@@ -119,21 +99,39 @@ const CreateAccount = ({ navigation }) => {
                       onChangeText={handleChange('password')}
                       onBlur={handleBlur('password')}
                       secureTextEntry={show}
-                      eyepress={()=>setshow(!show)}
-                      containerStyle={{paddingVertical:RF(5)}}
+                      eyepress={() => setshow(!show)}
+                      containerStyle={{ paddingVertical: RF(2) }}
                     />
+                    {errors.password && touched.password && (
+                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                        {errors.password}
+                      </Text>
+                    )}
 
                     <PhoneInputComponent
                       value={values.phone}
-                      onChangeText={handleChange('phone')}
-                      onChangeFormattedText={handleChange('phone')}
-                      
-                      containerStyle={{
-                        borderColor:
-                          errors.phone && touched.phone ? 'red' : 'gray',
-                        borderWidth: 1,
+                      onChangeText={(text) => {
+        
+                        handleChange('phone')(text);
+                      }}
+                      onChangeFormattedText={(formattedText) => {
+                        setFieldValue('phone', formattedText);
+                      }}
+                      onChangeCountry={(country) => {
+                
+                        setFieldValue('countryCode', country.cca2.toUpperCase());
                       }}
                     />
+                    {errors.phone  && touched.phone&&(
+                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                        {errors.phone}
+                      </Text>
+                    )}
+                    {errors.countryCode && touched.countryCode&& (
+                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                        {errors.countryCode}
+                      </Text>
+                    )}
 
                     <CustomButton
                       btnTitle={'Done'}
@@ -152,10 +150,8 @@ const CreateAccount = ({ navigation }) => {
             </Formik>
           </View>
         </View>
-
       </ScrollView>
-      </View>
-   
+    </View>
   );
 };
 

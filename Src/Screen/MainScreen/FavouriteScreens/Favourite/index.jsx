@@ -17,7 +17,9 @@ const Favourite = ({navigation}) => {
         <Text style={GST.subHeading}>Wishlist</Text>
         <SectionHeader titile={"Recently viewed"} txt onpress={()=>navigation.navigate("RecenltyView")}/>
         <View style={styles.listconatiner}>
-        <TopProduct data={topProductsData} />
+        <TopProduct data={topProductsData} onPress={()=>navigation.navigate("Home",{
+          screen:"Shop"
+        })}/>
         </View>
         <View style={styles.elipseconatiner}>
         <View style={styles.elipse}>
@@ -32,7 +34,9 @@ const Favourite = ({navigation}) => {
       </View>
       <View style={styles.bottomcontainer}>
         <View style={styles.sectioncontainer}>
-        <SectionHeader titile={"Most Popular"}/>
+        <SectionHeader titile={"Most Popular"} onpress={()=>navigation.navigate("Home",{
+          screen:"Shop"
+        })}/>
         </View>
        <PopularCard data={hotPopularData}/>
        </View>

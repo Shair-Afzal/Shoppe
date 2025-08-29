@@ -67,6 +67,8 @@ const CustomInput = ({
   onSubmitEditing,
   eyepress,
   onimagepicked,
+  multiline,
+  numberOfLines,
   ...rest
 }) => {
   const handlePick = async () => {
@@ -97,6 +99,8 @@ const CustomInput = ({
         secureTextEntry={secureTextEntry}
         onFocus={onFocus}
         onSubmitEditing={onSubmitEditing}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
         {...rest}
       />
       {rightIcon && (

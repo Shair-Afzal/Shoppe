@@ -7,8 +7,15 @@ const { width, height } = Dimensions.get("window");
  const aspectRatio = height / width;
  const isTablet = aspectRatio < 1.6;
 
-const FlashCard = ({data}) => {
+const FlashCard = ({data,onPress}) => {
   const navigation=useNavigation()
+  const handlepress=()=>{
+    if(!onPress){
+    navigation.navigate('FlashSales')
+    }else{
+    onPress()
+    }
+  }
   
   return (
     <View style={styles.flashSaleGrid}
@@ -28,7 +35,8 @@ const FlashCard = ({data}) => {
                 styles.flashItemContainer,
                 
               ]}
-              onPress={()=>navigation.navigate('FlashSales')}
+              onPress={handlepress}
+               activeOpacity={0.9}
             >
               <Image source={item.img} style={styles.flashItemImage} />
               <LinearGradient

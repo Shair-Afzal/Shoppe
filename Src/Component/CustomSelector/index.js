@@ -9,7 +9,7 @@ const CustomSelector = () => {
   return (
     <View style={styles.container}>
      
-      <Dropimg height={RF(35)} width={RF(35)} style={styles.leftIcon} />
+      <Dropimg height={RF(38)} width={RF(38)} style={styles.leftIcon} />
       <View style={{ flex: 1 }}>
         <RNPickerSelect
           onValueChange={(value) => console.log(value)}
@@ -23,7 +23,7 @@ const CustomSelector = () => {
           placeholder={{ label: "Select category", value: null }}
           useNativeAndroidPickerStyle={false}
           Icon={() => (
-            <Dropicon height={RF(15)} width={RF(15)} style={styles.rightIcon} />
+            <Dropicon height={RF(25)} width={RF(15)} style={styles.rightIcon} />
           )}
         />
       </View>
@@ -41,8 +41,10 @@ const styles = StyleSheet.create({
     borderRadius: RF(10),
     height: RF(45),
     paddingHorizontal: RF(5),
-    elevation: 2,
+    elevation: 5,
     marginTop: RF(10),
+    width:"98%",
+    alignSelf:"center"
   },
   leftIcon: {
     marginRight: RF(8),

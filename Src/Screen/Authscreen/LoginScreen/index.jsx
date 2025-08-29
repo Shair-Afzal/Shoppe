@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import GST, { RF } from '../../../Constant';
+import GST, { colors, RF } from '../../../Constant';
 import Bubbleicon from '../.././../assets/SVG/Bubbleicon.svg';
 import Curveicon from '../../../assets/SVG/Curveicon.svg';
 import Heart from '../../../assets/SVG/Heart.svg';
@@ -29,19 +29,7 @@ const LoginScreen = ({ navigation }) => {
   const emial=useSelector(state=>state.user.tempEmail)
   const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
-  const FormObserver = ({ errors, touched }) => {
-    useEffect(() => {
-      const firstErrorKey = Object.keys(errors).find(
-        key => touched[key] && errors[key],
-      );
 
-      if (firstErrorKey) {
-        showErrorToast(errors[firstErrorKey]);
-      }
-    }, [errors, touched]);
-
-    return null;
-  };
 
   return (
     <View style={GST.FLEX}>
@@ -76,7 +64,6 @@ const LoginScreen = ({ navigation }) => {
               validationSchema={LoginSchema}
               onSubmit={values => {
                 dispatch(setLoginEmail(values.email))
-                console.log("email",emial)
                 setLoading(true);
                 setTimeout(() => {
                   setLoading(false);
@@ -93,16 +80,20 @@ const LoginScreen = ({ navigation }) => {
                 touched,
               }) => (
                 <>
-                  <FormObserver errors={errors} touched={touched} />
+                 
                   <CustomInput
                     placeholder={'Email'}
-                    containerStyle={{ marginTop: RF(20),paddingVertical:RF(5)}}
+                    containerStyle={{ marginTop: RF(20),paddingVertical:RF(2)}}
                     value={values.email}
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
                     // containerStyle={{paddingVertical:RF(5)}}
                     
                   />
+                  {
+                    errors.email&&touched.email&&
+                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.email}</Text>
+                  }
 
                   <CustomButton
                     btnTitle={'Next'}

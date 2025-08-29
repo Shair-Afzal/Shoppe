@@ -5,7 +5,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GST, { colors, RF } from '../../../../Constant';
 import SectionHeader from '../../../../Component/SectionHeader';
 import styles from './style';
@@ -18,13 +18,16 @@ import ShippingAddressModal from '../../../../Component/ShippingModel';
 import PaymentModel from '../../../../Component/PaymentModel';
 import ReviewModel from '../../../../Component/ReviewModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import CustomModel from '../../../../Component/CustomModel';
 
-const PaymentScreen = () => {
+const PaymentScreen = ({navigation}) => {
   const [model, setmodel] = useState(false);
   const [paymentmodel, setpaymentmodel] = useState(false);
   const [vouchermodel, setvouchermodel] = useState(false);
   const [select, setselct] = useState('standard');
   const insert = useSafeAreaInsets();
+  const [pending,setpending]=useState(false);
+  const [success,setsucces]=useState(false)
 
   const renderItem = ({ item }) => (
     <View style={{ ...GST.CENTERCONTAINER, marginTop: RF(10), paddingHorizontal: RF(15) }}>
@@ -82,13 +85,37 @@ const PaymentScreen = () => {
       <Text style={styles.titletxt}>$17,00</Text>
     </View>
   );
+ const handlePayment = () => {
+  setpending(true);
+  setsucces(false);
+  setTimeout(() => {
+    setpending(false);
+    setsucces(true);
+   
+  }, 2000);
+   
+};
+
 
   return (
     <View style={{ ...GST.FLEX, paddingTop: insert.top }}>
+          <CustomModel
+  visible={pending || success}
+  onprogress={pending}
+  onsuccess={success}
+  onClose={() => {
+    setsucces(false);
+    setpending(false);
+    navigation.navigate('Profile',{
+      screen:"Track"
+    })
+  }}
+/>
       <FlatList
         data={detailsdata}
         ListHeaderComponent={
           <>
+     
             <ReviewModel
               Voucher
               visible={vouchermodel}
@@ -121,7 +148,9 @@ const PaymentScreen = () => {
                     26, Duong So 2, Thao Dien Ward, An Phu, District 2,{'\n'} Ho Chi
                     Minh city
                   </Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={() => setmodel(true)}
+                  >
                     <Buttonicon height={RF(30)} width={RF(30)} />
                   </TouchableOpacity>
                 </View>
@@ -278,6 +307,8 @@ const PaymentScreen = () => {
         title={'Pay'}
         btnstyle={{ backgroundColor: colors.darkblack }}
         txtstyle={{ color: colors.DarkWhite }}
+        onPress={handlePayment}
+      
       />
     </View>
   );

@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
   },
   rowstyle: {
     justifyContent: 'space-between',
-    paddingRight: RF(15),
   },
   con: {
     width: isTablet ? RF(195) : RF(155),
