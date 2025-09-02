@@ -5,6 +5,7 @@ import { menuData } from '../../../../utils/Dummydata';
 import Righticon from '../../../../assets/SVG/Righticon.svg';
 import CustomModel from '../../../../Component/CustomModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import styles from './style';
 
 const Setting = ({ navigation }) => {
   const [model, setmodel] = useState(false);
@@ -16,12 +17,7 @@ const Setting = ({ navigation }) => {
 
   return (
     <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: RF(20),
-        backgroundColor: colors.DarkWhite,
-        paddingBottom: RF(10),
-        paddingTop: insert.top,
-      }}
+      contentContainerStyle={[styles.scrollContainer, { paddingTop: insert.top }]}
       showsVerticalScrollIndicator={false}
     >
       <CustomModel
@@ -32,29 +28,22 @@ const Setting = ({ navigation }) => {
         onClose={() => setmodel(false)}
         onpress={del}
       />
-      <Text style={{ ...GST.subHeading, marginTop: RF(5) }}>Settings</Text>
+      <Text style={[GST.subHeading, styles.heading]}>Settings</Text>
 
-      {/* Replaced FlatList with manual mapping */}
       {menuData.map(item => (
-        <View key={item.id} style={{ marginTop: RF(18) }}>
-          <Text style={{ ...GST.description, fontFamily: 'Raleway-Bold' }}>
+        <View key={item.id} style={styles.section}>
+          <Text style={[GST.description, styles.sectionTitle]}>
             {item.title}
           </Text>
           {item.screens.map(screenItem => (
             <TouchableOpacity
               key={screenItem.id}
-              style={{
-                ...GST.CENTERCONTAINER,
-                marginTop: RF(15),
-                borderBottomWidth: 1,
-                borderColor: colors.grey,
-                paddingVertical: RF(12),
-              }}
+              style={[GST.CENTERCONTAINER, styles.menuItem]}
               onPress={() => navigation.navigate(screenItem.navigateTo)}
             >
-              <Text style={{ ...GST.subdescription }}>{screenItem.name}</Text>
-              <View style={{ ...GST.ROW, gap: RF(5) }}>
-                <Text style={{ ...GST.smallesttxt, fontSize: RF(12) }}>
+              <Text style={GST.subdescription}>{screenItem.name}</Text>
+              <View style={[GST.ROW, styles.menuRight]}>
+                <Text style={[GST.smallesttxt, styles.menuRightText]}>
                   {screenItem.txt}
                 </Text>
                 <Righticon />
@@ -65,26 +54,12 @@ const Setting = ({ navigation }) => {
       ))}
 
       <TouchableOpacity onPress={() => setmodel(true)}>
-        <Text
-          style={{
-            ...GST.smallesttxt,
-            color: colors.pink,
-            marginTop: RF(15),
-            fontSize: RF(12),
-          }}
-        >
+        <Text style={[GST.smallesttxt, styles.deleteText]}>
           Delete My Account
         </Text>
       </TouchableOpacity>
-      <Text
-        style={{
-          ...GST.description,
-          fontFamily: 'Raleway-Bold',
-          marginTop: RF(15),
-        }}
-      >
-        Slada
-      </Text>
+
+      <Text style={[GST.description, styles.footerTitle]}>Slada</Text>
       <Text style={GST.smallesttxt}>Version 1.0 April, 2020</Text>
     </ScrollView>
   );

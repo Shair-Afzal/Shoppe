@@ -21,7 +21,7 @@ const OrderHistory = () => {
     
     }
   return (
-    <View style={{...GST.MAIN,paddingTop:RF(15),paddingTop:insert.top}}>
+    <View style={{...styles.maincontainer,paddingTop:insert.top}}>
       <CustomHeader
         profilepic
         source={require('../../../../assets/Images/avatar.png')}
@@ -48,27 +48,17 @@ const OrderHistory = () => {
               <Text style={styles.productTitle}>{item.title}</Text>
               <Text style={styles.productPrice}>order{item.orderNumber}</Text>
               <View style={styles.optionsContainer}>
-                <View style={{ ...GST.ROW, gap: RF(12) }}>
+                <View style={styles.rowconatiner}>
                   <View style={{ width: '50%' }}>
                     <CustomButton
-                      style={{
-                        paddingVertical: RF(8),
-                        backgroundColor: colors.grey,
-                        borderRadius: RF(8),
-                      }}
+                      style={styles.dateconatiner}
                       btnTitle={'April,06'}
                       txtstyle={{ ...GST.smallesttxt }}
                     />
                   </View>
-                  <View style={{ width: '45%' }}>
+                  <View style={styles.btncontainer}>
                     <CustomButton
-                      style={{
-                        paddingVertical: RF(8),
-                        borderRadius: RF(8),
-                        backgroundColor: colors.DarkWhite,
-                        borderWidth: 1,
-                        borderColor: colors.blue,
-                      }}
+                      style={styles.btn}
                       btnTitle={'Review'}
                       txtstyle={{ ...GST.smallesttxt, color: colors.blue }}
                       onPress={()=>setmodal(true)}

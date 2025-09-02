@@ -40,7 +40,7 @@ const Bottomtab = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="HomeTab"
         component={HomeStack}
         options={{
           tabBarIcon: ({ focused }) =>
@@ -48,7 +48,7 @@ const Bottomtab = () => {
         }}
       />
       <Tab.Screen
-        name="Favourite"
+        name="FavouriteTab"
         component={FavouriteStack}
         options={{
           tabBarIcon: ({ focused }) =>
@@ -56,7 +56,7 @@ const Bottomtab = () => {
         }}
       />
       <Tab.Screen
-        name="Categories"
+        name="CategoriesTab"
         component={Categories}
         options={{
           tabBarStyle: { display: "none" },
@@ -65,7 +65,7 @@ const Bottomtab = () => {
         }}
       />
       <Tab.Screen
-        name="Cart"
+        name="CartTab"
         component={CartStack}
         options={{
           
@@ -74,7 +74,7 @@ const Bottomtab = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileTab"
         component={ProfileStack}
         options={{
           tabBarIcon: ({ focused }) =>

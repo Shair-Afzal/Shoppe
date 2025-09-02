@@ -22,7 +22,7 @@ const WelcomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('Create')}
           />
           <View style={styles.rowcontainer}>
-            <Text>I already have an account</Text>
+            <Text style={GST.subdescription}>I already have an account</Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('Login')}
               activeOpacity={0.7}

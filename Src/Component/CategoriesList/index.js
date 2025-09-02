@@ -6,18 +6,19 @@ import { useNavigation } from '@react-navigation/native';
  const aspectRatio = height / width;
  const isTablet = aspectRatio < 1.6;
     
- const CategoriesList = ({ item,press,style,catimg, txt,num}) => {
+ const CategoriesList = ({ item,press,style,catimg, txt,num,disabled}) => {
   const navigation=useNavigation()
   
   
   return(
     <TouchableOpacity style={[styles.categoryItem,style]}
     activeOpacity={0.9}
+    disabled={disabled}
     onPress={()=>{
       if(!press){
       navigation.navigate("Shop")
       }else {
-        navigation.navigate("Home",{
+        navigation.navigate("HomeTab",{
           screen:"Shop"
         })
       }
@@ -26,6 +27,7 @@ import { useNavigation } from '@react-navigation/native';
        <FlatList
        data={item.items}
        numColumns={2}
+       columnWrapperStyle={{justifyContent:"space-between"}}
        renderItem={({item:subitem,i})=>(
         <Image key={i}source={subitem.image} style={[styles.categoryImage,catimg]} />
        )}
@@ -62,19 +64,24 @@ const styles = StyleSheet.create({
 
   },
   categoryItem: {
-    padding:RF(2),
+    // ...GST.CENTER,
+    // padding:RF(3),
     // paddingBottom:RF(5),
     backgroundColor:colors.DarkWhite,
     elevation:5,
     borderRadius:RF(10),
-    paddingVertical:RF(3)
+    paddingVertical:RF(3),
+     width:"49%",
+     paddingHorizontal:RF(5),
+    //  borderWidth:1
+    
     // margin:9
   },
   categoryImage: {
-    width:isTablet?RF(95):RF(74),
+    width:"49%",
     height:isTablet? RF(95):RF(70),
     borderRadius: RF(5),
-    margin:RF(2),
+    marginTop:RF(4),
     resizeMode:"cover",
   },
   categoryName: {
@@ -85,7 +92,9 @@ const styles = StyleSheet.create({
   categoryCount: {
     ...GST.ROW,
     justifyContent:"space-between",
-    paddingHorizontal:RF(4)
+    paddingHorizontal:RF(4),
+    alignItems:"center",
+    marginTop:RF(2)
   },
   categoryCountText: {
     fontSize: RF(12),

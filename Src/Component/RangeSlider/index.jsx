@@ -3,9 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import RangeSlider from 'rn-range-slider';
 import GST, { colors, fontFamily, fontSize, RF } from '../../Constant';
 
-const RangeSliderComponent = () => {
-  const [low, setLow] = useState(10);
-  const [high, setHigh] = useState(90);
+const RangeSliderComponent = ({setHigh,setLow,low,high}) => {
+ 
 
   const renderThumb = useCallback(() => <View style={styles.thumb} />, []);
   const renderRail = useCallback(() => <View style={styles.rail} />, []);

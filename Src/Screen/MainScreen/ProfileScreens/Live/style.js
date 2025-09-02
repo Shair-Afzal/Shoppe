@@ -1,8 +1,8 @@
 import { Dimensions, StyleSheet } from 'react-native';
 import GST, { colors, RF } from '../../../../Constant';
-const { width, height } = Dimensions.get("window");
- const aspectRatio = height / width;
- const isTablet = aspectRatio < 1.6;
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const isTablet = aspectRatio < 1.6;
 const styles = StyleSheet.create({
   imgcontainer: {
     paddingVertical: RF(20),
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   img: {
     height: '100%',
     width: '100%',
-    resizeMode: isTablet?"stretch":"cover",
+    resizeMode: isTablet ? 'stretch' : 'cover',
   },
   bottomconatiner: {
     ...GST.CENTERCONTAINER,
@@ -27,18 +27,25 @@ const styles = StyleSheet.create({
     ...GST.mid_row,
     gap: RF(3),
   },
-  livecontainer:{
+  livecontainer: {
     ...GST.mid_row,
-    padding:RF(4),
-    backgroundColor:colors.green,
-    gap:RF(2),
-    borderRadius:RF(5)
+    padding: RF(4),
+    backgroundColor: colors.green,
+    gap: RF(2),
+    borderRadius: RF(5),
   },
-  circleconatiner:{
-    height:RF(5),
-    width:RF(5),
-    borderRadius:RF(100),
-    backgroundColor:colors.white
-  }
+  circleconatiner: {
+    height: RF(5),
+    width: RF(5),
+    borderRadius: RF(100),
+    backgroundColor: colors.white,
+  },
+  shopbtn: {
+    ...GST.CENTER,
+    padding: RF(12),
+    backgroundColor: colors.blue,
+    borderRadius: RF(10),
+    paddingHorizontal: RF(40),
+  },
 });
 export default styles;

@@ -8,6 +8,7 @@ import CustomInput from '../Custominput';
 import Time from '../../assets/SVG/Time.svg';
 import { useNavigation } from '@react-navigation/native';
 import ActiveVourcher from '../../assets/SVG/ActiveVourcher.svg';
+import Filter from '../../assets/SVG/Filter.svg';
 
 const Leftcomponent = ({
   icon,
@@ -21,6 +22,10 @@ const Leftcomponent = ({
   back,
   onimagpicked,
   Active,
+  containerStyle,
+  placeholderTextColor,
+  inputstyle,
+  filter,
 }) => {
   const navigation = useNavigation();
   return (
@@ -34,9 +39,7 @@ const Leftcomponent = ({
               <Vouchers height={RF(35)} width={RF(35)} />
             )}
           </TouchableOpacity>
-          <TouchableOpacity
-          onPress={()=>navigation.navigate("order")}
-          >
+          <TouchableOpacity onPress={() => navigation.navigate('order')}>
             <TopMenu height={RF(35)} width={RF(35)} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
@@ -44,19 +47,27 @@ const Leftcomponent = ({
           </TouchableOpacity>
         </View>
       )}
-      {input && (
-        <CustomInput
-          style={{ width: '54%', paddingVertical: RF(1) }}
-          cameraicon
-          placeholder={placeholder}
-          onFocus={onFocus}
-          value={value}
-          onChangeText={onChangetxt}
-          onSubmitEditing={onSubmitEditing}
-          onimagepicked={onimagpicked}
-
-        />
-      )}
+      <View style={filter?styles.inputwrapper:null}>
+        {input && (
+          <CustomInput
+            style={[styles.input, inputstyle]}
+            cameraicon
+            placeholder={placeholder}
+            onFocus={onFocus}
+            value={value}
+            onChangeText={onChangetxt}
+            onSubmitEditing={onSubmitEditing}
+            onimagepicked={onimagpicked}
+            containerStyle={containerStyle}
+            placeholderTextColor={placeholderTextColor}
+          />
+        )}
+        {filter && (
+          <TouchableOpacity onPress={() => navigation.navigate('Filter')}>
+            <Filter height={RF(25)} width={RF(25)} />
+          </TouchableOpacity>
+        )}
+      </View>
       {time && (
         <View style={{ ...GST.mid_row, gap: RF(3) }}>
           <Time height={RF(20)} width={RF(20)} />
@@ -89,5 +100,14 @@ const styles = StyleSheet.create({
   txt: {
     ...GST.smallesttxt,
     fontFamily: 'Raleway-Bold',
+  },
+  input: {
+    width: '56%',
+    paddingVertical: RF(1),
+  },
+  inputwrapper: {
+    ...GST.mid_row,
+    gap: RF(5),
+    justifyContent: 'flex-end',
   },
 });

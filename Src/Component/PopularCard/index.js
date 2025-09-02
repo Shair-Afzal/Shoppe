@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View,FlatList,Image, Touchable} from 'react-native'
 import React from 'react'
 import GST, { colors, RF } from '../../Constant';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import Blueheart from '../../assets/SVG/Blueheart.svg'
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -11,7 +10,7 @@ const PopularCard = ({data,onpress}) => {
     const renderHotPopularItem = ({ item }) => (
     <TouchableOpacity style={styles.hotItemContainer}
      activeOpacity={0.9}
-    onPress={()=>navigation.navigate('Details')}
+    onPress={()=>navigation.navigate('Details',{product:item})}
     >
       <Image source={item.img} style={styles.hotItemImage} />
       <View style={GST.CENTERCONTAINER}>

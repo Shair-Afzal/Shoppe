@@ -1,11 +1,13 @@
 import { StyleSheet } from "react-native";
 import GST, { colors, RF } from "../../../../Constant";
+import PaymentFooter from "../../../../Component/PaymentFooter";
 const styles=StyleSheet.create({
   announcementCard: {
     backgroundColor:colors.grey,
     borderRadius: RF(10),
     padding: RF(12),
-    marginTop:RF(10)
+    marginTop:RF(10),
+    marginBottom:RF(15)
   },
 elipsecircle:{
     height:RF(25),
@@ -24,12 +26,14 @@ titletxt:{
     fontFamily:"Raleway-Bold"
 },
 bottomcontainer:{
-    position:"absolute",
-    bottom:0,
+    // position:"absolute",
+    // bottom:70,
     // paddingLeft:RF(15)
+    marginTop:RF(3)
   },
   sectioncontainer:{
-    paddingHorizontal:RF(15)
+    // paddingHorizontal:RF(10)
+   
   },
   elipseconatiner: {
     
@@ -44,5 +48,8 @@ bottomcontainer:{
     height: RF(120),
     width: RF(120),
   },
+  Paymentfooter:{
+    position:"absolute",bottom:0,width:"100%"
+  }
 })
 export default styles

@@ -26,9 +26,11 @@ const RightComponent= ({name,descrip,profilepic,source,recimg,btn,txt}) => {
         }
         <View style={{...GST.ROW,gap:RF(8)}}>
         {recimg&&
-         <View style={styles.imgcontainer}>
+         <TouchableOpacity style={styles.imgcontainer}
+         onPress={()=>navigation.navigate("Settingprofile")}
+         >
             <Image source={source} style={styles.img}/>
-            </View>
+            </TouchableOpacity>
 }
         <View>
      {

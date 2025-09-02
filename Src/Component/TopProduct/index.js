@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get("window");
  const aspectRatio = height / width;
  const isTablet = aspectRatio < 1.6;
 
-  const TopProduct=({data,style,contentContainerStyle,txt,numColumns,stylerow,check,onPress})=>{
+  const TopProduct=({data,style,contentContainerStyle,txt,numColumns,stylerow,check,onPress,})=>{
     const sumbit=(item)=>{
     setSetlect(item.id)
   }

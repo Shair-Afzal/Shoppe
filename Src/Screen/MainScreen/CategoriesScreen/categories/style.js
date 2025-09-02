@@ -1,8 +1,10 @@
 import { Dimensions, StyleSheet } from 'react-native';
-import GST, { colors, RF } from '../../../../Constant';
+import GST, { colors, RF, fontFamily } from '../../../../Constant';
+
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
 const isTablet = aspectRatio < 1.6;
+
 const styles = StyleSheet.create({
   container: {
     ...GST.MAIN,
@@ -17,12 +19,11 @@ const styles = StyleSheet.create({
   },
   btncontainer: {
     ...GST.mid_row,
-    // gap:RF(10),
     marginTop: RF(10),
     justifyContent: 'space-between',
   },
   onbtn: {
-    width: RF(100),
+    width: "33%",
     paddingVertical: RF(8),
     ...GST.CENTER,
     backgroundColor: colors.lightblue,
@@ -37,12 +38,22 @@ const styles = StyleSheet.create({
   selectbtn: {
     ...GST.CENTER,
     height: RF(40),
-    width: isTablet ? RF(200) : RF(150),
+    width:"47%",
     borderRadius: RF(10),
     backgroundColor: colors.DarkWhite,
     borderWidth: 1,
     borderColor: colors.lightpink,
     marginTop: RF(5),
+  },
+  categoryWrapper: {
+    marginTop: RF(10),
+  },
+  categoryRow: {
+    justifyContent: 'space-between',
+  },
+  categoryTxt: {
+    ...GST.subdescription,
+    fontFamily: fontFamily.raleway,
   },
   justforcontainer: {
     height: RF(45),
@@ -57,9 +68,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  justforRow: {
+    ...GST.ROW,
+    gap: RF(10),
+    alignItems: 'center',
+  },
+  justforTxt: {
+    ...GST.subdescription,
+    fontFamily: fontFamily.raleway,
+  },
+  star: {
+    color: colors.blue,
+  },
   scrollcontainer: {
     flexGrow: 1,
     paddingBottom: RF(20),
   },
 });
+
 export default styles;

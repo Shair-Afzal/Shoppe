@@ -4,12 +4,12 @@ import GST, { colors, RF } from '../../Constant';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,rowstyle,img,discount}) => {
+const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,rowstyle,img,discount,dstxt}) => {
   const navigation=useNavigation()
    const renderNewItem = ({ item}) => (
     <TouchableOpacity style={[styles.newItemContainer,style]}
      activeOpacity={0.9}
-    onPress={()=>navigation.navigate('Details')}
+    onPress={()=>navigation.navigate('Details', { product: item })}
     >
      <View style={[styles.imgcontainer,imgstyle]}>
       <Image source={item.img} style={[styles.newItemImage,img]} />
@@ -20,12 +20,12 @@ const NewItem = ({data,style,justfor,numofcolumn,contentContainerStyle,imgstyle,
                     colors={['rgba(255, 87, 144, 1)', 'rgba(248, 17, 64, 1)']}
                     style={styles.discountTag}
                     >
-                      <Text style={styles.discountText}>-20%</Text>
+                      <Text style={styles.discountText}>-{item.discount}</Text>
                     </LinearGradient>
 }
       </View>
       <Text style={{...GST.smallesttxt,fontSize:RF(12)}}>{item.desc}</Text>
-      <Text style={{...GST.subdescription,fontFamily:"Raleway-Bold"}}>{item.price}</Text>
+      <Text style={{...GST.subdescription,fontFamily:"Raleway-Bold"}}>{item.price}  {dstxt&&<Text style={{...GST.subdescription,color:colors.pink,textDecorationLine: 'line-through' }}>$50,00</Text>}</Text>
     </TouchableOpacity>
   );
   return (

@@ -16,6 +16,7 @@ import {
   hotPopularData,
   newItemsData,
   orderStatusData,
+  ProductsData,
   topProductsData,
 } from '../../../../utils/Dummydata';
  // fixed import
@@ -38,13 +39,12 @@ const Profile = ({ navigation }) => {
     if (index === 1) {
       navigation.navigate('Recive');
     } else if(index==0){
-      navigation.navigate('Cart',{screen:'Payment'})
+      navigation.navigate('CartTab',{screen:'Payment'})
     }else{
       navigation.navigate('order')
     }
   };
 
-  // Outer FlatList is used only for scrolling. We render everything in ListHeaderComponent.
   return (
     <View style={{ ...styles.container, paddingTop: insert.top }}>
       <FlatList
@@ -52,7 +52,7 @@ const Profile = ({ navigation }) => {
         keyExtractor={(item, idx) => String(idx)}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={{ paddingHorizontal: RF(15), gap: RF(12) }}>
+          <View style={styles.headercontainer}>
             <CustomHeader
               profilepic
               source={require('../../../../assets/Images/avatar.png')}
@@ -80,7 +80,7 @@ const Profile = ({ navigation }) => {
               data={topProductsData}
               style={{ marginTop: 0 }}
               onPress={() =>
-                navigation.navigate('Favourite', {
+                navigation.navigate('FavouriteTab', {
                   screen: 'RecenltyView',
                 })
               }
@@ -108,11 +108,11 @@ const Profile = ({ navigation }) => {
           <>
             <StoriesCard data={topProductsData} />
             <View style={{ paddingLeft: RF(15) }}>
-              <View style={{ paddingRight: RF(15) }}>
+              <View style={styles.rightcontainer}>
                 <SectionHeader
                   titile={'New Items'}
                   onpress={() =>
-                    navigation.navigate('Home', {
+                    navigation.navigate('HomeTab', {
                       screen: 'Shop',
                     })
                   }
@@ -121,24 +121,24 @@ const Profile = ({ navigation }) => {
 
               <NewItem data={newItemsData} />
 
-              <View style={{ paddingRight: RF(15) }}>
+              <View style={styles.rightcontainer}>
                 <SectionHeader
                   titile={'Most Popular'}
                   onpress={() =>
-                    navigation.navigate('Home', {
+                    navigation.navigate('HomeTab', {
                       screen: 'Shop',
                     })
                   }
                 />
               </View>
 
-              <PopularCard data={hotPopularData} />
+              <PopularCard data={newItemsData} />
             </View>
 
             <View style={{ paddingHorizontal: RF(15) }}>
               <SectionHeader
                 titile={'Categories'}
-                onpress={() => navigation.navigate('Categories')}
+                onpress={() => navigation.navigate('CategoriesTab')}
               />
 
               <FlatList
@@ -152,7 +152,7 @@ const Profile = ({ navigation }) => {
               />
 
               <SectionHeader titile={'Flash Sale'} clock />
-              <FlashCard data={flashSaleData} onPress={()=>navigation.navigate("Home",{
+              <FlashCard data={flashSaleData} onPress={()=>navigation.navigate("HomeTab",{
                 screen:"FlashSales"
               })}/>
 
@@ -160,9 +160,9 @@ const Profile = ({ navigation }) => {
                 Top Products
               </Text>
               <TopProduct
-                data={topProductsData}
+                data={ProductsData}
                 onPress={() =>
-                  navigation.navigate('Home', {
+                  navigation.navigate('HomeTab', {
                     screen: 'Shop',
                   })
                 }
@@ -177,14 +177,10 @@ const Profile = ({ navigation }) => {
                 justfor
                 numofcolumn={2}
                 contentContainerStyle={{ marginTop: RF(12) }}
-                rowstyle={{ justifyContent: 'space-between', paddingRight: RF(1) }}
-                style={{ width: isTablet ? RF(195) : RF(155), marginLeft: RF(2) }}
+                rowstyle={styles.rowcontainer}
+                style={styles.con}
                 imgstyle={{ width: '100%' }}
-                img={{
-                  height: isTablet ? RF(190) : RF(150),
-                  width: '100%',
-                  resizemode: 'cover',
-                }}
+                img={styles.conimg}
               />
             </View>
           </>

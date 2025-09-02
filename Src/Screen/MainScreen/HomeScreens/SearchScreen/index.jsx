@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import GST, { colors, RF } from '../../../../Constant';
 import CustomHeader from '../../../../Component/CustomHeader';
@@ -7,6 +7,11 @@ import NewItem from '../../../../Component/NewItem';
 import { newItemsData } from '../../../../utils/Dummydata';
 import Model from '../../../../Component/ImageModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import styles from './style';   // ⬅️ external stylesheet
+import Loader from '../../../../Component/Loader/Loader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const STORAGE_KEY = "searchHistory"; // ✅ key for AsyncStorage
 
 const recommendations = [
   { id: 1, name: 'T-Shirt' },
@@ -16,18 +21,46 @@ const recommendations = [
   { id: 5, name: 'Sunglasses' },
 ];
 
-const SearchScreen = ({navigation}) => {
-  // history entries are objects: { id: string, term: string }
+const SearchScreen = ({ navigation }) => {
   const [history, setHistory] = useState([]);
   const [show, setShow] = useState(false);
   const [value, setValue] = useState('');
+  const [loading, setloading] = useState(false);
   const insets = useSafeAreaInsets();
 
-  const handleSubmit = () => {
-    const term = value.trim();
+  // ✅ Load history on mount
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          setHistory(JSON.parse(stored));
+        }
+      } catch (err) {
+        console.error("Error loading search history", err);
+      }
+    };
+    loadHistory();
+  }, []);
+
+  // ✅ Save history whenever it changes
+  useEffect(() => {
+    const saveHistory = async () => {
+      try {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+      } catch (err) {
+        console.error("Error saving search history", err);
+      }
+    };
+    if (history.length > 0) {
+      saveHistory();
+    }
+  }, [history]);
+
+  const handleSubmit = (text) => {
+    const term = text.trim();
     if (!term) return;
 
-    // de-dupe (move existing to front), then add with a stable id
     setHistory(prev => {
       const withoutDup = prev.filter(
         h => h.term.toLowerCase() !== term.toLowerCase(),
@@ -35,27 +68,40 @@ const SearchScreen = ({navigation}) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       return [{ id, term }, ...withoutDup];
     });
-    setValue('');
-    navigation.navigate('Shop')
+
+    setloading(true);
+    setTimeout(() => {
+      setloading(false);
+      navigation.navigate('Shop', { Searchvalue: text });
+      setValue('');
+    }, 1500);
   };
 
-  const clearHistory = () => setHistory([]);
+  const clearHistory = async () => {
+    setHistory([]);
+    await AsyncStorage.removeItem(STORAGE_KEY); // ✅ clear from storage too
+  };
 
   return (
-    <View style={{ ...GST.MAIN, paddingTop: insets.top }}>
+    <View style={[GST.MAIN, { paddingTop: insets.top }]}>
       <Model visible={show} onClose={() => setShow(false)} />
+      {loading && (
+        <View style={styles.loadingstyle}>
+          <Loader />
+        </View>
+      )}
 
       <CustomHeader
         name="Search"
         input
         value={value}
         onChangetxt={setValue}
-        onSubmitEditing={handleSubmit}
+        onSubmitEditing={() => handleSubmit(value)}
         onimagpicked={() => setShow(true)}
         placholder="Search..."
       />
 
-      <View style={{ ...GST.CENTERCONTAINER, marginTop: RF(10) }}>
+      <View style={[GST.CENTERCONTAINER, styles.historyHeader]}>
         <Text style={GST.subdescription}>Search history</Text>
         <TouchableOpacity
           onPress={clearHistory}
@@ -65,50 +111,46 @@ const SearchScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <View
-        style={{ ...GST.ROW, gap: RF(5), flexWrap: 'wrap', marginTop: RF(10) }}
-      >
+      <View style={[GST.ROW, styles.historyWrapper]}>
+        {history.length === 0 && (
+          <Text style={GST.subdescription}>No history found</Text>
+        )}
+
         {history.map(item => (
-          <View
+          <TouchableOpacity
             key={item.id}
-            style={{
-              backgroundColor: colors.grey,
-              padding: RF(10),
-              paddingHorizontal: RF(15),
-              borderRadius: RF(10),
+            style={styles.historyItem}
+            onPress={() => {
+              setValue(item.term);
+              handleSubmit(item.term);
             }}
           >
             <Text style={GST.subdescription}>{item.term}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={{ ...GST.subdescription, marginTop: RF(10) }}>
+      <Text style={[GST.subdescription, styles.recommendationsTitle]}>
         Recommendations
       </Text>
-      <View
-        style={{ ...GST.ROW, gap: RF(5), flexWrap: 'wrap', marginTop: RF(10) }}
-      >
+      <View style={[GST.ROW, styles.recommendWrapper]}>
         {recommendations.map(item => (
-          <View
+          <TouchableOpacity
             key={String(item.id)}
-            style={{
-              backgroundColor: colors.grey,
-              padding: RF(10),
-              paddingHorizontal: RF(15),
-              borderRadius: RF(10),
+            style={styles.recommendItem}
+            onPress={() => {
+              setValue(item.name);
+              handleSubmit(item.name);
             }}
           >
             <Text>{item.name}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={{ ...GST.description, marginTop: RF(10) }}>Discover</Text>
+      <Text style={[GST.description, styles.discoverTitle]}>Discover</Text>
 
-      {/* If NewItem uses FlatList internally, it’s fine here since we’re not inside a ScrollView.
-         If your NewItem supports it, you can pass scrollEnabled={false} to be extra safe. */}
-      <NewItem data={newItemsData} /* scrollEnabled={false} */ />
+      <NewItem data={newItemsData} />
     </View>
   );
 };

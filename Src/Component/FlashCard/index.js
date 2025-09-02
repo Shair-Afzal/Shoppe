@@ -64,18 +64,17 @@ const styles = StyleSheet.create({
     marginBottom:RF(5)
   },
   flashItemContainer: {
-    // width:RF(105),
+    width:"32%",
     padding:RF(4),
     marginBottom: RF(2),
     position: 'relative',
     elevation:5,
     backgroundColor:colors.DarkWhite,
-    marginLeft:RF(1),
     marginTop:RF(5),
     borderRadius:RF(10)
   },
   flashItemImage: {
-    width: isTablet?RF(120):RF(95),
+    width: "100%",
     height: isTablet?RF(110):RF(95),
     borderRadius: RF(8),
     backgroundColor: '#FFC0CB',

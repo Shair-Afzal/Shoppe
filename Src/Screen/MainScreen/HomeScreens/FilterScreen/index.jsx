@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import GST, { colors, RF } from '../../../../Constant';
-import CustomHeader from '../../../../Component/CustomHeader';
 import SectionHeader from '../../../../Component/SectionHeader';
 import TopProduct from '../../../../Component/TopProduct';
 import {
   colorsData,
+  ProductsData,
   sizesData,
   sortOptions,
   topProductsData,
@@ -16,43 +16,58 @@ import Select from '../../../../assets/SVG/Select.svg';
 import CustomButton from '../../../../Component/Custombutton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const FilterScreen = ({navigation}) => {
+const FilterScreen = ({ navigation }) => {
   const [select, setselect] = useState('XS');
   const [slectcolor, setselectcolor] = useState('Light Gray');
-  const [option,setoption]=useState('');
-  const insert=useSafeAreaInsets();
+  const [option, setoption] = useState('');
+  const insert = useSafeAreaInsets();
+   const [low, setLow] = useState(10);
+    const [high, setHigh] = useState(90);
+    const [name,setname]=useState('shoe')
+
+  // ✅ Clear button logic
+  const handleClear = () => {
+    setselect('XS');
+    setselectcolor('Light Gray');
+    setoption('');
+  };
 
   return (
-    <View style={{...GST.FLEXGROW, paddingTop:insert.top}}>
+    <View style={[GST.FLEXGROW, { paddingTop: insert.top, backgroundColor: colors.white }]}>
       <View style={styles.maincontainer}>
-        <View style={{ paddingHorizontal: RF(15) }}>
-          <SectionHeader 
-            titile={'Filter'} 
-            txt img 
-            txtstyle={GST.subHeading} 
-            onpress={()=>navigation.goBack()}
+        <View style={styles.sectionWrapper}>
+          <SectionHeader
+            titile={'Filter'}
+            txt
+            img
+            txtstyle={GST.subHeading}
+            onpress={() => navigation.goBack()}
           />
+
           <TopProduct
-            data={topProductsData}
+            data={ProductsData}
             txt={true}
             numColumns={5}
             stylerow={styles.row}
             contentContainerStyle={styles.container}
             check={true}
+            onPress={(item)=>setname(item.name)}
           />
+
+          {/* Shop Buttons */}
           <View style={styles.btnContainer}>
             <Text style={styles.labeltxt}>Shop</Text>
-            <View style={{ ...GST.ROW, gap: RF(5) }}>
+            <View style={styles.shopRow}>
               <TouchableOpacity style={styles.clothtxtconatiner}>
-                <Text style={{ ...GST.smallesttxt, color: colors.blue }}>
-                  Clothes
-                </Text>
+                <Text style={[GST.smallesttxt, { color: colors.blue }]}>Clothes</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.txtcontainer}>
-                <Text style={{ ...GST.smallesttxt }}>shoes</Text>
+                <Text style={GST.smallesttxt}>shoes</Text>
               </TouchableOpacity>
             </View>
           </View>
+
+          {/* Sizes */}
           <View style={styles.filtercontainer}>
             {sizesData.map((item, index) => (
               <TouchableOpacity
@@ -61,98 +76,78 @@ const FilterScreen = ({navigation}) => {
                 onPress={() => setselect(item.label)}
               >
                 <Text
-                  style={{
-                    ...GST.description,
-                    color: select == item.label ? colors.blue : "#AAC3FF",
-                  }}
+                  style={[
+                    GST.description,
+                    { color: select == item.label ? colors.blue : '#AAC3FF' },
+                  ]}
                 >
                   {item.value}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
-          <Text style={{ ...styles.labeltxt, marginTop: RF(15) }}>Colors</Text>
+
+          <Text style={[styles.labeltxt, styles.colorLabel]}>Colors</Text>
         </View>
-        
+
+        {/* FlatList Container */}
         <FlatList
-          data={[]} // Empty data to use as a scroll container
+          data={[]}
           ListHeaderComponent={
             <>
-              <View style={{ height: RF(60) }}>
+              {/* Colors */}
+              <View style={styles.colorListWrapper}>
                 <FlatList
                   data={colorsData}
                   horizontal
-                  contentContainerStyle={{
-                    paddingLeft: RF(15),
-                    marginTop: RF(10),
-                    gap: RF(15),
-                    height: RF(50),
-                  }}
+                  contentContainerStyle={styles.colorListContainer}
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
                       key={index}
-                      style={{
-                        backgroundColor: colors.DarkWhite,
-                        padding: RF(3),
-                        height: RF(40),
-                        width: RF(40),
-                        borderRadius: RF(100),
-                        elevation: 5,
-                        borderWidth: slectcolor == item.name ? 1 : 0,
-                        borderColor: colors.blue,
-                      }}
+                      style={[
+                        styles.colorCircle,
+                        { borderWidth: slectcolor == item.name ? 1 : 0 },
+                      ]}
                       onPress={() => setselectcolor(item.name)}
                     >
                       {slectcolor == item.name && (
-                        <Select
-                          height={RF(20)}
-                          width={RF(20)}
-                          style={{ position: 'absolute', top: 0, right: 0, zIndex: 11 }}
-                        />
+                        <Select height={RF(30)} width={RF(30)} style={styles.selectIcon} />
                       )}
-                      <View
-                        style={{
-                          backgroundColor: item.hex,
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: RF(100),
-                        }}
-                      ></View>
+                      <View style={[styles.innerColor, { backgroundColor: item.hex }]}></View>
                     </TouchableOpacity>
                   )}
                   keyExtractor={(item, index) => index.toString()}
                 />
               </View>
 
-              <RangeSliderComponent />
-              
-              <View style={{ paddingHorizontal: RF(15) }}>
+              {/* Range Slider */}
+              <RangeSliderComponent  low={low} high={high} setHigh={setHigh} setLow={setLow}/>
+
+              {/* Sort Options */}
+              <View style={styles.sectionWrapper}>
                 <FlatList
                   data={sortOptions}
                   numColumns={2}
-                  columnWrapperStyle={{ justifyContent: 'space-between' }}
+                  columnWrapperStyle={styles.columnWrapper}
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
                       key={index}
-                      style={{
-                        ...GST.CENTER,
-                        backgroundColor: option==item.value?colors.lightblue: colors.grey,
-                        paddingVertical: RF(5),
-                        width: RF(115),
-                        borderRadius: RF(20),
-                        marginTop: RF(10),
-                      }}
-                      onPress={()=>setoption(item.value)}
+                      style={[
+                        styles.sortOption,
+                        { backgroundColor: option == item.value ? colors.lightblue : colors.grey },
+                      ]}
+                      onPress={() => setoption(item.value)}
                     >
-                      <Text style={{...GST.smallesttxt,color:option==item.value?colors.blue:colors.darkblack}}>
+                      <Text
+                        style={[
+                          GST.smallesttxt,
+                          { color: option == item.value ? colors.blue : colors.darkblack },
+                        ]}
+                      >
                         {item.value}
                       </Text>
-                      {option==item.value && (
-                        <Select 
-                          height={RF(20)} 
-                          width={RF(20)} 
-                          style={{position:"absolute",right:0}}
-                        />
+                      {option == item.value && (
+                        <Select height={RF(20)} width={RF(20)} style={styles.sortSelectIcon} />
                       )}
                     </TouchableOpacity>
                   )}
@@ -162,30 +157,45 @@ const FilterScreen = ({navigation}) => {
             </>
           }
           ListFooterComponent={
-            <View style={{...GST.CENTERCONTAINER,paddingHorizontal:RF(15),marginTop:RF(15), marginBottom: RF(20)}}>
-              <View style={{width:"30%"}}>
-                <CustomButton 
-                  btnTitle={"clear"} 
-                  style={{
-                    backgroundColor:colors.DarkWhite,
-                    borderWidth:1,
-                    borderColor:colors.blue,
-                    padding:RF(12),
-                  }} 
-                  txtstyle={{color:colors.blue}}
+            <View style={styles.footerWrapper}>
+              <View style={styles.clearBtnWrapper}>
+                <CustomButton
+                  btnTitle={'Clear'}
+                  style={styles.clearBtn}
+                  txtstyle={styles.clearBtnText}
+                  onPress={handleClear}
                 />
               </View>
-              <View style={{width:"65%"}}>
-                <CustomButton 
-                  btnTitle={"Apply"} 
-                  style={{padding:RF(12)}} 
-                  onPress={()=>navigation.navigate('Shop')}
-                />
+              <View style={styles.applyBtnWrapper}>
+                <CustomButton
+  btnTitle={'Apply'}
+  style={styles.applyBtn}
+  onPress={() =>{
+    navigation.navigate('home', {
+      screen: 'HomeTab',
+      params: {
+        screen: 'Shop',
+        params: {
+          filters: {
+            size: select,
+            color: slectcolor,
+            sort: option,
+            range: { low, high },
+            name:name
+          },
+        },
+      },
+    })
+    console.log("name",name)
+  }
+  }
+/>
+                
               </View>
             </View>
           }
           renderItem={null}
-          keyExtractor={() => "dummy"}
+          keyExtractor={() => 'dummy'}
           showsVerticalScrollIndicator={false}
         />
       </View>

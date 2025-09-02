@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     paddingRight: RF(1),
   },
   itemstyle: {
-    width: isTablet ? RF(195) : RF(155),
-    marginLeft: RF(2),
+    width: "49%",
+    // marginLeft: RF(2),
   },
   itemimgcon: {
     width: '100%',

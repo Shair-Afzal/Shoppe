@@ -87,7 +87,6 @@ const PasswordScreen = ({ navigation }) => {
                         setLoading(false);
                         showSuccessToast('Login Successfully');
                         setTimeout(() => {
-                          console.log("user",email)
                           navigation.navigate('home');
                         }, 1500);
                       }, 1500);

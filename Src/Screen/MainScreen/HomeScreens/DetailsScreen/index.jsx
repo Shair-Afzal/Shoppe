@@ -8,7 +8,7 @@ import {
   StatusBar,
   FlatList,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swiper from 'react-native-swiper';
 import {
   detailsdata,
@@ -31,8 +31,10 @@ import UnLike from '../../../../assets/SVG/UnLike.svg';
 import Like from '../../../../assets/SVG/Like.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import VariationModal from '../../../../Component/VaritaionModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const DetailsScreen = ({ navigation }) => {
+const DetailsScreen = ({ navigation,route }) => {
+  const { product } = route.params;
   const [rating, setRating] = useState(4);
   const [fav, setfav] = useState(false);
   const [model,setmodel]=useState(false)
@@ -41,6 +43,7 @@ const DetailsScreen = ({ navigation }) => {
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
   const insert = useSafeAreaInsets();
+  const arr=[1,2,3,4]
 
   const renderContent = () => (
     <>
@@ -52,10 +55,10 @@ const DetailsScreen = ({ navigation }) => {
           dotStyle={styles.dot}
           activeDotStyle={styles.activeDot}
         >
-          {detailsdata.map((item, i) => (
+          {arr.map((item, i) => (
             <Image
               key={i}
-              source={item.img}
+              source={product.img}
               style={{
                 height: '100%',
                 width: '100%',
@@ -188,7 +191,7 @@ const DetailsScreen = ({ navigation }) => {
           style={{ paddingVertical: RF(15), marginTop: RF(10) }}
           onPress={() =>
             navigation.navigate('home', {
-              screen: 'Home',
+              screen: 'HomeTab',
               params: {
                 screen: 'Review',
               },
@@ -221,21 +224,73 @@ const DetailsScreen = ({ navigation }) => {
       </View>
     </>
   );
-  const buyerfunction=()=>{
-     setmodel(false)
-   navigation.navigate('home', {
-  screen: 'Cart',
-  params: {
-    screen: 'Payment',
-  },
-});
+ const buyerfunction = () => {
+  setmodel(false);
+  navigation.navigate('home', {
+    screen: 'CartTab',
+    params: {
+      screen: 'Payment',
+      params: { product }, // ✅ pass product to payment screen
+    },
+  });
+};
+  const cartfunction = async () => {
+    setmodel(false);
+
+    // Get existing cart from storage
+    const storedCart = await AsyncStorage.getItem("cartItems");
+    let cart = storedCart ? JSON.parse(storedCart) : [];
+
+    const existingIndex = cart.findIndex((item) => item.id === product.id);
+    if (existingIndex !== -1) {
+      cart[existingIndex].quantity =
+        (cart[existingIndex].quantity || 1) + 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+
+    await AsyncStorage.setItem("cartItems", JSON.stringify(cart));
+
+    // Navigate to cart tab
+    navigation.navigate("home", { screen: "CartTab" });
+  };
+ const toggleFavourite = async () => {
+  const storedFav = await AsyncStorage.getItem("favouriteItems");
+  let favItems = storedFav ? JSON.parse(storedFav) : [];
+
+  if (!fav) {
+    // ✅ Add product safely (store only serializable data)
+    const exists = favItems.some((item) => item.id === product.id);
+    if (!exists) {
+      favItems.push({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        img: product.imgUri || product.img,
+        size: product.size || 'M',     // ✅ add size
+      color: product.color || 'Pink' // use a string path or remote URL, not require()
+      });
+    }
+  } else {
+    // Remove from favourites
+    favItems = favItems.filter((item) => item.id !== product.id);
   }
-  const cartfunction=()=>{
-      setmodel(false)
-      navigation.navigate('home', {
-  screen: 'Cart',
- })
-  }
+
+  await AsyncStorage.setItem("favouriteItems", JSON.stringify(favItems));
+  setfav(!fav);
+};
+useEffect(() => {
+  const checkFav = async () => {
+    const storedFav = await AsyncStorage.getItem("favouriteItems");
+    if (storedFav) {
+      const favItems = JSON.parse(storedFav);
+      const exists = favItems.some((item) => item.id === product.id);
+      setfav(exists);
+    }
+  };
+  checkFav();
+}, [product]);
+
   return (
     <View style={{ ...GST.FLEX }}>
       <StatusBar translucent backgroundColor={'transparent'}  />
@@ -259,7 +314,7 @@ const DetailsScreen = ({ navigation }) => {
           paddingVertical: RF(10),
         }}
       >
-        <TouchableOpacity onPress={() => setfav(!fav)}>
+        <TouchableOpacity onPress={toggleFavourite}>
           {!fav ? (
             <UnLike height={RF(40)} width={RF(40)} />
           ) : (

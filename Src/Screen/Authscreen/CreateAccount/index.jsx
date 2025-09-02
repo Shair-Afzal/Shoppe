@@ -63,7 +63,7 @@ const CreateAccount = ({ navigation }) => {
                   showSuccessToast('Account Created successfully');
                   setTimeout(() => {
                     navigation.navigate('Login');
-                    console.log("user",user)
+                   
                   }, 1500);
                 }, 2000);
               }}

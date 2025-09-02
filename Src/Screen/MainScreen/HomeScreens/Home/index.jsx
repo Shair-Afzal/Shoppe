@@ -12,6 +12,7 @@ import BigSaleComponent from '../../../../Component/BigSaleComponent';
 import Swiper from 'react-native-swiper';
 import {
   categoriesData,
+  ecommerceData,
   flashSaleData,
   hotPopularData,
   newItemsData,
@@ -99,7 +100,7 @@ const Home = ({ navigation }) => {
             {/* Categories */}
             <SectionHeader
               titile={'Categories'}
-              onpress={() => navigation.navigate('Categories')}
+              onpress={() => navigation.navigate('CategoriesTab')}
             />
             <FlatList
               data={categoriesData}
@@ -138,7 +139,7 @@ const Home = ({ navigation }) => {
               titile={'Most Popular'}
               onpress={() => navigation.navigate('Shop')}
             />
-            <PopularCard data={hotPopularData} />
+            <PopularCard data={newItemsData} />
 
             {/* Just For You */}
             <Text style={{ ...styles.sectionTitle, marginTop: RF(15) }}>

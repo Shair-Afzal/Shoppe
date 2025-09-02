@@ -24,6 +24,13 @@ const FlashSales = ({ navigation }) => {
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
+  const [filter, setFilter] = React.useState("all");
+
+  // ✅ Filter data based on discount
+  const filteredData =
+    filter === "all"
+      ? newItemsData
+      : newItemsData.filter(item => item.discount === filter);
 
   const renderContent = () => (
     <>
@@ -32,10 +39,10 @@ const FlashSales = ({ navigation }) => {
         descrip={'Choose Your Discount'}
         Time={true}
       />
-      <FilterBar />
+      <FilterBar select={filter} setselect={setFilter}/>
       <TouchableOpacity
         style={styles.imgcon}
-        onPress={() => navigation.navigate("Profile",{
+        onPress={() => navigation.navigate("ProfileTab",{
           screen:"Live"
 
         })}
@@ -48,14 +55,18 @@ const FlashSales = ({ navigation }) => {
       </TouchableOpacity>
       <View style={styles.discontcon}>
         <Text style={{ ...GST.description, fontFamily: 'Raleway-Bold' }}>
-          20% Discount
+            {filter === "all" ? "All Discounts" : `${filter} Discount`}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Filter')}>
           <Filter height={RF(25)} width={RF(25)} />
         </TouchableOpacity>
       </View>
+      {
+        filteredData.length==0?
+        <Text style={{...GST.subHeading,textAlign:"center"}}>No items found</Text>:
+      
       <NewItem
-        data={newItemsData}
+        data={filteredData}
         justfor
         numofcolumn={2}
         contentContainerStyle={styles.itemcontainer}
@@ -64,7 +75,9 @@ const FlashSales = ({ navigation }) => {
         imgstyle={styles.itemimgcon}
         img={styles.imgconitem}
         discount={true}
+        dstxt={true}
       />
+}
       <Image 
         source={require('../../../../assets/Images/bigsalecard.png')}
         style={{width:"100%",height:RF(130),resizeMode:"contain",marginTop:RF(10)}}

@@ -1,102 +1,168 @@
 import Icon from '../../assets/SVG/Icon.svg';
-import { RF } from '../../Constant';
+import { colors, RF } from '../../Constant';
 
 const categoriesData = [
-  {
-    id: '1',
-    uri: 'https://picsum.photos/seed/clothing/150/150',
-    name: 'Clothing',
-    count: 109,
-    items: [
-      { id: '1-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '1-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '1-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '1-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
-    ],
-  },
+
   {
     id: '2',
     uri: 'https://picsum.photos/seed/shoes/150/150',
     name: 'Shoes',
     count: 530,
     items: [
-      { id: '2-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '2-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '2-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '2-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
+      { id: '2-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/shoe.png'),
+         description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
+        reviews: [
+          {
+            id: 'r1',
+            user: 'Veronika',
+            stars: 4,
+            comment:
+              'Great quality T-shirt. Comfortable and fits well. I love the color.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['New', 'Hot'],
+        likes: 1780,
+
+       },
+      { id: '2-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/shoes3.png'),
+         description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
+        reviews: [
+          {
+            id: 'r1',
+            user: 'Veronika',
+            stars: 4,
+            comment:
+              'Great quality T-shirt. Comfortable and fits well. I love the color.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['New', 'Hot'],
+        likes: 1780,
+
+      },
+      { id: '2-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/shoes4.png'),
+         description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
+        reviews: [
+          {
+            id: 'r1',
+            user: 'Veronika',
+            stars: 4,
+            comment:
+              'Great quality T-shirt. Comfortable and fits well. I love the color.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['New', 'Hot'],
+        likes: 1780,
+       },
+      { id: '2-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/shoes2.png'),
+         description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
+        reviews: [
+          {
+            id: 'r1',
+            user: 'Veronika',
+            stars: 4,
+            comment:
+              'Great quality T-shirt. Comfortable and fits well. I love the color.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['New', 'Hot'],
+        likes: 1780,
+      },
     ],
+    description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
   },
-  {
-    id: '3',
-    uri: 'https://picsum.photos/seed/bags/150/150',
-    name: 'Bags',
-    count: 87,
-    items: [
-      { id: '3-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '3-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '3-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '3-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
-    ],
-  },
-  {
-    id: '4',
-    uri: 'https://picsum.photos/seed/lingerie/150/150',
-    name: 'Lingerie',
-    count: 218,
-    items: [
-      { id: '4-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '4-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '4-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '4-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
-    ],
-  },
-  {
-    id: '5',
-    uri: 'https://picsum.photos/seed/watch/150/150',
-    name: 'Watch',
-    count: 218,
-    items: [
-      { id: '5-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '5-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '5-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '5-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
-    ],
-  },
-  {
-    id: '6',
-    uri: 'https://picsum.photos/seed/hoodies/150/150',
-    name: 'Hoodies',
-    count: 218,
-    items: [
-      { id: '6-101', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth1.png') },
-      { id: '6-102', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth2.png') },
-      { id: '6-103', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth3.png') },
-      { id: '6-104', name: 'Nike Air Max', price: 120, image: require('../../assets/Images/cloth4.png') },
-    ],
-  },
+ 
+
 ];
 
 const topProductsData = [
-  { id: 'tp-1', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-2', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-3', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-4', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-5', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-6', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-7', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-8', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-9', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
-  { id: 'tp-10', image: require('../../assets/Images/cloth4.png'), name: 'Hoodies' },
+  { id: 'tp-1', image: require('../../assets/Images/shoe.png'), name: 'shoes' },
+  { id: 'tp-2', image: require('../../assets/Images/shoes2.png'), name: 'shoes' },
+  { id: 'tp-3', image: require('../../assets/Images/shoes3.png'), name: 'shoes' },
+  { id: 'tp-4', image: require('../../assets/Images/shoes4.png'), name: 'shoes' },
+ 
 ];
 
 const newItemsData = [
-  { id: 'n-1', uri: 'https://picsum.photos/seed/new1/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$17.00', img: require('../../assets/Images/shoe.png') },
-  { id: 'n-2', uri: 'https://picsum.photos/seed/new2/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$32.00', img: require('../../assets/Images/shoe.png') },
-  { id: 'n-3', uri: 'https://picsum.photos/seed/new3/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$21.00', img: require('../../assets/Images/shoe.png') },
-  { id: 'n-4', uri: 'https://picsum.photos/seed/new4/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$17.00', img: require('../../assets/Images/shoe.png') },
-  { id: 'n-5', uri: 'https://picsum.photos/seed/new5/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$32.00', img: require('../../assets/Images/shoe.png') },
-  { id: 'n-6', uri: 'https://picsum.photos/seed/new6/120/120', desc: 'Lorem ipsum dolor sit amet consectetur.', price: '$21.00', img: require('../../assets/Images/shoe.png') },
+  { id: 'n-1', uri: 'https://picsum.photos/seed/new1/120/120', desc: 'Lorem ipsum...', price: 17, img: require('../../assets/Images/shoe.png'), name: 'shoes', color: 'Light Gray', size: "XS", category: "popular",likes: '1780', tag: 'New', heart: '♡',discount:"10%"},
+  { id: 'n-2', uri: 'https://picsum.photos/seed/new2/120/120', desc: 'Lorem ipsum...', price: 32, img: require('../../assets/Images/shoes2.png'), name: 'shoes', color: 'Blue', size: "M", category: "price_high_low",likes: '1780', tag: 'New', heart: '♡',discount:"20%"},
+  { id: 'n-3', uri: 'https://picsum.photos/seed/new3/120/120', desc: 'Lorem ipsum...', price: 21, img: require('../../assets/Images/shoes3.png'), name: 'shoes', color: 'Dark Gray', size: "L", category: "newest",likes: '1780', tag: 'New', heart: '♡',discount:"30%"},
+  { id: 'n-4', uri: 'https://picsum.photos/seed/new4/120/120', desc: 'Lorem ipsum...', price: 19, img: require('../../assets/Images/shoes4.png'), name: 'shoes', color: 'Black', size: "XL", category: "price_low_high",likes: '1780', tag: 'New', heart: '♡',discount:"30%"}
 ];
+
 
 const flashSaleData = [
   { id: 'f-1', uri: 'https://picsum.photos/seed/flash1/120/120', discount: '-20%', img: require('../../assets/Images/sale.png') },
@@ -152,6 +218,7 @@ const storydata = [
   { id: 'st-4', image: require('../../assets/Images/Storyimg.png'), bigsale: require('../../assets/Images/bigsalecard.png'), txt: 'Lorem ipsum dolor sit amet,\n consectetur adipiscing elit.' },
   { id: 'st-5', image: require('../../assets/Images/Storyimg.png') },
 ];
+        
 
 export const sizesData = [
   { id: 'sz-1', label: 'XS', value: 'xs' },
@@ -186,17 +253,13 @@ export const detailsdata = [
   { id: 'd-4', img: require('../../assets/Images/Detailsimg.png') },
 ];
 
-const ProductsData = [
-  { id: 'p-1', image: require('../../assets/Images/bag.png'), name: 'Hoodies' },
-  { id: 'p-2', image: require('../../assets/Images/watch.png'), name: 'Hoodies' },
-  { id: 'p-3', image: require('../../assets/Images/bag.png'), name: 'Hoodies' },
-  { id: 'p-4', image: require('../../assets/Images/watch.png'), name: 'Hoodies' },
-  { id: 'p-5', image: require('../../assets/Images/bag.png'), name: 'Hoodies' },
-  { id: 'p-6', image: require('../../assets/Images/watch.png'), name: 'Hoodies' },
-  { id: 'p-7', image: require('../../assets/Images/bag.png'), name: 'Hoodies' },
-  { id: 'p-8', image: require('../../assets/Images/watch.png'), name: 'Hoodies' },
-  { id: 'p-9', image: require('../../assets/Images/bag.png'), name: 'Hoodies' },
-  { id: 'p-10', image: require('../../assets/Images/watch.png'), name: 'Hoodies' },
+const
+ProductsData = [
+  { id: 'p-1', image: require('../../assets/Images/shoe.png'), name: 'shoes' },
+  { id: 'p-2', image: require('../../assets/Images/shoes2.png'), name: 'shoes' },
+  { id: 'p-3', image: require('../../assets/Images/shoes3.png'), name: 'shoes' },
+  { id: 'p-4', image: require('../../assets/Images/shoes4.png'), name: 'shoes' },
+
 ];
 
 export const sales = [
@@ -328,6 +391,165 @@ export const orderIssuesData = [
   { id: 'oi-4', title: 'Technical Assistance' },
   { id: 'oi-5', title: 'Other' },
 ];
+const ecommerceData = [
+  {
+    id: '1',
+    category: 'Clothing',
+    image: 'https://picsum.photos/seed/clothing/150/150',
+    count: 109,
+    products: [
+      {
+        id: '1-101',
+        name: 'Casual Cotton T-Shirt',
+        price: 17.0,
+        images: [
+          require('../../assets/Images/cloth1.png'),
+          require('../../assets/Images/cloth2.png'),
+          require('../../assets/Images/cloth3.png'),
+        ],
+        description:
+          'Comfortable cotton T-shirt made with 95% premium cotton. Perfect for daily wear.',
+        variations: [
+          { id: 'v1', color: 'Red', image: require('../../assets/Images/variationsimg.png') },
+          { id: 'v2', color: 'Blue', image: require('../../assets/Images/variationsimg.png') },
+        ],
+        specifications: {
+          material: ['Cotton 95%', 'Polyester 5%'],
+          origin: 'EU',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 3.0 },
+          { type: 'Express', days: '2-3 days', cost: 6.0 },
+        ],
+        rating: 4.2,
+        reviews: [
+          {
+            id: 'r1',
+            user: 'Veronika',
+            stars: 4,
+            comment:
+              'Great quality T-shirt. Comfortable and fits well. I love the color.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['New', 'Hot'],
+        likes: 1780,
+      },
+      {
+        id: '1-102',
+        name: 'Formal Shirt',
+        price: 32.0,
+        images: [
+          require('../../assets/Images/cloth4.png'),
+          require('../../assets/Images/cloth2.png'),
+        ],
+        description:
+          'Elegant formal shirt with a modern fit. Best for office wear.',
+        variations: [{ id: 'v1', size: 'M' }, { id: 'v2', size: 'L' }],
+        specifications: {
+          material: ['Cotton 80%', 'Polyester 20%'],
+          origin: 'USA',
+        },
+        delivery: [{ type: 'Standard', days: '3-5 days', cost: 4.0 }],
+        rating: 4.5,
+        reviews: [
+          {
+            id: 'r2',
+            user: 'John',
+            stars: 5,
+            comment: 'Perfect fit! I wear it daily at work. Highly recommended.',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['Sale'],
+        likes: 920,
+      },
+    ],
+  },
+  {
+    id: '2',
+    category: 'Shoes',
+    image: 'https://picsum.photos/seed/shoes/150/150',
+    count: 530,
+    products: [
+      {
+        id: '2-101',
+        name: 'Nike Air Max',
+        price: 120.0,
+        images: [
+          require('../../assets/Images/shoe.png'),
+          require('../../assets/Images/cloth2.png'),
+        ],
+        description:
+          'Nike Air Max sneakers with maximum comfort and stylish design.',
+        variations: [
+          { id: 'v1', size: '8' },
+          { id: 'v2', size: '9' },
+          { id: 'v3', size: '10' },
+        ],
+        specifications: {
+          material: ['Mesh upper', 'Rubber sole'],
+          origin: 'Vietnam',
+        },
+        delivery: [
+          { type: 'Standard', days: '5-7 days', cost: 5.0 },
+          { type: 'Express', days: '2-3 days', cost: 10.0 },
+        ],
+        rating: 4.8,
+        reviews: [
+          {
+            id: 'r3',
+            user: 'Alice',
+            stars: 5,
+            comment: 'Super comfy and looks amazing!',
+            avatar: require('../../assets/Images/Reviewimg.png'),
+          },
+        ],
+        tags: ['Hot', 'New'],
+        likes: 2450,
+      },
+    ],
+  },
+];
+export const monthlyData = {
+  January: {
+    total: 420,
+    ordered: 15,
+    received: 12,
+    toReceive: 3,
+    sales: [
+      { category: 'Electronics', amount: 120 },
+      { category: 'Fashion', amount: 80 },
+      { category: 'Groceries', amount: 150 },
+      { category: 'Other', amount: 70 },
+    ],
+  },
+  February: {
+    total: 365,
+    ordered: 12,
+    received: 10,
+    toReceive: 2,
+    sales: [
+      { category: 'Electronics', amount: 100 },
+      { category: 'Fashion', amount: 90 },
+      { category: 'Groceries', amount: 110 },
+      { category: 'Other', amount: 65 },
+    ],
+  },
+  March: {
+    total: 500,
+    ordered: 20,
+    received: 18,
+    toReceive: 2,
+    sales: [
+      { category: 'Electronics', amount: 200 },
+      { category: 'Fashion', amount: 120 },
+      { category: 'Groceries', amount: 130 },
+      { category: 'Other', amount: 50 },
+    ],
+  },
+  // ... keep adding for all 12 months
+};
 
 export {
   categoriesData,
@@ -341,4 +563,5 @@ export {
   categories,
   storydata,
   ProductsData,
+  ecommerceData,
 };

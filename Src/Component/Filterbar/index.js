@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import GST, { colors, RF } from '../../Constant';
 import Polygon from '../../assets/SVG/Polygon.svg';
 
-const FilterBar = () => {
-    const [select,setselect]=useState('all')
+const FilterBar = ({select,setselect}) => {
+
   return (
     <View style={styles.Container}>
       <TouchableOpacity

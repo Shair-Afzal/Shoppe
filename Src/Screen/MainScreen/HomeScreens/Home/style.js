@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   con: {
-    width: isTablet ? RF(195) : RF(155),
-    marginLeft: RF(2),
+    width: "49%",
+    // marginLeft: RF(2),
   },
   imgcon: {
     width: '100%',

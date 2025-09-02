@@ -69,6 +69,7 @@ const CustomInput = ({
   onimagepicked,
   multiline,
   numberOfLines,
+   placeholderTextColor = "#D2D2D2",
   ...rest
 }) => {
   const handlePick = async () => {
@@ -92,7 +93,7 @@ const CustomInput = ({
       <TextInput
         style={[styles.input, inputStyle]}
         placeholder={placeholder}
-        placeholderTextColor="#D2D2D2"
+        placeholderTextColor={placeholderTextColor}
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
@@ -101,6 +102,7 @@ const CustomInput = ({
         onSubmitEditing={onSubmitEditing}
         multiline={multiline}
         numberOfLines={numberOfLines}
+        tex
         {...rest}
       />
       {rightIcon && (
