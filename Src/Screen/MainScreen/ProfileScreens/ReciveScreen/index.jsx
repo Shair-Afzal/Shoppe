@@ -13,7 +13,7 @@ const ReciveScreen = ({ navigation }) => {
   const insert = useSafeAreaInsets();
 
   return (
-    <View style={[GST.MAIN, { paddingTop: insert.top }, styles.main]}>
+    <View style={[GST.MAIN, { paddingTop: insert.top,paddingBottom:insert.bottom}, styles.main]}>
       <CustomHeader
         name={'To Recieve'}
         descrip={'My Orders'}

@@ -2,50 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import StarRating from 'react-native-star-rating-widget';
 import GST, { colors, RF } from '../../Constant';
+import { reviewData } from '../../utils/Dummydata';
 
 const ReviewList = () => {
-  const reviewData = [
-    {
-      id: 1,
-      name: 'Veronika',
-      rating: 4,
-      comment:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-      image: require('../../assets/Images/Reviewimg.png'),
-    },
-    {
-      id: 2,
-      name: 'John Doe',
-      rating: 5,
-      comment:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-      image: require('../../assets/Images/Reviewimg.png'),
-    },
-    {
-      id: 3,
-      name: 'Sarah Smith',
-      rating: 3,
-      comment:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-      image: require('../../assets/Images/Reviewimg.png'),
-    },
-    {
-      id: 4,
-      name: 'Mike Johnson',
-      rating: 4,
-      comment:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-      image: require('../../assets/Images/Reviewimg.png'),
-    },
-    {
-      id: 5,
-      name: 'Emily Wilson',
-      rating: 2,
-      comment:
-        'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum',
-      image: require('../../assets/Images/Reviewimg.png'),
-    },
-  ];
+
 
   const dummyFunction = () => {
     // This function does nothing - makes the rating read-only

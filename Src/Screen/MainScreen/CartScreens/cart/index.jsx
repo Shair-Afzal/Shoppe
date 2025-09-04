@@ -84,7 +84,7 @@ const calculateTotal = () => {
   return (
     <View style={GST.FLEX}>
       <ShippingAddressModal add visible={model} onclose={() => setmodel(false)} />
-      <View style={{ ...GST.MAIN, paddingTop: insert.top }}>
+      <View style={{ ...GST.MAIN, paddingTop: insert.top,paddingBottom:insert.bottom}}>
         <View style={styles.txtcontainer}>
           <Text style={GST.subHeading}>Cart</Text>
           <View style={styles.elipsecircle}>

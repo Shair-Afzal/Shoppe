@@ -52,8 +52,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(229, 235, 252, 1)',
     padding: RF(8),
     borderRadius: RF(100),
-    // alignItems: "center",
-    paddingHorizontal: RF(20),
+
+    width:"30%",
+    justifyContent:"center",
+    alignItems:"center"
   
   },
   orderButtonText: {

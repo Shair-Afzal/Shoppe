@@ -31,7 +31,7 @@ const Leftcomponent = ({
   return (
     <View>
       {icon && (
-        <View style={{ ...GST.mid_row, gap: RF(10) }}>
+        <View style={styles.rowcontainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Voucher')}>
             {Active ? (
               <ActiveVourcher height={RF(35)} width={RF(35)} />
@@ -47,7 +47,7 @@ const Leftcomponent = ({
           </TouchableOpacity>
         </View>
       )}
-      <View style={filter?styles.inputwrapper:null}>
+      <View style={filter ? styles.inputwrapper : null}>
         {input && (
           <CustomInput
             style={[styles.input, inputstyle]}
@@ -109,5 +109,9 @@ const styles = StyleSheet.create({
     ...GST.mid_row,
     gap: RF(5),
     justifyContent: 'flex-end',
+  },
+  rowcontainer: {
+    ...GST.mid_row,
+    gap: RF(10),
   },
 });

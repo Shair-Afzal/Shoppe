@@ -48,18 +48,18 @@ const styles = StyleSheet.create({
   },
   saleImage: {
     height: RF(130),
-    width: RF(130),
+    width: "48%",
     resizeMode: 'cover',
     borderRadius: RF(10),
   },
   saleContent: {
     justifyContent: 'space-between',
-    height: RF(130),
+    height: "100%",
   },
   saleShopButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: RF(120),
+    width: "100%",
     height: RF(45),
     backgroundColor: colors.blue,
     borderRadius: RF(10),

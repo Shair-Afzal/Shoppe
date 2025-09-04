@@ -42,7 +42,7 @@ const Favourite = ({ navigation }) => {
   };
 
   return (
-    <View style={{ ...GST.FLEX, paddingTop: insert.top }}>
+    <View style={{ ...GST.FLEX, paddingTop: insert.top,paddingBottom:insert.bottom }}>
       <View style={styles.container}>
         <Text style={GST.subHeading}>Wishlist</Text>
         

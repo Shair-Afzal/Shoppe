@@ -33,6 +33,12 @@ const styles = StyleSheet.create({
     innerContainer:{
       position:"absolute",
       bottom:15,width:"100%"
+    },
+    inputconatiner:{
+      marginTop: RF(20),paddingVertical:RF(2)
+    },
+    btnstyle:{
+      marginTop: RF(25)
     }
   })
   export default styles;

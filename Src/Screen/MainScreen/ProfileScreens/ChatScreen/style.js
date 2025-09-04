@@ -23,14 +23,19 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     borderRadius: RF(100),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
     color: colors.blue,
+    fontFamily: 'Raleway-Bold',
+    fontSize: fontSize.medium,
   },
   bodyContainer: {
     backgroundColor: colors.white,
     marginTop: RF(10),
     padding: RF(15),
+    flex: 1,
   },
 
   /** Chat Messages */
@@ -49,13 +54,16 @@ const styles = StyleSheet.create({
   },
   botBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.DarkWhite,
+    backgroundColor: colors.lightblue,
   },
   userText: {
     color: colors.DarkWhite,
   },
   botText: {
-    color: colors.black,
+    ...GST.smallesttxt,
+    color: colors.Black,
+    fontSize:fontSize.avgSmall
+
   },
 
   /** Bottom Sheet */
@@ -75,6 +83,8 @@ const styles = StyleSheet.create({
   },
   bottomSheetTitle: {
     fontFamily: 'Raleway-Bold',
+    fontSize: fontSize.medium,
+    color: colors.Black,
   },
   bottomSheetBody: {
     backgroundColor: colors.DarkWhite,
@@ -92,16 +102,21 @@ const styles = StyleSheet.create({
   },
   issueRow: {
     gap: RF(5),
+    flexDirection: 'row',
   },
   issueText: {
     fontSize: RF(12),
   },
   bottomActions: {
-    ...GST.CENTERCONTAINER,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
     bottom: RF(5),
     left: RF(15),
-    backgroundColor:colors.DarkWhite
+    backgroundColor: colors.DarkWhite,
+    width: '100%',
+    gap: RF(10),
   },
   nextButton: {
     paddingVertical: RF(14),
@@ -110,16 +125,20 @@ const styles = StyleSheet.create({
 
   /** Input Section */
   inputWrapper: {
-    ...GST.CENTERCONTAINER,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     position: "absolute",
-    bottom: RF(10),
+    bottom: RF(0),
     left: 0,
     right: 0,
-    paddingHorizontal: RF(10),
+    paddingHorizontal: RF(12),
+    backgroundColor: colors.lightblue,
+    height: RF(60),
   },
   inputContainer: {
-    width: "70%",
-    paddingVertical: RF(2),
+    width: "65%",
+    fontSize: fontSize.medium,
   },
   sendButton: {
     alignSelf: 'flex-end',
@@ -132,82 +151,76 @@ const styles = StyleSheet.create({
   sendButtonText: {
     color: colors.DarkWhite,
   },
-    flatlistContainer: {
-      paddingBottom: RF(20),
-    },
-    card: {
-      marginTop: RF(10),
-      width: '100%',
-    },
-    catImg: {
-      height: RF(40),
-      width: '48%',
-      resizemode: 'cover',
-    },
-    catStyle: {
-      width: '30%',
-    },
-  
-    detailsContainer: {
-      height: RF(90),
-      width: '67%',
-    },
-    orderInfo: {
-      justifyContent: 'space-between',
-      height: '100%',
-      width: '100%',
-    },
-    orderRow: {
-      flexDirection: 'row',
-      width: '100%',
-      justifyContent: 'space-between',
-    },
-    orderLeft: {
-      width: '60%',
-    },
-    orderNumber: {
-      fontFamily: 'Raleway-Bold',
-      fontSize: RF(14),
-      color: colors.Black,
-    },
-    shippedText: {
-      fontFamily: 'Raleway-Bold',
-      color: colors.Black,
-    },
-  
-    itemBox: {
-      padding: RF(6),
-      backgroundColor: colors.lightblue,
-      borderRadius: RF(5),
-      alignSelf: 'flex-end',
-    },
-    itemText: {
-      fontSize: fontSize.regSmall,
-    },
-  
-    trackBtn: {
-      padding: RF(8),
-      width: '40%',
-      borderRadius: RF(10),
-      borderColor: colors.blue,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    trackBtnTrack: {
-      backgroundColor: colors.blue,
-      borderWidth: 0,
-    },
-    trackBtnReview: {
-      backgroundColor: colors.DarkWhite,
-      borderWidth: 1,
-    },
-    trackText: {
-      color: colors.DarkWhite,
-    },
-    reviewText: {
-      color: colors.blue,
-    },
-  
+  flatlistContainer: {
+    paddingBottom: RF(20),
+  },
+  card: {
+    marginTop: RF(10),
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  catImg: {
+    height: RF(40),
+    width: '48%',
+    resizeMode: 'cover',
+  },
+  catStyle: {
+    width: '30%',
+  },
+  detailsContainer: {
+    height: RF(90),
+    width: '67%',
+  },
+  orderInfo: {
+    justifyContent: 'space-between',
+    height: '100%',
+    width: '100%',
+  },
+  orderRow: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  orderLeft: {
+    width: '60%',
+  },
+  orderNumber: {
+    fontFamily: 'Raleway-Bold',
+    fontSize: RF(14),
+    color: colors.Black,
+  },
+  shippedText: {
+    fontFamily: 'Raleway-Bold',
+    color: colors.Black,
+  },
+  itemBox: {
+    padding: RF(6),
+    backgroundColor: colors.lightblue,
+    borderRadius: RF(5),
+    alignSelf: 'flex-end',
+  },
+  itemText: {
+    fontSize: fontSize.regSmall,
+  },
+  trackBtn: {
+    padding: RF(8),
+    width: '40%',
+    borderRadius: RF(10),
+    borderColor: colors.blue,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconRow: {
+    flexDirection: 'row',
+    gap: RF(5),
+  },
+  profileImage: {
+    height: "100%",
+    width: "100%",
+    borderRadius: RF(5),
+  },
 });
 
 export default styles;

@@ -32,7 +32,7 @@ const ActivityScreen = ({ navigation }) => {
   const monthData = monthlyData[currentMonth] || { total: 0, ordered: 0, received: 0, toReceive: 0, sales: [] };
 
   return (
-    <View style={{ ...GST.MAIN, paddingTop: insert.top }}>
+    <View style={{ ...GST.MAIN, paddingTop: insert.top,paddingBottom:insert.bottom}}>
       <CustomHeader
         profilepic
         source={require('../../../../assets/Images/avatar.png')}

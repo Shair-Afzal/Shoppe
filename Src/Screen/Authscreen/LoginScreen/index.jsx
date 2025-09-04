@@ -19,20 +19,22 @@ import CustomButton from '../../../Component/Custombutton';
 import styles from './style';
 import BubbleIconComponent from '../../../Component/BubbleiconComponent';
 import { LoginSchema } from '../../../utils/Schema';
-import { Formik } from 'formik';
+import { Formik, insert } from 'formik';
 import BotttomButtons from '../../../Component/BottomButtonContainer';
 import Loader from '../../../Component/Loader/Loader';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginEmail } from '../../../Redux/slices/userslice';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const LoginScreen = ({ navigation }) => {
   const emial=useSelector(state=>state.user.tempEmail)
   const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
+  const insert=useSafeAreaInsets()
 
 
   return (
-    <View style={GST.FLEX}>
+    <View style={{...GST.FLEX,paddingBottom:insert.bottom}}>
       <StatusBar 
         translucent 
         backgroundColor="transparent" 
@@ -83,7 +85,7 @@ const LoginScreen = ({ navigation }) => {
                  
                   <CustomInput
                     placeholder={'Email'}
-                    containerStyle={{ marginTop: RF(20),paddingVertical:RF(2)}}
+                    containerStyle={styles.inputconatiner}
                     value={values.email}
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
@@ -97,7 +99,7 @@ const LoginScreen = ({ navigation }) => {
 
                   <CustomButton
                     btnTitle={'Next'}
-                    style={{ marginTop: RF(25) }}
+                    style={styles.btnstyle}
                     onPress={handleSubmit}
                   />
                   <TouchableOpacity

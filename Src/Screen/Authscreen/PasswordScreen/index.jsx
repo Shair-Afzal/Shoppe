@@ -103,9 +103,9 @@ const PasswordScreen = ({ navigation }) => {
                   <TouchableOpacity
                     onPress={() => navigation.navigate('ForgetPassword')}
                     activeOpacity={0.7}
-                    style={{ marginTop: RF(10) }}
+                    style={styles.forgetcon}
                   >
-                    <Text style={{ ...GST.subdescription, textAlign: 'right' }}>
+                    <Text style={styles.forgettxt}>
                       Forget Password
                     </Text>
                   </TouchableOpacity>
@@ -117,7 +117,7 @@ const PasswordScreen = ({ navigation }) => {
       </Formik>
       {!keyboardVisible && (
         <View style={styles.rowcontainer}>
-          <Text>Not you?</Text>
+          <Text style={GST.subdescription}>Not you?</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
             activeOpacity={0.7}

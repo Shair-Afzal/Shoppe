@@ -13,7 +13,7 @@ const userSchema = Yup.object().shape({
 
   phone: Yup.string()
     .required('Phone number is required')
-    .test('is-valid-phone', 'Invalid phone number', function (value) {
+    .test('is-valid-phone', 'phone number length is not correct ', function (value) {
       const { countryCode } = this.parent;
       if (!value || !countryCode) return false;
 

@@ -14,7 +14,7 @@ const RatingComponent = () => {
         ratingCount={5}
         imageSize={40}
         showRating
-        style={{ marginTop: 20 }}
+        style={styles.rating}
       />
     </View>inishRating={this.ratingCompleted}
 
@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: "red", // optional just for visibility
   },
+  rating:{
+    marginTop: 20 
+  }
 });
 
 export default RatingComponent;

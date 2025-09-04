@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     paddingTop: RF(10),
   },
   btn: {
-    width: isTablet ? RF(130) : RF(100),
+    width: "32%",
     paddingVertical: RF(8),
     ...GST.CENTER,
     backgroundColor: colors.grey,
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   onbtn: {
-    width: "33%",
+    width: "32%",
     paddingVertical: RF(8),
     ...GST.CENTER,
     backgroundColor: colors.lightblue,

@@ -18,14 +18,16 @@ import CustomTicket from '../TicketComponent';
 import Icon from '../.../../../assets/SVG/Icon.svg';
 import RatingComponent from '../RatingComponent';
 import StarRating from 'react-native-star-rating-widget';
+ // Import the updated stylesheet
 
-const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress}) => {
-   const [rating, setRating] = useState(0);
+const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review, onPress }) => {
+  const [rating, setRating] = useState(0);
   const navigation = useNavigation();
   const sumbit = () => {
     navigation.navigate('Track');
     onclose();
   };
+  
   return (
     <Modal
       animationType="fade"
@@ -34,25 +36,13 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
       onRequestClose={onclose}
       statusBarTranslucent={true}
     >
-      <View style={GST.MODALMAIN}>
-        <View style={{ width: '100%', position: 'absolute', bottom: 0 }}>
-          <View
-            style={{
-              backgroundColor: colors.lightblue,
-              padding: RF(15),
-              width: '100%',
-              paddingVertical: RF(25),
-              borderTopLeftRadius: RF(10),
-              borderTopRightRadius: RF(10),
-            }}
-          >
-            <Text
-              style={{
-                ...GST.description,
-                fontFamily: 'Raleway-Bold',
-                textAlign: unsuccessful || Voucher || review ? null : 'center',
-              }}
-            >
+      <View style={styles.modalMain}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={[
+              styles.modalTitle,
+              !unsuccessful && !Voucher && !review && styles.modalTitleCenter
+            ]}>
               {unsuccessful
                 ? 'Delivery was not successful'
                 : Voucher
@@ -62,18 +52,11 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
                 : 'Which item you want to review?'}
             </Text>
           </View>
-          <View
-            style={{
-              backgroundColor: colors.DarkWhite,
-              padding: RF(15),
-              paddingVertical: RF(10),
-              height: unsuccessful ? null : RF(300),
-            }}
-          >
+          <View style={unsuccessful ? styles.modalBodyNoHeight : styles.modalBody}>
             {!unsuccessful && !Voucher && !review && (
               <FlatList
                 data={orderHistoryData}
-                contentContainerStyle={{ paddingBottom: RF(10) }}
+                contentContainerStyle={styles.flatlistContainer}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <View style={styles.cartItemContainer}>
@@ -90,32 +73,19 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
                         order{item.orderNumber}
                       </Text>
                       <View style={styles.optionsContainer}>
-                        <View style={{ ...GST.ROW, gap: RF(12) }}>
+                        <View style={{ ...GST.CENTERCONTAINER }}>
                           <View style={{ width: '50%' }}>
                             <CustomButton
-                              style={{
-                                paddingVertical: RF(8),
-                                backgroundColor: colors.grey,
-                                borderRadius: RF(8),
-                              }}
+                              style={styles.dateButton}
                               btnTitle={'April,06'}
                               txtstyle={{ ...GST.smallesttxt }}
                             />
                           </View>
                           <View style={{ width: '45%' }}>
                             <CustomButton
-                              style={{
-                                paddingVertical: RF(8),
-                                borderRadius: RF(8),
-                                backgroundColor: colors.DarkWhite,
-                                borderWidth: 1,
-                                borderColor: colors.blue,
-                              }}
+                              style={styles.reviewActionButton}
                               btnTitle={'Review'}
-                              txtstyle={{
-                                ...GST.smallesttxt,
-                                color: colors.blue,
-                              }}
+                              txtstyle={styles.reviewActionText}
                               onPress={sumbit}
                             />
                           </View>
@@ -128,25 +98,17 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
             )}
             {unsuccessful && (
               <>
-                <Text
-                  style={{ ...GST.subdescription, fontFamily: 'Raleway-Bold' }}
-                >
+                <Text style={styles.unsuccessfulText}>
                   What should I do?
                 </Text>
-                <Text
-                  style={{
-                    ...GST.smallesttxt,
-                    fontSize: RF(12),
-                    marginTop: RF(5),
-                  }}
-                >
+                <Text style={styles.unsuccessfulDescription}>
                   Don't worry, we will shortly contact you to arrange more
                   suitable time for the delivery. You can also contact us by
                   using this number +00 000 000 000 or chat with our customer
                   care service
                 </Text>
                 <CustomButton
-                  style={{ marginTop: RF(10), paddingVertical: RF(15) }}
+                  style={styles.chatButton}
                   btnTitle={'Chat Now'}
                   onPress={onclose}
                 />
@@ -154,168 +116,62 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
             )}
             {Voucher && (
               <>
-                <View style={{ marginTop: RF(15) }}>
+                <View style={styles.voucherSpacing}>
                   <CustomTicket>
-                    <View
-                      style={{
-                        ...GST.CENTERCONTAINER,
-                        width: '94%',
-                        padding: RF(5),
-                        borderBottomWidth: 1,
-                        borderStyle: 'dashed',
-                        alignSelf: 'center',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          ...GST.subdescription,
-                          color: colors.blue,
-                          fontFamily: 'Raleway-Bold',
-                        }}
-                      >
+                    <View style={styles.voucherHeader}>
+                      <Text style={styles.voucherTitle}>
                         Voucher
                       </Text>
-                      <View
-                        style={{
-                          backgroundColor: colors.lightpink,
-                          padding: RF(1),
-                          borderRadius: radius.radius2,
-                          paddingHorizontal: RF(5),
-                        }}
-                      >
+                      <View style={styles.voucherValid}>
                         <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
                       </View>
                     </View>
-                    <View
-                      style={{
-                        ...GST.ROW,
-                        gap: RF(8),
-                        marginTop: RF(10),
-                        marginLeft: RF(20),
-                      }}
-                    >
+                    <View style={styles.voucherRow}>
                       <Icon height={RF(15)} width={RF(15)} />
-                      <Text
-                        style={{
-                          ...GST.subdescription,
-                          fontFamily: 'Raleway-Bold',
-                        }}
-                      >
+                      <Text style={styles.voucherTitle}>
                         First Purchase
                       </Text>
                     </View>
-                    <View
-                      style={{
-                        ...GST.CENTERCONTAINER,
-                        width: '97%',
-                        padding: RF(2),
-                        paddingHorizontal: RF(15),
-                      }}
-                    >
+                    <View style={styles.voucherContent}>
                       <Text style={GST.smallesttxt}>
                         5% off for your next order
                       </Text>
-
                       <TouchableOpacity
-                        style={{
-                          ...GST.CENTER,
-                          width: '30%',
-                          backgroundColor: colors.blue,
-                          padding: RF(8),
-                          borderRadius: RF(10),
-                        }}
+                        style={styles.applyButton}
                         onPress={onclose}
                       >
-                        <Text
-                          style={{
-                            ...GST.smallesttxt,
-                            color: colors.DarkWhite,
-                          }}
-                        >
+                        <Text style={styles.applyButtonText}>
                           Apply
                         </Text>
                       </TouchableOpacity>
                     </View>
                   </CustomTicket>
                 </View>
-                <View style={{ marginTop: RF(15) }}>
+                <View style={styles.voucherSpacing}>
                   <CustomTicket>
-                    <View
-                      style={{
-                        ...GST.CENTERCONTAINER,
-                        width: '94%',
-                        padding: RF(5),
-                        borderBottomWidth: 1,
-                        borderStyle: 'dashed',
-                        alignSelf: 'center',
-                      }}
-                    >
-                      <Text
-                        style={{
-                          ...GST.subdescription,
-                          color: colors.blue,
-                          fontFamily: 'Raleway-Bold',
-                        }}
-                      >
+                    <View style={styles.voucherHeader}>
+                      <Text style={styles.voucherTitle}>
                         Voucher
                       </Text>
-                      <View
-                        style={{
-                          backgroundColor: colors.lightpink,
-                          padding: RF(1),
-                          borderRadius: radius.radius2,
-                          paddingHorizontal: RF(5),
-                        }}
-                      >
+                      <View style={styles.voucherValid}>
                         <Text style={GST.smallesttxt}>Valid Until 5.16.20</Text>
                       </View>
                     </View>
-                    <View
-                      style={{
-                        ...GST.ROW,
-                        gap: RF(8),
-                        marginTop: RF(10),
-                        marginLeft: RF(20),
-                      }}
-                    >
+                    <View style={styles.voucherRow}>
                       <Icon height={RF(15)} width={RF(15)} />
-                      <Text
-                        style={{
-                          ...GST.subdescription,
-                          fontFamily: 'Raleway-Bold',
-                        }}
-                      >
+                      <Text style={styles.voucherTitle}>
                         First Purchase
                       </Text>
                     </View>
-                    <View
-                      style={{
-                        ...GST.CENTERCONTAINER,
-                        width: '97%',
-                        padding: RF(2),
-                        paddingHorizontal: RF(15),
-                      }}
-                    >
+                    <View style={styles.voucherContent}>
                       <Text style={GST.smallesttxt}>
                         5% off for your next order
                       </Text>
-
                       <TouchableOpacity
-                        style={{
-                          ...GST.CENTER,
-                          width: '30%',
-                          backgroundColor: colors.blue,
-                          padding: RF(8),
-                          borderRadius: RF(10),
-                        }}
+                        style={styles.applyButton}
                         onPress={onclose}
                       >
-                        <Text
-                          style={{
-                            ...GST.smallesttxt,
-                            color: colors.DarkWhite,
-                          }}
-                        >
+                        <Text style={styles.applyButtonText}>
                           Apply
                         </Text>
                       </TouchableOpacity>
@@ -326,7 +182,7 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
             )}
             {review && (
               <View>
-                <View style={{ ...GST.ROW, alignItems: 'center', gap: RF(5) }}>
+                <View style={styles.reviewContainer}>
                   <View style={styles.reviewimgcontainer}>
                     <Image
                       source={require('../../assets/Images/Reviewimg.png')}
@@ -337,12 +193,7 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
                     <Text style={GST.smallesttxt}>
                       Lorem ipsum dolor sit amet consectetur.
                     </Text>
-                    <Text
-                      style={{
-                        ...GST.subdescription,
-                        fontFamily: fontFamily.bold,
-                      }}
-                    >
+                    <Text style={styles.reviewOrderText}>
                       Order #92287157
                     </Text>
                   </View>
@@ -351,16 +202,13 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
                   rating={rating}
                   starSize={RF(40)}
                   onChange={(value) => {
-    setRating(value)}}
+                    setRating(value);
+                  }}
                   style={{ marginTop: RF(5) }}
                   enableHalfStar={false}
                 />
                 <CustomInput
-                  containerStyle={{
-                    borderRadius: RF(10),
-                    paddingVertical: RF(0),
-                    marginTop: RF(5),
-                  }}
+                  containerStyle={styles.reviewInputContainer}
                   multiline={true}
                   numberOfLines={5}
                   inputStyle={{ textAlignVertical: 'top' }}
@@ -371,12 +219,7 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
             {review && (
               <CustomButton
                 btnTitle={'Say it!'}
-                style={{
-                  paddingVertical: RF(15),
-                  position: 'absolute',
-                  bottom: RF(10),
-                  marginLeft: RF(15),
-                }}
+                style={styles.reviewButton}
                 onPress={onclose}
               />
             )}
@@ -389,16 +232,16 @@ const ReviewModel = ({ visible, onclose, unsuccessful, Voucher, review,onPress})
 
 export default ReviewModel;
 
+
 const styles = StyleSheet.create({
   cartItemContainer: {
-    ...GST.ROW,
+    ...GST.CENTERCONTAINER,
     borderRadius: RF(12),
-    gap: RF(15),
     width: '100%',
     marginTop: RF(12),
   },
   imageContainer: {
-    width: RF(120),
+    width: "38%",
     height: RF(110),
     padding: RF(3),
     borderRadius: RF(12),
@@ -421,7 +264,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.DarkWhite,
     ...GST.CENTER,
   },
-
   productDetails: {
     height: RF(110),
     width: RF(180),
@@ -479,4 +321,137 @@ const styles = StyleSheet.create({
     width: '100%',
     resizeMode: 'cover',
   },
+  modalMain: {
+    ...GST.MODALMAIN,
+  },
+  modalContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+  },
+  modalHeader: {
+    backgroundColor: colors.lightblue,
+    padding: RF(15),
+    width: '100%',
+    paddingVertical: RF(25),
+    borderTopLeftRadius: RF(10),
+    borderTopRightRadius: RF(10),
+  },
+  modalTitle: {
+    ...GST.description,
+    fontFamily: 'Raleway-Bold',
+  },
+  modalTitleCenter: {
+    textAlign: 'center',
+  },
+  modalBody: {
+    backgroundColor: colors.DarkWhite,
+    padding: RF(15),
+    paddingVertical: RF(10),
+    height: RF(300),
+  },
+  modalBodyNoHeight: {
+    backgroundColor: colors.DarkWhite,
+    padding: RF(15),
+    paddingVertical: RF(10),
+  },
+  unsuccessfulText: {
+    ...GST.subdescription,
+    fontFamily: 'Raleway-Bold',
+  },
+  unsuccessfulDescription: {
+    ...GST.smallesttxt,
+    fontSize: RF(12),
+    marginTop: RF(5),
+  },
+  voucherHeader: {
+    ...GST.CENTERCONTAINER,
+    width: '94%',
+    padding: RF(5),
+    borderBottomWidth: 1,
+    borderStyle: 'dashed',
+    alignSelf: 'center',
+  },
+  voucherTitle: {
+    ...GST.subdescription,
+    color: colors.blue,
+    fontFamily: 'Raleway-Bold',
+  },
+  voucherValid: {
+    backgroundColor: colors.lightpink,
+    padding: RF(1),
+    borderRadius: radius.radius2,
+    paddingHorizontal: RF(5),
+  },
+  voucherRow: {
+    ...GST.ROW,
+    gap: RF(8),
+    marginTop: RF(10),
+    marginLeft: RF(20),
+  },
+  voucherContent: {
+    ...GST.CENTERCONTAINER,
+    width: '97%',
+    padding: RF(2),
+    paddingHorizontal: RF(15),
+  },
+  applyButton: {
+    ...GST.CENTER,
+    width: '30%',
+    backgroundColor: colors.blue,
+    padding: RF(8),
+    borderRadius: RF(10),
+  },
+  applyButtonText: {
+    ...GST.smallesttxt,
+    color: colors.DarkWhite,
+  },
+  reviewContainer: {
+    ...GST.ROW,
+    alignItems: 'center',
+    gap: RF(5),
+  },
+  reviewOrderText: {
+    ...GST.subdescription,
+    fontFamily: fontFamily.bold,
+  },
+  reviewInputContainer: {
+    borderRadius: RF(10),
+    paddingVertical: RF(0),
+    marginTop: RF(5),
+  },
+  reviewButton: {
+    paddingVertical: RF(15),
+    position: 'absolute',
+    bottom: RF(10),
+    marginLeft: RF(15),
+  },
+  dateButton: {
+    paddingVertical: RF(8),
+    backgroundColor: colors.grey,
+    borderRadius: RF(8),
+  },
+  reviewActionButton: {
+    paddingVertical: RF(8),
+    borderRadius: RF(8),
+    backgroundColor: colors.DarkWhite,
+    borderWidth: 1,
+    borderColor: colors.blue,
+  },
+  reviewActionText: {
+    ...GST.smallesttxt,
+    color: colors.blue,
+  },
+  chatButton: {
+    marginTop: RF(10),
+    paddingVertical: RF(15),
+  },
+  voucherSpacing: {
+    marginTop: RF(15),
+  },
+  flatlistContainer: {
+    paddingBottom: RF(10),
+  },
 });
+
+

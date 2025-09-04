@@ -34,6 +34,8 @@ const App = () => {
       {/* <AuthStack /> */}
       {/* <Bottomtab/> */}
       <AppStack/>
+      {/* <CustomModel  /> */}
+      
       
       
       
