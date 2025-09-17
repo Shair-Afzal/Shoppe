@@ -6,17 +6,24 @@ import ProfilePhoto from '../../../Component/Profilephoto';
 import { OtpInput } from 'react-native-otp-entry';
 import styles from './style';
 import Arrowbtn from '../../../assets/SVG/Arrowbtn.svg';
-import { otpSchema, PasswordSchema } from '../../../utils/Schema';
+import { PasswordSchema } from '../../../utils/Schema';
 import { Formik } from 'formik';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithPassword } from '../../../Redux/slices/userslice';
+
 const PasswordScreen = ({ navigation }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-  const email = useSelector(state => state.user.user);
+const email = useSelector(state => state.user.tempEmail);
+const error = useSelector(state => state.user.error);
+  useEffect(() => {
+    if (error) {
+      showErrorToast(error);  // 👈 show toast whenever error updates
+    }
+  }, [error]);
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () =>
@@ -30,19 +37,36 @@ const PasswordScreen = ({ navigation }) => {
       hide.remove();
     };
   }, []);
+
+const handleLogin = async (password) => {
+  setLoading(true);
+  try {
+    const result = await dispatch(loginWithPassword({ email, password }));
+
+    if (result.success) {
+      showSuccessToast('Login Successfully');
+      setTimeout(() => {
+        navigation.navigate('home');
+      }, 1500);
+    } else {
+      showErrorToast(result.error || 'Your email or password is not correct');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
     <View style={GST.FLEX}>
       {loading && <Loader />}
       <BubbleIconComponent style={{ position: 'absolute', top: 0, left: 0 }} />
       <View style={{ height: RF(300) }}>
-        <ProfilePhoto title={'Hello, Romina!!'} />
+        <ProfilePhoto title={`Hello, ${email || 'User'}!!`} />
       </View>
       <Formik
         initialValues={{ password: '' }}
         validationSchema={PasswordSchema}
-        onSubmit={values => {
-         
-        }}
+        onSubmit={values => handleLogin(values.password)}
       >
         {({
           handleSubmit,
@@ -52,7 +76,6 @@ const PasswordScreen = ({ navigation }) => {
           setFieldTouched,
         }) => (
           <>
-
             <View style={styles.container}>
               <Text style={GST.subdescription}>Type your password</Text>
 
@@ -77,37 +100,27 @@ const PasswordScreen = ({ navigation }) => {
                   }}
                   onTextChange={text => setFieldValue('password', text)}
                   onFilled={text => {
-                    try {
-                      // dispatch(loginWithPassword(text));
-                      setLoading(true);
-                      setFieldTouched('password', true);
-                      setFieldValue('password', text);
-
-                      setTimeout(() => {
-                        setLoading(false);
-                        showSuccessToast('Login Successfully');
-                        setTimeout(() => {
-                          navigation.navigate('home');
-                        }, 1500);
-                      }, 1500);
-                    } catch (err) {
-                      showErrorToast('your email and password is not correct');
-                    }
+                    setFieldTouched('password', true);
+                    setFieldValue('password', text);
+                    handleLogin(text); // ✅ call login logic when OTP filled
                   }}
                 />
-            {
-              errors.password&&touched.password&&
-              <Text style={{...GST.subdescription,color:colors.red}}>{errors.password}</Text>
-            }
+
+                {errors.password && touched.password && (
+                  <Text
+                    style={{ ...GST.subdescription, color: colors.red }}
+                  >
+                    {errors.password}
+                  </Text>
+                )}
+
                 {errors.password && (
                   <TouchableOpacity
                     onPress={() => navigation.navigate('ForgetPassword')}
                     activeOpacity={0.7}
                     style={styles.forgetcon}
                   >
-                    <Text style={styles.forgettxt}>
-                      Forget Password
-                    </Text>
+                    <Text style={styles.forgettxt}>Forget Password</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -115,6 +128,7 @@ const PasswordScreen = ({ navigation }) => {
           </>
         )}
       </Formik>
+
       {!keyboardVisible && (
         <View style={styles.rowcontainer}>
           <Text style={GST.subdescription}>Not you?</Text>

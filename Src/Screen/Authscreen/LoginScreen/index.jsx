@@ -1,17 +1,13 @@
 import {
   View,
   Text,
-  SafeAreaView,
-  Touchable,
-  TouchableOpacity,
+  StatusBar,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  StatusBar,
+  TouchableOpacity,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import GST, { colors, RF } from '../../../Constant';
-import Bubbleicon from '../.././../assets/SVG/Bubbleicon.svg';
 import Curveicon from '../../../assets/SVG/Curveicon.svg';
 import Heart from '../../../assets/SVG/Heart.svg';
 import CustomInput from '../../../Component/Custominput';
@@ -19,26 +15,40 @@ import CustomButton from '../../../Component/Custombutton';
 import styles from './style';
 import BubbleIconComponent from '../../../Component/BubbleiconComponent';
 import { LoginSchema } from '../../../utils/Schema';
-import { Formik, insert } from 'formik';
-import BotttomButtons from '../../../Component/BottomButtonContainer';
+import { Formik } from 'formik';
 import Loader from '../../../Component/Loader/Loader';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setLoginEmail } from '../../../Redux/slices/userslice';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-const LoginScreen = ({ navigation }) => {
-  const emial=useSelector(state=>state.user.tempEmail)
-  const dispatch=useDispatch()
-  const [loading, setLoading] = useState(false);
-  const insert=useSafeAreaInsets()
 
+const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+
+ 
+  const handleLogin = async (email) => {
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
+      dispatch(setLoginEmail(email));
+      showSuccessToast('Email is  valid!');
+      navigation.navigate('Password');
+    } catch (error) {
+      showErrorToast('Something went wrong, try again!');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <View style={{...GST.FLEX,paddingBottom:insert.bottom}}>
-      <StatusBar 
-        translucent 
-        backgroundColor="transparent" 
-        barStyle="dark-content" 
+    <View style={{ ...GST.FLEX, paddingBottom: insets.bottom }}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
       />
       <KeyboardAvoidingView
         style={GST.FLEX}
@@ -61,17 +71,11 @@ const LoginScreen = ({ navigation }) => {
               <Text style={GST.description}>Good to see you back!</Text>
               <Heart height={RF(20)} width={RF(20)} />
             </View>
+
             <Formik
               initialValues={{ email: '' }}
               validationSchema={LoginSchema}
-              onSubmit={values => {
-                dispatch(setLoginEmail(values.email))
-                setLoading(true);
-                setTimeout(() => {
-                  setLoading(false);
-                  navigation.navigate('Password');
-                }, 1500);
-              }}
+              onSubmit={values => handleLogin(values.email)}
             >
               {({
                 handleChange,
@@ -82,20 +86,23 @@ const LoginScreen = ({ navigation }) => {
                 touched,
               }) => (
                 <>
-                 
                   <CustomInput
                     placeholder={'Email'}
                     containerStyle={styles.inputconatiner}
                     value={values.email}
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
-                    // containerStyle={{paddingVertical:RF(5)}}
-                    
                   />
-                  {
-                    errors.email&&touched.email&&
-                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.email}</Text>
-                  }
+                  {errors.email && touched.email && (
+                    <Text
+                      style={{
+                        ...GST.subdescription,
+                        color: colors.red,
+                      }}
+                    >
+                      {errors.email}
+                    </Text>
+                  )}
 
                   <CustomButton
                     btnTitle={'Next'}

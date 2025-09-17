@@ -1,58 +1,86 @@
-import { useNavigation } from "@react-navigation/native";
-import { createSlice } from "@reduxjs/toolkit";
-// const navigation=useNavigation()
+import { createSlice } from '@reduxjs/toolkit';
+import auth from '@react-native-firebase/auth';
+
 const initialState = {
   user: null,
   authenticated: false,
-  tempEmail: null,   
+  tempEmail: null,
+  error: null,
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
-    createAccount: (state, action) => {
+    setUser: (state, action) => {
       state.user = action.payload;
       state.authenticated = true;
-      state.tempEmail=null
+      state.tempEmail = null;
+      state.error = null;
     },
     setLoginEmail: (state, action) => {
-      state.tempEmail = action.payload;  
+      state.tempEmail = action.payload;
     },
-    loginWithPassword: (state, action) => {
-      const  password  = action.payload;
-      const email = state.tempEmail;
-
-      if (
-        state.user &&
-        state.user.email === email &&
-        state.user.password === password
-      ) {
-        state.authenticated = true;
-        state.tempEmail = null; 
-        // navigation.navigate('OnBonding')
-        
-      } else {
-        throw new Error("Invalid credentials");
-      }
+    setError: (state, action) => {
+      state.error = action.payload;
     },
-    forgetpassword:(state,action)=>{
-       const newPassword = action.payload;
-      if(state.user){
-      state.user.password =newPassword;
-      state.authenticated=false;
-      state.tempEmail=null
-      }
-    },
-    logout: (state) => {
+    clearUser: state => {
       state.user = null;
-
       state.authenticated = false;
       state.tempEmail = null;
+      state.error = null;
     },
   },
 });
 
-export const { createAccount, setLoginEmail, loginWithPassword, logout,forgetpassword } =
+export const { setUser, setLoginEmail, setError, clearUser } =
   authSlice.actions;
+
+export const createAccount =
+  ({ email, password }) =>
+  async dispatch => {
+    try {
+      const res = await auth().createUserWithEmailAndPassword(email, password);
+      dispatch(setUser(res.user));
+      return { success: true };
+    } catch (err) {
+      if (err.code === 'auth/email-already-in-use') {
+        dispatch(setError('This email is already registered. Please log in.'));
+      } else {
+        dispatch(setError(err.message));
+      }
+      return { success: false, error: err.message };
+    }
+  };
+
+export const loginWithPassword =
+  ({ email, password }) =>
+  async dispatch => {
+    try {
+      const res = await auth().signInWithEmailAndPassword(email, password);
+      dispatch(setUser(res.user));
+      return { success: true };
+    } catch (err) {
+      dispatch(setError(err.message));
+      return { success: false, error: err.message };
+    }
+  };
+
+export const forgetpassword = email => async dispatch => {
+  try {
+    await auth().sendPasswordResetEmail(email);
+  } catch (err) {
+    dispatch(setError(err.message));
+  }
+};
+
+export const logout = () => async dispatch => {
+  try {
+    await auth().signOut();
+    dispatch(clearUser());
+  } catch (err) {
+    dispatch(setError(err.message));
+  }
+};
+
 export default authSlice.reducer;

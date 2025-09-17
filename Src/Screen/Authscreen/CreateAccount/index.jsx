@@ -15,16 +15,88 @@ import PhoneInputComponent from '../../../Component/PhoneInputComponent';
 import CustomButton from '../../../Component/Custombutton';
 import { initialValues, userSchema } from '../../../utils/Schema';
 import { Formik } from 'formik';
-import { showSuccessToast } from '../../../utils/Toast';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAccount } from '../../../Redux/slices/userslice';
+import Google from '../../../assets/SVG/Google.svg';
+import Apple from '../../../assets/SVG/Apple.svg';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+import { setUser, setError } from '../../../Redux/slices/userslice';
+import { Alert } from 'react-native';
+
+// Configure Google Sign-In with the new webClientId from the provided JSON
+GoogleSignin.configure({
+  webClientId:
+    '576309715513-5ku286iecnak68uubaldoej8daup5rp7.apps.googleusercontent.com',
+  offlineAccess: true,
+});
 
 const CreateAccount = ({ navigation }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [show, setshow] = useState(true);
-  const user = useSelector((state) => state.user);
+  const user = useSelector(state => state.user);
+  const error = useSelector(state => state.user.error);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      console.log('Checking Play Services...');
+      const hasPlayServices = await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      if (!hasPlayServices) {
+        Alert.alert(
+          'Error',
+          'Google Play Services is not available on this device.',
+        );
+        return;
+      }
+
+      console.log('Attempting Google sign-in...');
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('User info:', userInfo);
+
+      console.log('Getting ID token...');
+      const { idToken } = await GoogleSignin.getTokens();
+      console.log('ID token received:', !!idToken);
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign in with Firebase
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
+      console.log('Firebase user:', userCredential.user);
+
+      // Dispatch user to Redux store
+      dispatch(
+        setUser({
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          displayName: userCredential.user.displayName,
+        }),
+      );
+
+      showSuccessToast('Google Sign-In successful');
+      navigation.navigate('Home'); // Or your desired screen
+    } catch (err) {
+      console.log('Full error object:', JSON.stringify(err, null, 2));
+      console.log('Error code:', err.code);
+      console.log('Error message:', err.message);
+
+      const errorMsg = err.code
+        ? `${err.code}: ${err.message}`
+        : JSON.stringify(err);
+
+      dispatch(setError(errorMsg));
+      Alert.alert('Error', errorMsg);
+    }
+  };
 
   return (
     <View style={GST.FLEX}>
@@ -33,10 +105,10 @@ const CreateAccount = ({ navigation }) => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <StatusBar 
-          translucent 
-          backgroundColor="transparent" 
-          barStyle="dark-content" 
+        <StatusBar
+          translucent
+          backgroundColor="transparent"
+          barStyle="dark-content"
         />
         {loading && <Loader />}
         <View style={styles.container}>
@@ -55,17 +127,28 @@ const CreateAccount = ({ navigation }) => {
             <Formik
               initialValues={initialValues}
               validationSchema={userSchema}
-              onSubmit={values => {
-                dispatch(createAccount(values));
+              onSubmit={async values => {
                 setLoading(true);
-                setTimeout(() => {
+                try {
+                  const res = await dispatch(
+                    createAccount({
+                      email: values.email,
+                      password: values.password,
+                    }),
+                  );
+
                   setLoading(false);
-                  showSuccessToast('Account Created successfully');
-                  setTimeout(() => {
+
+                  if (res.payload?.success) {
+                    showSuccessToast('Account Created successfully');
                     navigation.navigate('Login');
-                   
-                  }, 1500);
-                }, 2000);
+                  } else {
+                    showErrorToast(error);
+                  }
+                } catch (err) {
+                  setLoading(false);
+                  showErrorToast(err.message);
+                }
               }}
             >
               {({
@@ -87,7 +170,9 @@ const CreateAccount = ({ navigation }) => {
                       containerStyle={{ paddingVertical: RF(2) }}
                     />
                     {errors.email && touched.email && (
-                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                      <Text
+                        style={{ ...GST.subdescription, color: colors.red }}
+                      >
                         {errors.email}
                       </Text>
                     )}
@@ -103,32 +188,39 @@ const CreateAccount = ({ navigation }) => {
                       containerStyle={{ paddingVertical: RF(2) }}
                     />
                     {errors.password && touched.password && (
-                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                      <Text
+                        style={{ ...GST.subdescription, color: colors.red }}
+                      >
                         {errors.password}
                       </Text>
                     )}
 
                     <PhoneInputComponent
                       value={values.phone}
-                      onChangeText={(text) => {
-        
+                      onChangeText={text => {
                         handleChange('phone')(text);
                       }}
-                      onChangeFormattedText={(formattedText) => {
+                      onChangeFormattedText={formattedText => {
                         setFieldValue('phone', formattedText);
                       }}
-                      onChangeCountry={(country) => {
-                
-                        setFieldValue('countryCode', country.cca2.toUpperCase());
+                      onChangeCountry={country => {
+                        setFieldValue(
+                          'countryCode',
+                          country.cca2.toUpperCase(),
+                        );
                       }}
                     />
-                    {errors.phone  && touched.phone&&(
-                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                    {errors.phone && touched.phone && (
+                      <Text
+                        style={{ ...GST.subdescription, color: colors.red }}
+                      >
                         {errors.phone}
                       </Text>
                     )}
-                    {errors.countryCode && touched.countryCode&& (
-                      <Text style={{ ...GST.subdescription, color: colors.red }}>
+                    {errors.countryCode && touched.countryCode && (
+                      <Text
+                        style={{ ...GST.subdescription, color: colors.red }}
+                      >
                         {errors.countryCode}
                       </Text>
                     )}
@@ -148,6 +240,17 @@ const CreateAccount = ({ navigation }) => {
                 );
               }}
             </Formik>
+            <View style={styles.gacontainer}>
+              <TouchableOpacity
+                style={styles.googleapplebtn}
+                onPress={handleGoogleSignIn}
+              >
+                <Google heigh={RF(25)} width={RF(25)} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.googleapplebtn}>
+                <Apple heigh={RF(25)} width={RF(25)} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>

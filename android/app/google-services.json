@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "671088382176",
-    "project_id": "shoppe-824df",
-    "storage_bucket": "shoppe-824df.firebasestorage.app"
+    "project_number": "576309715513",
+    "project_id": "shoppe-6cb59",
+    "storage_bucket": "shoppe-6cb59.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:671088382176:android:519c959ebde5a1043b4085",
+        "mobilesdk_app_id": "1:576309715513:android:58554b4ccbf252c090e3e8",
         "android_client_info": {
           "package_name": "com.shoppe"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "576309715513-su6o4v1pnk2fhv8fthoo7an9djf0njk2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shoppe",
+            "certificate_hash": "2500ddf734e26f185493de306580e56aca76a4e7"
+          }
+        },
+        {
+          "client_id": "576309715513-5ku286iecnak68uubaldoej8daup5rp7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDEqmWKe8RJDLIE23v3k7jPgHTuU7E6aUI"
+          "current_key": "AIzaSyC8DWYt9q8_zGEVyGSX9iO-O_byNpl3yxY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576309715513-5ku286iecnak68uubaldoej8daup5rp7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
