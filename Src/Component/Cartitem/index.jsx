@@ -103,7 +103,7 @@ const CartItem = ({
           
 }
           {addcart ? (
-            <View style={{ ...GST.mid_row, gap: RF(10) }}>
+            <View style={{ ...GST.mid_row, gap: "30%" }}>
               <TouchableOpacity
                 style={{
                   ...GST.CENTER,
@@ -125,7 +125,8 @@ const CartItem = ({
                   ...GST.CENTER,
                   backgroundColor: colors.lightblue,
                   padding: RF(5),
-                  width: RF(35),
+                  // width: RF(35),
+                  paddingHorizontal: RF(15),
                   borderRadius: RF(10),
                 }}
               >
@@ -140,17 +141,19 @@ const CartItem = ({
                   borderColor: colors.blue,
                   borderWidth: 1,
                   borderRadius: RF(100),
+                  justifyContent:"center",
+                  alignItems:"center"
                 }}
                 onPress={handleIncrement}
               >
-                <Text style={{ ...GST.subdescription, color: colors.blue, marginBottom: RF(5) }}>
+                <Text style={{ ...GST.subdescription, color: colors.blue,marginBottom: RF(5) }}>
                   +
                 </Text>
               </TouchableOpacity>
             </View>
           ) : (
             <TouchableOpacity>
-              <Add height={25} width={RF(25)} />
+              <Add height={RF(25)} width={RF(25)} />
             </TouchableOpacity>
           )}
         </View>
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:RF(2)
   },
   imageContainer: {
-    width: RF(120),
+    width: "36%",
     height: RF(110),
     padding: RF(3),
     borderRadius: RF(12),
@@ -188,8 +191,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: RF(15),
     left: RF(15),
-    width: RF(30),
-    height: RF(30),
+    width: "30%",
+    height: "30%",
     borderRadius: RF(16),
     backgroundColor: colors.DarkWhite,
     ...GST.CENTER,

@@ -15,6 +15,8 @@ import CustomModel from './Src/Component/CustomModel';
 import ReviewModel from './Src/Component/ReviewModel';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import VariationModal from './Src/Component/VaritaionModal';
+import SellerStack from './Src/Navigation/MainStack/SellerStack';
+import AdminStack from './Src/Navigation/MainStack/AdminStack';
 
 
 
@@ -33,7 +35,9 @@ const App = () => {
             />
       {/* <AuthStack /> */}
       {/* <Bottomtab/> */}
-      <AppStack/>
+      {/* <AppStack/> */}
+      {/* <SellerStack/> */}
+      <AdminStack/>
       {/* <CustomModel  /> */}
       
       

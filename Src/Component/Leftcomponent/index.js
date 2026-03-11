@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import GST, { colors, RF } from '../../Constant';
+import GST, { colors, RF, wp } from '../../Constant';
 import TopMenu from '../../assets/SVG/TopMenu.svg';
 import Settings from '../../assets/SVG/Settings.svg';
 import Vouchers from '../../assets/SVG/Vouchers.svg';
@@ -34,16 +34,16 @@ const Leftcomponent = ({
         <View style={styles.rowcontainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Voucher')}>
             {Active ? (
-              <ActiveVourcher height={RF(35)} width={RF(35)} />
+              <ActiveVourcher height={wp(10)} width={wp(10)} />
             ) : (
-              <Vouchers height={RF(35)} width={RF(35)} />
+              <Vouchers height={wp(10)} width={wp(10)} />
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('order')}>
-            <TopMenu height={RF(35)} width={RF(35)} />
+            <TopMenu height={wp(10)} width={wp(10)} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-            <Settings height={RF(35)} width={RF(35)} />
+            <Settings height={wp(10)} width={wp(10)} />
           </TouchableOpacity>
         </View>
       )}
@@ -70,7 +70,7 @@ const Leftcomponent = ({
       </View>
       {time && (
         <View style={{ ...GST.mid_row, gap: RF(3) }}>
-          <Time height={RF(20)} width={RF(20)} />
+          <Time height={wp(5)} width={wp(5)} />
           <View style={styles.box}>
             <Text style={styles.txt}>00</Text>
           </View>

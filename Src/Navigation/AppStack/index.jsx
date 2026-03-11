@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelcomeScreen from '../../Screen/Authscreen/WelcomeScreen';
 import LoginScreen from '../../Screen/Authscreen/LoginScreen';
 import CreateAccount from '../../Screen/Authscreen/CreateAccount';
@@ -18,31 +18,33 @@ import FilterScreen from '../../Screen/MainScreen/HomeScreens/FilterScreen';
 import DetailsScreen from '../../Screen/MainScreen/HomeScreens/DetailsScreen';
 import ReviewScreen from '../../Screen/MainScreen/HomeScreens/ReviewScreen';
 import ChatScreen from '../../Screen/MainScreen/ProfileScreens/ChatScreen';
+import AdminStack from '../MainStack/AdminStack';
 const AppStack = () => {
-    const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        
+
       }}
       initialRouteName='OnBonding'
     >
-       <Stack.Screen name="OnBonding" component={OnBondingScreen}/>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="OnBonding" component={OnBondingScreen} />
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Create" component={CreateAccount} />
       <Stack.Screen name="Password" component={PasswordScreen} />
-       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
-       <Stack.Screen name="ConfirmPassword" component={ConfirmPassword}/> 
-        <Stack.Screen name="home" component={Bottomtab}/>
-       <Stack.Screen name='Filter' component={FilterScreen}/>
-       <Stack.Screen name='Details' component={DetailsScreen}/>
-       <Stack.Screen name='Chat' component={ChatScreen}/>
-       
-           {/* <Stack.Screen name='Review' component={ReviewScreen}/> */}
+      <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
+      <Stack.Screen name="ConfirmPassword" component={ConfirmPassword} />
+      <Stack.Screen name="home" component={Bottomtab} />
+      <Stack.Screen name='Filter' component={FilterScreen} />
+      <Stack.Screen name='Details' component={DetailsScreen} />
+      <Stack.Screen name='Chat' component={ChatScreen} />
+      <Stack.Screen name='Admin' component={AdminStack} />
 
-        {/* <Stack.Screen name="FlashSales" component={FlashSales}/> */}
+      {/* <Stack.Screen name='Review' component={ReviewScreen}/> */}
+
+      {/* <Stack.Screen name="FlashSales" component={FlashSales}/> */}
     </Stack.Navigator>
   )
 }

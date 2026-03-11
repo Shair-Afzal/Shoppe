@@ -2,13 +2,14 @@ import { StyleSheet, Text, View,Image, TouchableOpacity} from 'react-native'
 import React from 'react'
 import GST, { colors, RF } from '../../Constant'
 import { useNavigation } from '@react-navigation/native'
+import { wp,hp } from '../../Constant'
 const RightComponent= ({name,descrip,profilepic,source,recimg,btn,txt}) => {
   const navigation=useNavigation()
   return (
     <View>
       {
             profilepic&&
-            <View style={{...GST.mid_row,gap:RF(10)}}>
+            <View style={{...GST.mid_row,gap:"20%"}}>
              <TouchableOpacity style={styles.imgcontainer}
              onPress={()=>navigation.navigate("Settingprofile")}
              >
@@ -55,24 +56,24 @@ export default RightComponent
 
 const styles = StyleSheet.create({
     imgcontainer:{
-        height:RF(50),
-        width:RF(50),
+        height:wp(14),
+        width:wp(14),
         backgroundColor:colors.DarkWhite,
         elevation:5,
         borderRadius:RF(100),
-        ...GST.CENTER
+        ...GST.CENTER,
+        padding:RF(3)
     },
     img:{
-        height:RF(44),
-        width:RF(44),
+        height:"100%",
+        width:"100%",
         resizeMode:"cover",
         borderRadius:RF(100),
     },
     btn:{
-        paddingHorizontal:RF(15),
+        padding:wp(3),
         backgroundColor:colors.blue,
         borderRadius:RF(20),
         ...GST.CENTER,
-        height:RF(40)
     }
 })

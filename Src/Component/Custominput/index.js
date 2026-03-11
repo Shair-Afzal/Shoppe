@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Image, StyleSheet, Touchable, TouchableOpacity } from 'react-native';
-import { RF } from '../../Constant';
+import { RF, wp } from '../../Constant';
 import Eyeicon from '../../assets/SVG/Eyeicon.svg'; // Adjust the path as necessary
 import ImageIcon from '../../assets/SVG/ImageIcon.svg';
 import { Alert } from "react-native";
@@ -132,14 +132,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F8F8F8',
     borderRadius: RF(30),
-    paddingHorizontal: RF(15),
-    paddingVertical: RF(8),
+    paddingHorizontal: wp(3),
+    paddingVertical: wp('1.5%'),
     justifyContent:"space-between"
   },
   input: {
     width:"80%",
     fontSize: RF(14),
     color: '#000',
+    // textAlignVertical: 'top', // For multiline support
   },
   icon: {
     width: RF(20),
