@@ -14,7 +14,7 @@ import styles from './style';
 import CustomInput from '../../../Component/Custominput';
 import PhoneInputComponent from '../../../Component/PhoneInputComponent';
 import CustomButton from '../../../Component/Custombutton';
-import { initialValues, userSchema } from '../../../utils/Schema';
+import { initialValues, SellerSchema, Sellervalues, userSchema } from '../../../utils/Schema';
 import { Formik } from 'formik';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
@@ -29,6 +29,7 @@ import { Alert } from 'react-native';
 import { pickImage } from '../../../Component/Custominput';
 import { registerAccount } from '../../../Redux/slices/Action/Authaction.js';
 import Config from 'react-native-config';
+import { RegisterSellerAccount } from '../../../Redux/slices/Action/Authaction.js';
 
 // Configure Google Sign-In with the new webClientId from the provided JSON
 GoogleSignin.configure({
@@ -37,7 +38,7 @@ GoogleSignin.configure({
   offlineAccess: true,
 });
 
-const CreateAccount = ({ navigation }) => {
+const SellerAccount = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const { user, error, loading } = useSelector(state => state.user);
@@ -67,22 +68,22 @@ const CreateAccount = ({ navigation }) => {
           />
 
           <Text style={styles.txt}>
-            Create {'\n'}
+            Create Seller{'\n'}
             Account
           </Text>
           <View style={styles.innercontainer}>
             <Formik
-              initialValues={initialValues}
-              validationSchema={userSchema}
+              initialValues={Sellervalues}
+              validationSchema={SellerSchema}
               onSubmit={async values => {
                 console.log(values);
 
                 try {
-                  await dispatch(registerAccount(values)).unwrap();
+                  await dispatch(RegisterSellerAccount(values)).unwrap();
 
-                  showSuccessToast('Account Created');
+                  showSuccessToast('Seller Account Created successfully');
 
-                  navigation.navigate('Login');
+                  navigation.navigate('SellerTabs');
                 } catch (err) {
                   showErrorToast(err);
                 }
@@ -106,7 +107,7 @@ const CreateAccount = ({ navigation }) => {
 
                       setselectedimg(image);
 
-                      setFieldValue('profilepic', image); // store full object
+                      setFieldValue('shopLogo', image); // store full object
                     }
                   } catch (error) {
                     console.log('Error picking image:', error);
@@ -116,11 +117,11 @@ const CreateAccount = ({ navigation }) => {
                 return (
                   <>
                     <TouchableOpacity onPress={() => handlepickimage()}>
-                      {values.profilepic == null ? (
+                      {values.shopLogo == null ? (
                         <Cameraicon height={RF(70)} width={RF(70)} />
                       ) : (
                         <Image
-                          source={{ uri: values.profilepic.path }}
+                          source={{ uri: values.shopLogo.path }}
                           style={{
                             height: RF(70),
                             width: RF(70),
@@ -129,111 +130,47 @@ const CreateAccount = ({ navigation }) => {
                         />
                       )}
                     </TouchableOpacity>
-                    {errors.profilepic && touched.profilepic && (
+                    {errors.shopLogo && touched.shopLogo && (
                       <Text
                         style={{ ...GST.subdescription, color: colors.red }}
                       >
-                        {errors.profilepic}
+                        {errors.shopLogo}
                       </Text>
                     )}
                     <View style={styles.inputwrapper}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          backgroundColor: colors.white,
-                          padding: wp(4),
-                          paddingHorizontal: wp(8),
-                          borderRadius: radius.radius3,
-                          elevation: 4,
-                        }}
-                      >
-                        <TouchableOpacity
-                          onPress={() => {
-                            setselect('customer');
-                           setFieldValue('role','customer')
-                          }}
-                        >
-                          <Text
-                            style={{
-                              ...GST.subdescription,
-                              color:
-                                select === 'customer'
-                                  ? colors.blue
-                                  : colors.Black,
-                            }}
-                          >
-                            Customer
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setselect('seller');
-                            setFieldValue('role','seller')
-                          }}
-                        >
-                          <Text
-                            style={{
-                              ...GST.subdescription,
-                              color:
-                                select === 'seller'
-                                  ? colors.blue
-                                  : colors.Black,
-                            }}
-                          >
-                            Seller
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
+                     
                       <CustomInput
-                        placeholder={'username'}
-                        value={values.username}
-                        onChangeText={handleChange('username')}
-                        onBlur={handleBlur('username')}
+                        placeholder={'Shop Name'}
+                        value={values.shopName}
+                        onChangeText={handleChange('shopName')}
+                        onBlur={handleBlur('shopName')}
                         containerStyle={{ paddingVertical: RF(2) }}
                       />
 
-                      {errors.username && touched.username && (
+                      {errors.shopName && touched.shopName && (
                         <Text
                           style={{ ...GST.subdescription, color: colors.red }}
                         >
-                          {errors.username}
+                          {errors.shopName}
                         </Text>
                       )}
 
                       <CustomInput
-                        placeholder={'Email'}
-                        value={values.email}
-                        onChangeText={handleChange('email')}
-                        onBlur={handleBlur('email')}
+                        placeholder={'Shope Description'}
+                        value={values.shopDescription}
+                        onChangeText={handleChange('shopDescription')}
+                        onBlur={handleBlur('shopDescription')}
                         containerStyle={{ paddingVertical: RF(2) }}
                       />
-                      {errors.email && touched.email && (
+                      {errors.shopDescription && touched.shopDescription && (
                         <Text
                           style={{ ...GST.subdescription, color: colors.red }}
                         >
-                          {errors.email}
+                          {errors.shopDescription}
                         </Text>
                       )}
 
-                      <CustomInput
-                        placeholder={'Password'}
-                        rightIcon
-                        value={values.password}
-                        onChangeText={handleChange('password')}
-                        onBlur={handleBlur('password')}
-                        secureTextEntry={show}
-                        eyepress={() => setshow(!show)}
-                        containerStyle={{ paddingVertical: RF(2) }}
-                      />
-                      {errors.password && touched.password && (
-                        <Text
-                          style={{ ...GST.subdescription, color: colors.red }}
-                        >
-                          {errors.password}
-                        </Text>
-                      )}
-
+                      
                       {/* <PhoneInputComponent
                       value={values.phone}
                       onChangeText={text => {
@@ -287,4 +224,4 @@ const CreateAccount = ({ navigation }) => {
   );
 };
 
-export default CreateAccount;
+export default SellerAccount;

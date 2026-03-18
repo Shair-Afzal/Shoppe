@@ -109,7 +109,7 @@ const CustomModel = ({ visible, onClose, deltitile, txt, btn, onpress, onprogres
                 onPress={onClose}
                 activeOpacity={0.8}
               >
-                <Text style={styles.okayButtonText}>Cancel</Text>
+                <Text style={{...styles.okayButtonText,color:colors.white}}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

@@ -1,15 +1,19 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { combineReducers } from "redux";
-import { persistReducer } from "redux-persist";
-import authReducer from "./userslice";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { combineReducers } from 'redux';
+import { persistReducer } from 'redux-persist';
+import authReducer from './userslice';
+import userreducer from './Reducers/Authreducer.js';
 
 const rootReducer = combineReducers({
-  user: authReducer,
+  user: userreducer,
 });
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage: AsyncStorage,
+  // 🔥 Complete user slice ko persist نہ کریں تاکہ loading ہمیشہ false سے شروع ہو
+  blacklist: ['user'],
+  timeout: 0,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

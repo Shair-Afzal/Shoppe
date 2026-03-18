@@ -14,41 +14,83 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors } from '../../../Constant';
 import ImageCropPicker from 'react-native-image-crop-picker';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { UpdateProfile,UpdateSellerProfile } from '../../../Redux/slices/Action/Authaction';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import Loader from '../../../Component/Loader/Loader';
+import { LogoutUser } from '../../../Redux/slices/Action/Authaction';
+import { logout } from '../../../Redux/slices/Reducers/Authreducer';
 // ─── Stored Profile Values (no phone) ─────────────────────────────────────────
-const defaultProfile = {
-  shopName: 'Ahmed Fashion Store',
-  ownerName: 'Ahmed Khan',
-  email: 'ahmed.khan@gmail.com',
-  address: 'Shop #14, Main Market, Lahore',
-  description: 'Premium clothing & accessories. Quality guaranteed. Fast delivery.',
-  logoUri: null,
-};
 
-const INFO_ROWS = [
-  { key: 'ownerName', label: 'Owner Name', icon: '👤' },
-  { key: 'email', label: 'Email', icon: '✉️' },
-  { key: 'address', label: 'Address', icon: '📍' },
-  { key: 'description', label: 'Description', icon: '📝', multiline: true },
-];
+
+
 
 const SellerProfile = () => {
   const insets = useSafeAreaInsets();
+  const dispatch=useDispatch();
+  const {seller,user,loading,error}=useSelector(state => state.user)
+   const INFO_ROWS = [
+  { key: 'ownerName', label: 'Owner Name', icon: '👤' },
+  { key: 'email', label: 'Email', icon: '✉️' },
+  { key: 'description', label: 'Description', icon: '📝', multiline: true },
+];
+const defaultProfile = {
+  shopName: seller?.shopName,
+  ownerName: user?.username,
+  email: user?.email,
+  description: seller?.shopDescription,
+  logoUri: seller?.shopLogo,
+  profilepic:user?.profilepic
+};
   const [profile, setProfile] = useState(defaultProfile);
   const [editVisible, setEditVisible] = useState(false);
   const [draft, setDraft] = useState(defaultProfile);
+ 
 
   const openEdit = () => {
     setDraft({ ...profile });
     setEditVisible(true);
+    console.log("seller",seller)
+    console.log("user",user)
+
   };
 
-  const saveEdit = () => {
-    if (!draft.shopName.trim()) return Alert.alert('Required', 'Shop name cannot be empty');
-    if (!draft.ownerName.trim()) return Alert.alert('Required', 'Owner name cannot be empty');
-    setProfile({ ...draft });
+  const saveEdit = async () => {
+    try{
+      await Promise.all([
+        dispatch(UpdateProfile({
+        username: draft.ownerName,
+        email: draft.email,
+        profilepic:draft.profilepic
+      })).unwrap(),
+      
+      dispatch(UpdateSellerProfile({
+        shopName: draft.shopName,
+        shopDescription: draft.description,
+        shopLogo: draft.logoUri,
+      })).unwrap()
+      ])
+
+      setProfile(draft );
     setEditVisible(false);
+    showSuccessToast("Account is updated ")
+
+    }catch(err){
+      console.log(err)
+      showErrorToast(err)
+    }
+   
+    
   };
+  const Logout=async()=>{
+    try{
+      const res=await dispatch(LogoutUser())
+      return res
+
+    }catch(err){
+      showErrorToast(err)
+    }
+  }
 
   const pickLogo = () => {
     ImageCropPicker.openPicker({
@@ -67,6 +109,7 @@ const SellerProfile = () => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {loading&&<Loader/>}
       <StatusBar backgroundColor={colors.sellerPrimary} barStyle="light-content" />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
@@ -80,8 +123,8 @@ const SellerProfile = () => {
         {/* ── Avatar ── */}
         <View style={styles.avatarWrapper}>
           <View style={styles.avatarRing}>
-            {profile.logoUri
-              ? <Image source={{ uri: profile.logoUri }} style={styles.avatarImg} resizeMode="cover" />
+            {profile?.logoUri
+              ? <Image source={{ uri: profile?.logoUri }} style={styles.avatarImg} resizeMode="cover" />
               : (
                 <View style={styles.avatarPlaceholder}>
                   <Text style={styles.avatarInitial}>{initial}</Text>
@@ -92,8 +135,8 @@ const SellerProfile = () => {
 
         {/* ── Name & Badges ── */}
         <View style={styles.nameBlock}>
-          <Text style={styles.shopName}>{profile.shopName}</Text>
-          <Text style={styles.ownerSub}>{profile.ownerName}</Text>
+          <Text style={styles.shopName}>{profile?.shopName}</Text>
+          <Text style={styles.ownerSub}>{profile?.ownerName}</Text>
           <View style={styles.badgesRow}>
             <View style={styles.badgeGreen}>
               <Text style={styles.badgeGreenTxt}>✓ Verified</Text>
@@ -140,6 +183,9 @@ const SellerProfile = () => {
         <TouchableOpacity style={styles.editBtn} onPress={openEdit} activeOpacity={0.85}>
           <Text style={styles.editBtnTxt}>✏️  Edit Profile</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={{...styles.editBtn,backgroundColor:colors.red}} onPress={Logout} activeOpacity={0.85}>
+          <Text style={styles.editBtnTxt}>Logout</Text>
+        </TouchableOpacity>
 
       </ScrollView>
 
@@ -150,7 +196,7 @@ const SellerProfile = () => {
         transparent={false}
         onRequestClose={() => setEditVisible(false)}>
         <View style={[styles.modalRoot, { paddingTop: insets.top }]}>
-
+          {loading && <Loader />}
           {/* Modal Header */}
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setEditVisible(false)} style={styles.headerBtn}>

@@ -25,10 +25,10 @@ import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import { object } from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { forgetpassword } from '../../../Redux/slices/userslice';
+import { ResetPassword } from '../../../Redux/slices/Action/Authaction';
 const ConfirmPassword = ({ navigation }) => {
-  const [loading, setLoading] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const user=useSelector(state=>state.user)
+  const {loading,error,resetToken}=useSelector(state=>state.user)
   const dispatch=useDispatch()
   
 
@@ -75,16 +75,20 @@ const ConfirmPassword = ({ navigation }) => {
         <Formik
           initialValues={ConfirmPasswordvalues}
           validationSchema={ConfirmPasswordSchema}
-          onSubmit={(values)=>{
-            dispatch(forgetpassword(values.repeatPassword))
-      setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      showSuccessToast('Password changed succcesfully');
-      setTimeout(() => {
-        navigation.navigate('Login');
-      }, 1500);
-    }, 1500);}}
+          onSubmit={async (values)=>{
+            console.log("resetToken",resetToken)
+            try{
+              const res=await dispatch(ResetPassword({password:values.password,confirmpassword:values.confirmpassword,resetToken:resetToken}))
+              if(res?.meta?.requestStatus === "fulfilled"){
+                showSuccessToast("You password is Updated")
+                navigation.navigate('Login')
+                return res.data
+              }
+            }catch(err){
+              showErrorToast(err.message)
+
+            }
+          }}
         >
           {({
             handleChange,
@@ -102,13 +106,13 @@ const ConfirmPassword = ({ navigation }) => {
                   inputStyle={styles.inputStyle}
                   containerStyle={{ borderRadius: RF(5) }}
                   secureTextEntry={true}
-                  onChangeText={handleChange('newPassword')}
-                  onBlur={handleBlur('newPassword')}
-                  value={values.newPassword}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
                 />
                 {
-                  errors.newPassword&&touched.newPassword&&(
-                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.newPassword}</Text>
+                  errors.password&&touched.password&&(
+                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.password}</Text>
                   )
                 }
                 
@@ -117,13 +121,13 @@ const ConfirmPassword = ({ navigation }) => {
                   inputStyle={styles.inputStyle}
                   containerStyle={{ borderRadius: RF(5) }}
                   secureTextEntry={true}
-                  onChangeText={handleChange('repeatPassword')}
-                  onBlur={handleBlur('repeatPassword')}
-                  value={values.repeatPassword}
+                  onChangeText={handleChange('confirmpassword')}
+                  onBlur={handleBlur('confirmpassword')}
+                  value={values.confirmpassword}
                 />
                 {
-                  errors.repeatPassword&&touched.repeatPassword&&(
-                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.repeatPassword}</Text>
+                  errors.confirmpassword&&touched.confirmpassword&&(
+                    <Text style={{...GST.subdescription,color:colors.red}}>{errors.confirmpassword}</Text>
                   )
                 }
                
@@ -131,7 +135,7 @@ const ConfirmPassword = ({ navigation }) => {
 
               {!keyboardVisible && (
                 <BotttomButtons
-                  onPress={() => handleSubmit()}
+                  onPress={handleSubmit}
                   arrowpress={() => cancelsumbit()}
                   btnTitle={'Save'}
                   containerStyle={{ paddingHorizontal: RF(20) }}

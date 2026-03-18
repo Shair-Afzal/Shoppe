@@ -20,7 +20,8 @@ export const pickImage = async () => {
               const image = await ImagePicker.openCamera({
                 width: 300,
                 height: 400,
-                cropping: true,
+                cropping: false, 
+                compressImageQuality: 0.6, 
               });
               resolve(image);
             } catch (error) {
@@ -35,7 +36,8 @@ export const pickImage = async () => {
               const image = await ImagePicker.openPicker({
                 width: 300,
                 height: 400,
-                cropping: true,
+                cropping: false, 
+                compressImageQuality: 0.6,
               });
               resolve(image);
             } catch (error) {

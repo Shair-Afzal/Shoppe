@@ -3,7 +3,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import AuthStack from './Src/Navigation/Authstack'
  import Toast from 'react-native-toast-message';
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { store } from './Src/Redux/store';
 import Bottomtab from './Src/Navigation/MainStack/Bottomtab';
 import { colors } from './Src/Constant';
@@ -17,14 +17,17 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import VariationModal from './Src/Component/VaritaionModal';
 import SellerStack from './Src/Navigation/MainStack/SellerStack';
 import AdminStack from './Src/Navigation/MainStack/AdminStack';
+import Route from './Src/Navigation/Route.js';
 
 
 
 
 const App = () => {
+  
   return (
     <SafeAreaProvider>
     <Provider store={store}>
+     
     <NavigationContainer>
 
       <StatusBar
@@ -37,8 +40,9 @@ const App = () => {
       {/* <Bottomtab/> */}
       {/* <AppStack/> */}
       {/* <SellerStack/> */}
-      <AdminStack/>
+      {/* <AdminStack/> */}
       {/* <CustomModel  /> */}
+      <Route/>
       
       
       

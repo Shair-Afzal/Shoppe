@@ -23,25 +23,10 @@ import { setLoginEmail } from '../../../Redux/slices/userslice';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const LoginScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
   const insets = useSafeAreaInsets();
-
+  const [loading, setLoading] = useState(false);
+  
  
-  const handleLogin = async (email) => {
-    setLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
-      dispatch(setLoginEmail(email));
-      showSuccessToast('Email is  valid!');
-      navigation.navigate('Password');
-    } catch (error) {
-      showErrorToast('Something went wrong, try again!');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <View style={{ ...GST.FLEX, paddingBottom: insets.bottom }}>
@@ -75,7 +60,16 @@ const LoginScreen = ({ navigation }) => {
             <Formik
               initialValues={{ email: '' }}
               validationSchema={LoginSchema}
-              onSubmit={values => handleLogin(values.email)}
+              onSubmit={values =>{
+                setLoading(true)
+                setTimeout(()=>{
+                 setLoading(false)
+                   navigation.navigate('Password',{email:values})
+                },1500)
+               
+               
+                
+              }}
             >
               {({
                 handleChange,
@@ -107,7 +101,7 @@ const LoginScreen = ({ navigation }) => {
                   <CustomButton
                     btnTitle={'Next'}
                     style={styles.btnstyle}
-                    onPress={handleSubmit}
+                   onPress={()=>handleSubmit()}
                   />
                   <TouchableOpacity
                     style={styles.cancelbtn}

@@ -2,10 +2,10 @@ import React from 'react';
 import { View, ActivityIndicator, StyleSheet, Modal } from 'react-native';
 import GST, { colors, RF} from '../../Constant';
 
-const Loader = ({ }) => {
+const Loader = ({style }) => {
  
   return (
-    <View style={styles.overlay}>
+    <View style={[styles.overlay,style]}>
   <ActivityIndicator size={"large"} color={colors.blue}/>
 
 </View>

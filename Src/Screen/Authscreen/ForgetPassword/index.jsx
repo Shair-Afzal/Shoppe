@@ -23,28 +23,57 @@ import { otpSchema, PasswordSchema } from '../../../utils/Schema';
 import Loader from '../../../Component/Loader/Loader';
 import CustomButton from '../../../Component/Custombutton';
 import CustomModel from '../../../Component/CustomModel';
-const ForgetPassword = ({ navigation }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { ForgetPasword,VerifyOtp } from '../../../Redux/slices/Action/Authaction'
+
+const ForgetPassword = ({ navigation,route }) => {
+  const dispatch=useDispatch()
+  const {email}=route.params
+  const {error,loading}=useSelector(state=>state.user)
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const formikRef = useRef();
-  const [loading, setLoading] = useState(false);
+ 
   const [showmodel,setmodel]=useState(false)
-  const [error,seterror]=useState(false)
+  // const [error,seterror]=useState(false)
 
   const [selectedOption, setSelectedOption] = useState('SMS');
   const [count, setcount] = useState(0);
-  const Submit = () => {
+const Submit = async () => {
+
+  try {
+
     if (selectedOption === 'SMS') {
-      setcount(count + 1);
-      if(count==1){
-        setmodel(true)
-      }
-    } else if (selectedOption === 'Email') {
-      navigation.navigate('ConfirmPassword');
-      setcount(0);
+
+     
+
+      const res = await dispatch(ForgetPasword({ email:email }))
+      console.log("API RESPONSE:", res)
       
+
+    
+
+      if (res?.meta?.requestStatus === "fulfilled") {
+
+        showSuccessToast("OTP is send on email")
+
+        setcount(prev => prev + 1)
+
+      } else {
+
+        showErrorToast(res.payload||"Something went wrong")
+
+      }
+
     }
-    formikRef.current.submitForm();
-  };
+
+  } catch (err) {
+
+
+    showErrorToast(err.message)
+
+  }
+
+};
   const cancelsumbit = () => {
     if (count > 0) {
       setcount(count - 1);
@@ -68,9 +97,25 @@ const ForgetPassword = ({ navigation }) => {
   return (
     <Formik
       innerRef={formikRef}
-      initialValues={{ password: '' }}
+      initialValues={{ otp: '' }}
       validationSchema={otpSchema}
-      onSubmit={values => {
+      onSubmit={async (values) => {
+          console.log("FORM SUBMIT VALUES:", values)
+        try{
+          const res=await dispatch(VerifyOtp({ otp: values.otp }))
+            if(res?.meta?.requestStatus === "fulfilled"){
+      showSuccessToast("Otp is verified Successfully")
+      navigation.navigate("ConfirmPassword")
+    }else{
+      showErrorToast(res.payload || "Invalid OTP")
+    }
+
+         
+
+        }catch(err){
+          showErrorToast(err)
+
+        }
         
       }}
     >
@@ -80,8 +125,12 @@ const ForgetPassword = ({ navigation }) => {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <CustomModel visible={showmodel} onClose={()=>setmodel(false)}/>
-          {loading && <Loader />}
+           
           <View style={GST.FLEX}>
+            {
+              loading&&<Loader/>
+            }
+           
             <View style={{ height: RF(140) }}>
               <RightBubble style={styles.bg} />
             </View>
@@ -92,11 +141,11 @@ const ForgetPassword = ({ navigation }) => {
             <Text style={styles.txt}>
               {count == 0
                 ? 'How you would like to restore\n your password?'
-                : 'Enter 4-digits code we sent you on your phone number'}
+                : 'Enter 4-digits code we sent you on your email'}
             </Text>
             {count == 0 ? (
               <View style={styles.btncontainer}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.btn}
                   onPress={() => setSelectedOption('SMS')}
                 >
@@ -114,14 +163,14 @@ const ForgetPassword = ({ navigation }) => {
                       ></TouchableOpacity>
                     )}
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   style={{ ...styles.btn, backgroundColor: colors.lightpink }}
-                  onPress={() => setSelectedOption('Email')}
+                  onPress={() => setSelectedOption('SMS')}
                 >
                   <View style={GST.ROW}>
                     <Text style={styles.emailtxt}>Email</Text>
-                    {selectedOption === 'Email' ? (
+                    {selectedOption === 'SMS' ? (
                       <Check
                         height={RF(20)}
                         width={RF(20)}
@@ -136,14 +185,18 @@ const ForgetPassword = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             ) : (
-              <>
+              
+              
+                
+                 <>
+                  
                 <Text style={{ ...GST.description, textAlign: 'center' }}>
-                  +98*******00
+                  {email.email}
                 </Text>
 
                 <View style={styles.otpwarapper}>
                   <OtpInput
-                    numberOfDigits={4}
+                    numberOfDigits={6}
                     focusColor={colors.blue}
                     secureTextEntry={true}
                     type="numeric"
@@ -157,23 +210,14 @@ const ForgetPassword = ({ navigation }) => {
                       focusStickStyle: { height: RF(10) },
                       pinCodeTextStyle: { fontSize: RF(14) },
                     }}
-                    onTextChange={text => setFieldValue('password', text)}
-                    onFilled={text => {
-                      if (text.trim() === '2234') {
-                        setLoading(true);
-                        setTimeout(() => {
-                          setLoading(false);
-                          showSuccessToast('OTP verified successfully');
-                          setTimeout(() => {
-                            navigation.navigate('ConfirmPassword');
-                          }, 1500);
-                        }, 1500);
-                      } else {
-                        setFieldTouched('password', true);
-                        setFieldValue('password', text);
-                        seterror(true)
-                      }
-                    }}
+                    onTextChange={text => setFieldValue('otp', text)}
+                   onFilled={(text) => {
+  formikRef.current?.setFieldValue('otp', text)
+
+  setTimeout(() => {
+    formikRef.current?.handleSubmit()
+  }, 200)
+}}
                   />
                 </View>
                 {error&& (
@@ -182,7 +226,13 @@ const ForgetPassword = ({ navigation }) => {
                   </Text>
                 )}
               </>
-            )}
+               
+              )
+             
+              
+             
+             
+            }
             {
               !keyboardVisible&&
             
@@ -195,6 +245,7 @@ const ForgetPassword = ({ navigation }) => {
             />
 }
           </View>
+          
         </KeyboardAvoidingView>
       )}
     </Formik>

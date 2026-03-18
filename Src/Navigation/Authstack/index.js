@@ -8,6 +8,7 @@ import PasswordScreen from '../../Screen/Authscreen/PasswordScreen';
 import ForgetPassword from '../../Screen/Authscreen/ForgetPassword';
 import ConfirmPassword from '../../Screen/Authscreen/ConfirmPassword';
 import OnBondingScreen from '../../Screen/Authscreen/OnbondingScreen';
+import SellerAccount from '../../Screen/Authscreen/SellerAccount';
 
 const AuthStack = () => {
     const Stack = createNativeStackNavigator();

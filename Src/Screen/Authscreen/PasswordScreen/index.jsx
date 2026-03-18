@@ -12,18 +12,13 @@ import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginWithPassword } from '../../../Redux/slices/userslice';
+import { LoginUser } from '../../../Redux/slices/Action/Authaction';
 
-const PasswordScreen = ({ navigation }) => {
+const PasswordScreen = ({ navigation,route }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+const {loading,error,user,accesstoken}=useSelector(state=>state.user)
   const dispatch = useDispatch();
-const email = useSelector(state => state.user.tempEmail);
-const error = useSelector(state => state.user.error);
-  useEffect(() => {
-    if (error) {
-      showErrorToast(error);  // 👈 show toast whenever error updates
-    }
-  }, [error]);
+  const {email}=route.params
 
   useEffect(() => {
     const show = Keyboard.addListener('keyboardDidShow', () =>
@@ -32,41 +27,33 @@ const error = useSelector(state => state.user.error);
     const hide = Keyboard.addListener('keyboardDidHide', () =>
       setKeyboardVisible(false),
     );
+   
     return () => {
       show.remove();
       hide.remove();
     };
   }, []);
 
-const handleLogin = async (password) => {
-  setLoading(true);
-  try {
-    const result = await dispatch(loginWithPassword({ email, password }));
 
-    if (result.success) {
-      showSuccessToast('Login Successfully');
-      setTimeout(() => {
-        navigation.navigate('home');
-      }, 1500);
-    } else {
-      showErrorToast(result.error || 'Your email or password is not correct');
-    }
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <View style={GST.FLEX}>
       {loading && <Loader />}
       <BubbleIconComponent style={{ position: 'absolute', top: 0, left: 0 }} />
       <View style={{ height: RF(300) }}>
-        <ProfilePhoto title={`Hello, ${email || 'User'}!!`} />
+        <ProfilePhoto title={`Hello, ${email.email}`} />
       </View>
       <Formik
         initialValues={{ password: '' }}
         validationSchema={PasswordSchema}
-        onSubmit={values => handleLogin(values.password)}
+        onSubmit={async (values) =>{
+          try {
+            await dispatch(LoginUser({email:email.email,password:values.password})).unwrap()
+            showSuccessToast("User Login suucessfully")
+          } catch(err){
+            showErrorToast(err)
+          }
+        }}
       >
         {({
           handleSubmit,
@@ -74,39 +61,39 @@ const handleLogin = async (password) => {
           touched,
           setFieldValue,
           setFieldTouched,
+          validateForm
         }) => (
           <>
             <View style={styles.container}>
               <Text style={GST.subdescription}>Type your password</Text>
 
               <View style={styles.otpwarapper}>
-                <OtpInput
-                  numberOfDigits={8}
-                  focusColor={colors.blue}
-                  secureTextEntry={true}
-                  type="alphanumeric"
-                  blurOnFilled={true}
-                  autoFocus={true}
-                  theme={{
-                    colors: {
-                      primary: colors.blue,
-                    },
-                    pinCodeContainerStyle: styles.otpcontainer,
-                    focusStickStyle: { height: RF(10) },
-                    pinCodeTextStyle: { fontSize: RF(14) },
-                    filledPinCodeContainerStyle: {
-                      backgroundColor: colors.blue,
-                    },
-                  }}
-                  onTextChange={text => setFieldValue('password', text)}
-                  onFilled={text => {
-                    setFieldTouched('password', true);
-                    setFieldValue('password', text);
-                    handleLogin(text); // ✅ call login logic when OTP filled
-                  }}
-                />
+             <OtpInput
+  numberOfDigits={8}
+  focusColor={colors.blue}
+  secureTextEntry={true}
+  type="alphanumeric"
+  blurOnFilled={true}
+  autoFocus={true}
+  theme={{
+    colors: { primary: colors.blue },
+    pinCodeContainerStyle: styles.otpcontainer,
+    focusStickStyle: { height: RF(10) },
+    pinCodeTextStyle: { fontSize: RF(14) },
+    filledPinCodeContainerStyle: { backgroundColor: colors.blue },
+  }}
+  onTextChange={text => setFieldValue('password', text)}
+  onFilled={(text) => {
+  setFieldValue('password', text);
 
-                {errors.password && touched.password && (
+  setTimeout(() => {
+    handleSubmit();
+  }, 100);
+}}
+
+/>
+
+                {errors.password && touched.password  && (
                   <Text
                     style={{ ...GST.subdescription, color: colors.red }}
                   >
@@ -114,9 +101,9 @@ const handleLogin = async (password) => {
                   </Text>
                 )}
 
-                {errors.password && (
+                {errors.password && touched.password || error &&(
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('ForgetPassword')}
+                    onPress={() => navigation.navigate('ForgetPassword',{email:email.email})}
                     activeOpacity={0.7}
                     style={styles.forgetcon}
                   >

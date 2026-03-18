@@ -8,37 +8,23 @@ const userSchema = Yup.object().shape({
   password: Yup.string()
     .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
-
-  countryCode: Yup.string().required('Country code is required'),
-
-  phone: Yup.string()
-    .required('Phone number is required')
-    .test('is-valid-phone', 'phone number length is not correct ', function (value) {
-      const { countryCode } = this.parent;
-      if (!value || !countryCode) return false;
-
-      try {
-        const phoneNumber = parsePhoneNumberFromString(value, countryCode);
-        return phoneNumber ? phoneNumber.isValid() : false;
-      } catch (err) {
-        return false;
-      }
-    })
-    .test('is-correct-length', 'Phone number length is not valid', function (value) {
-      const { countryCode } = this.parent;
-      if (!value || !countryCode) return false;
-
-      try {
-        const phoneNumber = parsePhoneNumberFromString(value, countryCode);
-        if (!phoneNumber) return false;
-
-        // Ensures the number matches the required length for the country
-        return phoneNumber.isPossible();
-      } catch (err) {
-        return false;
-      }
-    }),
+   username:Yup.string()
+     .required("Enter username"),
+   role:Yup.string()
+    .required("Role is required"),
+  profilepic: Yup.mixed().required("Profile image required")
+     
+    
 });
+
+const SellerSchema=Yup.object().shape({
+  shopName:Yup.string()
+  .required("ShopName is required"),
+   shopDescription:Yup.string()
+  .required("ShopName is required"),
+  shopLogo:Yup.mixed().required(" shop Logo required")
+
+})
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -51,30 +37,36 @@ const PasswordSchema = Yup.object().shape({
     .required('Password is required'),
 });
 const ConfirmPasswordSchema = Yup.object().shape({
-  newPassword: Yup.string()
-    .min(8, 'Password must be at least 6 characters')
+  password: Yup.string()
+    .min(8, 'Password must be at least 8 characters')
     .required('New Password is required'),
 
-  repeatPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
+  confirmpassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
     .required('Repeat Password is required'),
 });
 const initialValues = {
   email: '',
   password: '',
-  phone: '',
-  countryCode: 'PK',
+  username: '',
+  role: '',
+  profilepic:null
 };
 const ConfirmPasswordvalues = {
-  newPassword: '',
-  repeatPassword: '',
+  password: '',
+  confirmpassword: '',
 };
 const otpSchema = Yup.object().shape({
   otp: Yup.string()
     .required('OTP is required')
     // .matches(/^\d+$/, 'OTP must contain only digits')
-    .length(4, 'OTP must be exactly 4 digits '),
+    .length(6, 'OTP must be exactly 6 digits '),
 });
+const Sellervalues={
+  shopName:"",
+  shopDescription:"",
+  shopLogo:null,
+}
 export {
   initialValues,
   userSchema,
@@ -83,5 +75,7 @@ export {
   ConfirmPasswordSchema,
   ConfirmPasswordvalues,
   otpSchema,
+  Sellervalues,
+  SellerSchema
 };
 export default userSchema;

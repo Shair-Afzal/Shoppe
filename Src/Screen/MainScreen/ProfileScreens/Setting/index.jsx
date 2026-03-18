@@ -6,12 +6,25 @@ import Righticon from '../../../../assets/SVG/Righticon.svg';
 import CustomModel from '../../../../Component/CustomModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './style';
+import { useDispatch, useSelector } from 'react-redux';
+import { LogoutUser } from '../../../../Redux/slices/Action/Authaction';
+import { showErrorToast } from '../../../../utils/Toast';
+import Loader from '../../../../Component/Loader/Loader';
 
 const Setting = ({ navigation }) => {
   const [model, setmodel] = useState(false);
-  const del = () => {
+  const {loading,error}=useSelector(state => state.user)
+  const dispatch=useDispatch()
+  const del = async () => {
+    try{
     setmodel(false);
-    navigation.navigate('Login');
+   const res=await dispatch(LogoutUser()).unwrap()
+  return  res.data
+    }catch(err){
+      console.log(err)
+      showErrorToast(err)
+
+    }
   };
   const insert = useSafeAreaInsets();
 
@@ -20,6 +33,7 @@ const Setting = ({ navigation }) => {
       contentContainerStyle={[styles.scrollContainer, { paddingTop: insert.top }]}
       showsVerticalScrollIndicator={false}
     >
+      {loading&&<Loader/>}
       <CustomModel
         deltitile={true}
         txt

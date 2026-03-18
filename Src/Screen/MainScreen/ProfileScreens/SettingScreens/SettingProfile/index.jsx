@@ -1,17 +1,57 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
-import GST, { colors, RF } from '../../../../../Constant';
+import React, { useEffect, useState } from 'react';
+import GST, { colors, RF, wp } from '../../../../../Constant';
 import CustomHeader from '../../../../../Component/CustomHeader';
 import CustomInput, { pickImage } from '../../../../../Component/Custominput';
 import Buttonicon from '../../../../../assets/SVG/Buttonicon.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './style'; 
+import { useDispatch, useSelector } from 'react-redux';
+import { UserProfile,UpdateProfile } from '../../../../../Redux/slices/Action/Authaction';
+import { showErrorToast, showSuccessToast } from '../../../../../utils/Toast';
+import CustomButton from '../../../../../Component/Custombutton';
+import { updateProfile } from '@react-native-firebase/auth';
+import Loader from '../../../../../Component/Loader/Loader';
 
-const SettingProfile = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [name, setName] = useState('Romina');
-  const [email, setEmail] = useState('gmail@example.com');
-  const [password, setPassword] = useState('12345678');
+const SettingProfile = ({navigation}) => {
+    const dispatch=useDispatch();
+  const {user,loading,error}=useSelector(state => state.user)
+    const fetch= async ()=>{
+
+   console.log("user",user)
+    try{
+    const res =await dispatch(UserProfile(user?._id))
+    
+    return res
+    }catch(err){
+      showErrorToast(err)
+    }
+
+  }
+
+  useEffect( ()=>{
+    fetch()
+    
+  },[])
+
+  
+  const [selectedImage, setSelectedImage] = useState(user?.profilepic);
+  const [username, setName] = useState(user?.username);
+  const [email, setEmail] = useState(user?.email);
+  const handlesumbit=async()=>{
+    try{
+    const res=await dispatch(UpdateProfile({username:username,email:email,profilepic:selectedImage})).unwrap()
+     showSuccessToast("user profile is updated")
+    return res.data
+   
+    }catch(err){
+      console.log("erroris",err)
+      showErrorToast(err.message)
+    }
+  }
+ 
+
+
 
   const handlePickImage = async () => {
     try {
@@ -28,15 +68,22 @@ const SettingProfile = () => {
 
   return (
     <View style={[GST.MAIN, styles.main, { paddingTop: insert.top }]}>
-      <CustomHeader name={'Settings'} descrip={'Your Profile'} />
+      {
+        loading&&
+        <Loader style={{width:"100%",alignSelf:"center",backgroundColor:""}}/>
 
-      {/* Profile Image */}
+       }
+      <CustomHeader name={'Settings'} descrip={'Your Profile'} />
+       
+    
       <View style={styles.avatarContainer}>
         <Image
           source={
             selectedImage == null
               ? require('../../../../../assets/Images/avatar.png')
-              : { uri: selectedImage.path }
+              : typeof selectedImage === 'string'
+      ? { uri: selectedImage } 
+      : { uri: selectedImage.path } 
           }
           style={styles.avatar}
         />
@@ -48,10 +95,10 @@ const SettingProfile = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Input Fields */}
+
       <View style={styles.inputWrapper}>
         <CustomInput
-          value={name}
+          value={username}
           containerStyle={styles.inputContainer}
           onChangeText={setName}
         />
@@ -60,13 +107,9 @@ const SettingProfile = () => {
           containerStyle={styles.inputContainer}
           onChangeText={setEmail}
         />
-        <CustomInput
-          value={password}
-          secureTextEntry={true}
-          containerStyle={styles.inputContainer}
-          onChangeText={setPassword}
-        />
+        
       </View>
+      <CustomButton btnTitle={"Edit"} onPress={handlesumbit} style={{position:"absolute",bottom:RF(20),alignSelf:"center"}}/>
     </View>
   );
 };
