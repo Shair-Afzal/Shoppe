@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -12,6 +12,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors, fontSize, fontFamily, radius } from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
 import ActiveProfile from '../../../assets/SVG/Activeprofile.svg';
+import { AllSellers } from '../../../Redux/slices/Action/Authaction';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../../Component/Loader/Loader';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import { SellerStatus } from '../../../Redux/slices/Action/Authaction';
+
 
 const sellersData = [
     { id: 'sl1', name: 'TechShop PK', owner: 'Kamran Mirza', email: 'kamran@techshop.pk', products: 48, revenue: '$4,200', status: 'Approved', joined: 'Oct 2024' },
@@ -28,14 +34,48 @@ const STATUS_COLOR = {
 };
 
 const ManageSellers = ({ navigation }) => {
+    
+    
     const insets = useSafeAreaInsets();
-    const [search, setSearch] = useState('');
-    const [sellers, setSellers] = useState(sellersData);
+    const {scurrentpage,stotalpage,sisfetchmore,allSellers,loading}=useSelector(state => state.user)
+    const disptach=useDispatch()
+
+    const fetchdata=async ()=>{
+        try{
+            const res=await disptach(AllSellers({page:1,limit:3})).unwrap()
+ showSuccessToast("data is fectch successfully")
+        console.log("data",allSellers)
+        return res
+
+
+       }catch(err){
+        showErrorToast(err)
+        }
+    }
+    useEffect(()=>{
+        fetchdata()
+    },[])
+    const loadMore = async () => {
+      if (scurrentpage <stotalpage && sisfetchmore) {
+        await disptach(AllUsers({ page: scurrentpage + 1, limit: 3 }));
+      }
+    };
+    const handleStatusChange = async (sellerId, status) => {
+  try {
+    await disptach(SellerStatus({ sellerId, status })).unwrap();
+    showSuccessToast(`Seller ${status} successfully`);
+  } catch (err) {
+    showErrorToast(err);
+  }
+};
+        const [search, setSearch] = useState('');
+    // const [sellers, setSellers] = useState(sellersData);
+    const sellers=allSellers
 
     const filtered = sellers.filter(
         s =>
-            s.name.toLowerCase().includes(search.toLowerCase()) ||
-            s.owner.toLowerCase().includes(search.toLowerCase()),
+            s.shopName.toLowerCase().includes(search.toLowerCase()) ||
+            s.email.toLowerCase().includes(search.toLowerCase()),
     );
 
     const changeStatus = (id, newStatus) => {
@@ -53,23 +93,23 @@ const ManageSellers = ({ navigation }) => {
                         <ActiveProfile width={wp('8%')} height={wp('8%')} />
                     </View>
                     <View style={styles.shopInfo}>
-                        <Text style={styles.shopName}>{item.name}</Text>
-                        <Text style={styles.ownerTxt}>Owner: {item.owner}</Text>
-                        <Text style={styles.emailTxt}>{item.email}</Text>
+                        <Text style={styles.shopName}>{item?.shopName}</Text>
+                        <Text style={styles.ownerTxt}>Owner: {item?.user?.username}</Text>
+                        <Text style={styles.emailTxt}>{item?.user?.email}</Text>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-                        <Text style={[styles.statusTxt, { color: sc.color }]}>{item.status}</Text>
+                        <Text style={[styles.statusTxt, { color: sc.color }]}>{item?.status}</Text>
                     </View>
                 </View>
 
                 <View style={styles.metaRow}>
                     <View style={styles.metaChip}>
-                        <Text style={styles.metaVal}>{item.products}</Text>
+                        <Text style={styles.metaVal}>{item.products||0}</Text>
                         <Text style={styles.metaLabel}>Products</Text>
                     </View>
                     <View style={styles.metaDivider} />
                     <View style={styles.metaChip}>
-                        <Text style={styles.metaVal}>{item.revenue}</Text>
+                        <Text style={styles.metaVal}>{item.revenue||0}</Text>
                         <Text style={styles.metaLabel}>Revenue</Text>
                     </View>
                     <View style={styles.metaDivider} />
@@ -79,34 +119,34 @@ const ManageSellers = ({ navigation }) => {
                     </View>
                 </View>
 
-                {item.status === 'Pending' && (
+                {item.status === 'pending' && (
                     <View style={styles.actionRow}>
                         <TouchableOpacity
                             style={[styles.actBtn, { backgroundColor: colors.sellerSuccess }]}
-                            onPress={() => changeStatus(item.id, 'Approved')}
+                            onPress={() => handleStatusChange(item._id, 'approved')}
                             activeOpacity={0.8}>
                             <Text style={styles.actBtnTxt}>✓ Approve</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.actBtn, { backgroundColor: colors.sellerError }]}
-                            onPress={() => changeStatus(item.id, 'Rejected')}
+                            onPress={() => handleStatusChange(item._id, 'rejected')}
                             activeOpacity={0.8}>
                             <Text style={styles.actBtnTxt}>✕ Reject</Text>
                         </TouchableOpacity>
                     </View>
                 )}
-                {item.status === 'Approved' && (
+                {item.status === 'approved' && (
                     <TouchableOpacity
                         style={[styles.actBtnFull, { backgroundColor: '#FEE2E2', borderColor: colors.sellerError }]}
-                        onPress={() => changeStatus(item.id, 'Rejected')}
+                        onPress={() => handleStatusChange(item._id, 'rejected')}
                         activeOpacity={0.8}>
                         <Text style={[styles.actBtnFullTxt, { color: colors.sellerError }]}>Suspend Seller</Text>
                     </TouchableOpacity>
                 )}
-                {item.status === 'Rejected' && (
+                {item.status === 'rejected' && (
                     <TouchableOpacity
                         style={[styles.actBtnFull, { backgroundColor: '#D1FAE5', borderColor: colors.sellerSuccess }]}
-                        onPress={() => changeStatus(item.id, 'Approved')}
+                        onPress={() => handleStatusChange(item._id, 'approved')}
                         activeOpacity={0.8}>
                         <Text style={[styles.actBtnFullTxt, { color: colors.sellerSuccess }]}>Reinstate Seller</Text>
                     </TouchableOpacity>
@@ -118,7 +158,7 @@ const ManageSellers = ({ navigation }) => {
     return (
         <View style={[styles.root, { paddingTop: insets.top }]}>
             <StatusBar barStyle="light-content" backgroundColor={colors.sellerDark} />
-
+               {loading&&<Loader/>}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.7}>
                     <LeftArrow width={wp('5%')} height={wp('5%')} />
@@ -151,10 +191,15 @@ const ManageSellers = ({ navigation }) => {
 
             <FlatList
                 data={filtered}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={renderSeller}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
+                onEndReached={loadMore}
+                  onEndReachedThreshold={0.5}
+                                ListFooterComponent={
+                    sisfetchmore ? <ActivityIndicator size="small" /> : null
+                  }
             />
         </View>
     );

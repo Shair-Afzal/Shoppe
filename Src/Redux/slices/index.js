@@ -3,9 +3,11 @@ import { combineReducers } from 'redux';
 import { persistReducer } from 'redux-persist';
 import authReducer from './userslice';
 import userreducer from './Reducers/Authreducer.js';
+import productreducer from "./Reducers/Productreducer.js"
 
 const rootReducer = combineReducers({
   user: userreducer,
+  product:productreducer,
 });
 
 const persistConfig = {

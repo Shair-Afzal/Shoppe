@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+
 import Api from "../../../Axios"
 import { showErrorToast } from "../../../utils/Toast";
 
@@ -59,6 +60,8 @@ let type = match ? `image/${match[1]}` : `image/jpeg`;
         err.response?.data?.message ||
         err.message ||
         "Login failed";
+        console.log(err?.response)
+        console.log(err.message)
             return rejectWithValue(message||'Login failed. Please check your credentials and try again.');
         }
 
@@ -95,7 +98,7 @@ let type = match ? `image/${match[1]}` : `image/jpeg`;
             const message =
         err.response?.data?.message ||
         err.message 
-        rejectWithValue(message||"otp is not correct")
+        return rejectWithValue(message||"otp is not correct")
         }
 
     }
@@ -188,6 +191,8 @@ let type = match ? `image/${match[1]}` : `image/jpeg`;
  })
 
  export const UpdateProfile=createAsyncThunk(
+
+
     "/auth/update",
     async({username, email,profilepic},{rejectWithValue})=>{
         const formData=new FormData()
@@ -258,5 +263,99 @@ let type = match ? `image/${match[1]}` : `image/jpeg`;
 
             }catch(err){
                 return rejectWithValue(err?.message)
+            }
+        })
+
+        export const UpdateProfilepic=createAsyncThunk(
+            "auth/pic",
+            
+            async(profilepic,{rejectWithValue})=>{
+                const formData=new FormData()
+                  let localUri =
+         typeof profilepic ==="string"?
+         profilepic:
+          profilepic.uri || profilepic.path;
+
+let filename =
+  profilepic.fileName ||
+  profilepic.filename ||
+  (localUri ? localUri.split('/').pop() : `photo_${Date.now()}.jpg`);
+  let match = /\.(\w+)$/.exec(filename);
+  let type = match ? `image/${match[1]}` : `image/jpeg`;
+                try{
+                      formData.append('profilepic', {
+  uri: Platform.OS === 'android' ? localUri : localUri.replace('file://', ''),
+  name: filename,
+  type,
+})
+                    const res=await Api.put("/users/updateprofilepic",formData,{
+                        headers:{
+                            'Content-Type': 'multipart/form-data', 
+                        }
+                    })
+                    return res.data.data
+
+
+
+                }catch(err){
+                      const message =
+        err.response?.data?.message ||
+        err.message 
+        console.log("error",err)
+                    return rejectWithValue(message||"some think is going wrong")
+
+                }
+
+        }
+
+
+    )
+
+    export const AllUsers=createAsyncThunk(
+        'auth/all',
+        async({page = 1, limit = 3 },{rejectWithValue})=>{
+        try{
+            const res=await Api.get(`/users/all?page=${page}&limit=${limit}`)
+            return res.data.data
+        }catch(err){
+            return rejectWithValue(err?.message)
+
+        }
+    })
+    export const AllSellers=createAsyncThunk(
+        'auth/allseller',
+        async({page = 1, limit = 3 },{rejectWithValue})=>{
+        try{
+            const res=await Api.get(`/Seller/getallsellerprofiles?page=${page}&limit=${limit}`)
+            return res.data.data
+        }catch(err){
+            return rejectWithValue(err?.message)
+
+        }
+    })
+    export const ToggleBlock=createAsyncThunk(
+        'auth/block',
+        async(userId,{rejectWithValue})=>{
+            try{
+                const res=await Api.put(`/users/toogleblock/${userId}`)
+                return res.data.data
+
+            }catch(err){
+                return rejectWithValue(err?.message)
+
+            }
+
+        })
+
+        export const SellerStatus=createAsyncThunk(
+            'auth/status',
+            async({sellerId,status},{rejectWithValue})=>{
+        try{
+                const res=await Api.put(`/Seller/sellerstatus/${sellerId}`,{status})
+                return res.data.data
+
+            }catch(err){
+                return rejectWithValue(err?.message)
+
             }
         })

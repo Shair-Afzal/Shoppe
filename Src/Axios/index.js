@@ -6,7 +6,7 @@ import { store } from "../Redux/store";
 
 const Api = axios.create({
   baseURL:"https://wilfredo-limitary-rosio.ngrok-free.dev/api/v1",
-  timeout: 30000,
+  timeout: 50000,
   headers: {
     "Content-Type": "application/json",
   },

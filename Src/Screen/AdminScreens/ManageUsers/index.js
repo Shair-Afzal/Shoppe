@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -12,6 +12,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors, fontSize, fontFamily, radius } from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
 import InactiveProfile from '../../../assets/SVG/InactiveProfile.svg';
+import { AllUsers } from '../../../Redux/slices/Action/Authaction';
+import { useDispatch, useSelector } from 'react-redux';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import Loader from '../../../Component/Loader/Loader';
+import { ToggleBlock } from '../../../Redux/slices/Action/Authaction';
+import { ActivityIndicator } from 'react-native';
 
 const usersData = [
     { id: 'u1', name: 'Ali Hassan', email: 'ali@gmail.com', orders: 14, status: 'Active', joined: 'Jan 2025' },
@@ -24,35 +30,76 @@ const usersData = [
 ];
 
 const ManageUsers = ({ navigation }) => {
+    const dispatch=useDispatch();
+    const {allusers,currentPage,totalPages, isfetchMore,loading,user}=useSelector(state =>state.user)
+    const fetch = async ()=>{
+       try{
+        const res=await dispatch(AllUsers({ page: 1, limit: 3 })).unwrap()
+        showSuccessToast("data is fectch successfully")
+        console.log(allusers)
+        return res
+
+
+       }catch(err){
+        showErrorToast(err)
+
+
+       }
+    }
+
+    useEffect(()=>{
+        fetch()
+
+
+    },
+        
+[])
+const loadMore = () => {
+  if (currentPage < totalPages && !isfetchMore) {
+    dispatch(AllUsers({ page: currentPage + 1, limit: 3 }));
+  }
+};
     const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
-    const [users, setUsers] = useState(usersData);
+    // const [users, setUsers] = useState(allusers);
+    const users=allusers;
+
 
     const filtered = users.filter(
         u =>
-            u.name.toLowerCase().includes(search.toLowerCase()) ||
+            u.username.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase()),
     );
 
-    const toggleStatus = id => {
-        setUsers(prev =>
-            prev.map(u =>
-                u.id === id
-                    ? { ...u, status: u.status === 'Active' ? 'Blocked' : 'Active' }
-                    : u,
-            ),
-        );
+    const toggleStatus =async (id) => {
+        // setUsers(prev =>
+        //     prev.map(u =>
+        //         u.id === id
+        //             ? { ...u, status: u.status === 'Active' ? 'Blocked' : 'Active' }
+        //             : u,
+        //     ),
+        // );
+        try{
+      const res =await dispatch(ToggleBlock(id)).unwrap()
+      showSuccessToast("you update user status ")
+      console.log("updated user",allusers)
+      return res
+
+        }catch(err){
+            showErrorToast(err)
+
+        }
     };
 
     const renderUser = ({ item }) => {
-        const isActive = item.status === 'Active';
+        const isActive = item.isBlocked;
         return (
             <View style={styles.card}>
                 <View style={styles.avatarCircle}>
                     <InactiveProfile width={wp('7%')} height={wp('7%')} />
                 </View>
                 <View style={styles.info}>
-                    <Text style={styles.userName}>{item.name}</Text>
+                    <Text style={styles.userName}>{item.username}</Text>
                     <Text style={styles.userEmail}>{item.email}</Text>
                     <Text style={styles.userMeta}>
                         Orders: {item.orders}  •  Joined: {item.joined}
@@ -77,13 +124,13 @@ const ManageUsers = ({ navigation }) => {
                             styles.toggleBtn,
                             {
                                 backgroundColor: isActive
-                                    ? colors.sellerError
-                                    : colors.sellerSuccess,
+                                    ? colors.sellerSuccess
+                                    : colors.sellerError,
                             },
                         ]}
-                        onPress={() => toggleStatus(item.id)}
+                        onPress={() => toggleStatus(item._id)}
                         activeOpacity={0.8}>
-                        <Text style={styles.toggleTxt}>{isActive ? 'Block' : 'Unblock'}</Text>
+                        <Text style={styles.toggleTxt}>{isActive ?  'Unblock':'Block' }</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -92,8 +139,11 @@ const ManageUsers = ({ navigation }) => {
 
     return (
         <View style={[styles.root, { paddingTop: insets.top }]}>
-            <StatusBar barStyle="light-content" backgroundColor={colors.sellerDark} />
 
+            <StatusBar barStyle="light-content" backgroundColor={colors.sellerDark} />
+        {
+            loading&&<Loader/>
+        }
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.7}>
@@ -132,10 +182,16 @@ const ManageUsers = ({ navigation }) => {
 
             <FlatList
                 data={filtered}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={renderUser}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={
+    isfetchMore ? <ActivityIndicator size="small" /> : null
+  }
+
             />
         </View>
     );

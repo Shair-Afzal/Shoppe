@@ -85,15 +85,15 @@ const AdminChatList = ({ navigation }) => {
     }
   };
 
-  const handleSearch = (text) => {
+  const handleSearch = text => {
     setSearchText(text);
-    const filtered = chatList.filter((chat) =>
-      chat.userName.toLowerCase().includes(text.toLowerCase())
+    const filtered = chatList.filter(chat =>
+      chat.userName.toLowerCase().includes(text.toLowerCase()),
     );
     setFilteredChat(filtered);
   };
 
-  const handleChatPress = (chat) => {
+  const handleChatPress = chat => {
     navigation.navigate('AdminChatScreen', { chatData: chat });
   };
 
@@ -157,7 +157,11 @@ const AdminChatList = ({ navigation }) => {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Search width={wp('5%')} height={wp('5%')} style={styles.searchIcon} />
+          <Search
+            width={wp('5%')}
+            height={wp('5%')}
+            style={styles.searchIcon}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Search conversations..."
@@ -181,13 +185,17 @@ const AdminChatList = ({ navigation }) => {
           <FlatList
             data={filteredChat}
             renderItem={renderChatItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             showsVerticalScrollIndicator={true}
             scrollIndicatorInsets={{ right: 1 }}
           />
         ) : (
           <View style={styles.emptyContainer}>
-            <BubblesIcon width={wp('15%')} height={wp('15%')} style={{ marginBottom: hp('2%') }} />
+            <BubblesIcon
+              width={wp('15%')}
+              height={wp('15%')}
+              style={{ marginBottom: hp('2%') }}
+            />
             <Text style={styles.emptyText}>
               {searchText ? 'No conversations found' : 'No messages yet'}
             </Text>

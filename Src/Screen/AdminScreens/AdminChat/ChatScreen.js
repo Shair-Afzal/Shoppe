@@ -47,7 +47,7 @@ const AdminChatScreen = ({ route, navigation }) => {
       {
         id: '3',
         sender: 'user',
-        text: 'I ordered a product yesterday but I haven\'t received a confirmation yet',
+        text: "I ordered a product yesterday but I haven't received a confirmation yet",
         timestamp: '10:22 AM',
         isSendByAdmin: false,
       },
@@ -61,7 +61,7 @@ const AdminChatScreen = ({ route, navigation }) => {
       {
         id: '5',
         sender: 'user',
-        text: 'Sure, it\'s #12345',
+        text: "Sure, it's #12345",
         timestamp: '10:27 AM',
         isSendByAdmin: false,
       },
@@ -103,12 +103,18 @@ const AdminChatScreen = ({ route, navigation }) => {
     <View
       style={[
         styles.messageContainer,
-        item.isSendByAdmin ? styles.adminMessageContainer : styles.userMessageContainer,
+        item.isSendByAdmin
+          ? styles.adminMessageContainer
+          : styles.userMessageContainer,
       ]}
     >
       {!item.isSendByAdmin && (
         <Image
-          source={typeof chatData.userImage === 'number' ? chatData.userImage : { uri: chatData.userImage }}
+          source={
+            typeof chatData.userImage === 'number'
+              ? chatData.userImage
+              : { uri: chatData.userImage }
+          }
           style={styles.messageAvatar}
           resizeMode="cover"
         />
@@ -122,7 +128,9 @@ const AdminChatScreen = ({ route, navigation }) => {
         <Text
           style={[
             styles.messageText,
-            item.isSendByAdmin ? styles.adminMessageText : styles.userMessageText,
+            item.isSendByAdmin
+              ? styles.adminMessageText
+              : styles.userMessageText,
           ]}
         >
           {item.text}
@@ -143,7 +151,7 @@ const AdminChatScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.sellerBg} />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.flex}
       >
         {/* Header */}
@@ -157,7 +165,11 @@ const AdminChatScreen = ({ route, navigation }) => {
 
           <View style={styles.headerInfo}>
             <Image
-              source={typeof chatData.userImage === 'number' ? chatData.userImage : { uri: chatData.userImage }}
+              source={
+                typeof chatData.userImage === 'number'
+                  ? chatData.userImage
+                  : { uri: chatData.userImage }
+              }
               style={styles.headerAvatar}
               resizeMode="cover"
             />
@@ -179,7 +191,7 @@ const AdminChatScreen = ({ route, navigation }) => {
           ref={flatListRef}
           data={messages}
           renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
           contentContainerStyle={styles.messagesList}
           showsVerticalScrollIndicator={true}
@@ -198,10 +210,7 @@ const AdminChatScreen = ({ route, navigation }) => {
               multiline
               maxHeight={hp('8%')}
             />
-            <TouchableOpacity
-              style={styles.attachButton}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.attachButton} activeOpacity={0.7}>
               <Add width={wp('6%')} height={wp('6%')} />
             </TouchableOpacity>
           </View>

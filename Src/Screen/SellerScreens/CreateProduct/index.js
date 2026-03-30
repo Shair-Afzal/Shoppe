@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,12 +12,35 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { wp, hp, colors } from '../../../Constant';
+import { Createproduct,GetAllCategories } from '../../../Redux/slices/Action/Productaction';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../../Component/Loader/Loader';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 
-const CATEGORIES = ['Clothing', 'Shoes', 'Bags', 'Accessories', 'Electronics', 'Sportswear'];
+// const CATEGORIES = ['Clothing', 'Shoes', 'Bags', 'Accessories', 'Electronics', 'Sportswear'];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 const CreateProduct = ({ navigation }) => {
+  const dispatch=useDispatch()
+  const {product,error,loading,allcategories}=useSelector(state => state.product)
+  const CATEGORIES=allcategories
   const insets = useSafeAreaInsets();
+  const fetchdata=async()=>{
+    try{
+      const res=await dispatch(GetAllCategories()).unwrap()
+      showSuccessToast("all data is fetch successfully")
+     console.log(res)
+      return res
+    }catch(err){
+      console.log(err)
+      showErrorToast(err)
+
+    }
+  }
+  useEffect(()=>{
+    fetchdata()
+  },[])
+ 
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -26,8 +49,34 @@ const CreateProduct = ({ navigation }) => {
   const [selectedCat, setSelectedCat] = useState('');
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [images, setImages] = useState([]);
+  const [color,setcolor]=useState('')
 
-  const MAX_IMAGES = 6;
+   const sumbit=async ()=>{
+    try{
+      const res=await dispatch(Createproduct({
+        name:name,
+        price:price,
+        description:description,
+        stock:stock,
+        size:selectedSizes,
+        category:selectedCat,
+        image:images,
+        color:color
+
+      })).unwrap()
+      showSuccessToast("product is created succesfully")
+      navigation.goBack()
+      return res
+
+    }catch(err){
+      console.log(err)
+      showErrorToast(err)
+    }
+
+  }
+
+
+  const MAX_IMAGES = 4;
 
   // ── Gallery multi-pick ────────────────────────────────────────────────────
   const pickGallery = () => {
@@ -83,6 +132,9 @@ const CreateProduct = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {
+        loading&&<Loader/>
+      }
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
@@ -167,13 +219,15 @@ const CreateProduct = ({ navigation }) => {
         {/* ── Category ── */}
         <Text style={styles.label}>Category</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
-          {CATEGORIES.map(cat => (
+          {CATEGORIES.map((cat,index)=> 
+          
+          (
             <TouchableOpacity
-              key={cat}
-              style={[styles.chip, selectedCat === cat && styles.chipActive]}
-              onPress={() => setSelectedCat(cat)}>
-              <Text style={[styles.chipTxt, selectedCat === cat && styles.chipTxtActive]}>
-                {cat}
+              key={index}
+              style={[styles.chip, selectedCat === cat._id && styles.chipActive]}
+              onPress={() => setSelectedCat(cat._id)}>
+              <Text style={[styles.chipTxt, selectedCat === cat._id && styles.chipTxtActive]}>
+                {cat?.name}
               </Text>
             </TouchableOpacity>
           ))}
@@ -193,6 +247,17 @@ const CreateProduct = ({ navigation }) => {
             </TouchableOpacity>
           ))}
         </View>
+        <View style={styles.halfField}>
+            <Text style={styles.label}>Colors</Text>
+            <TextInput
+              style={styles.input}
+              value={color}
+              onChangeText={setcolor}
+              placeholder="Color"
+              placeholderTextColor={colors.sellerSubText}
+              
+            />
+          </View>
 
         {/* ── Description ── */}
         <Text style={styles.label}>Description</Text>
@@ -206,9 +271,11 @@ const CreateProduct = ({ navigation }) => {
           numberOfLines={5}
           textAlignVertical="top"
         />
+         
+      
 
         {/* ── Submit ── */}
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.submitBtn} onPress={sumbit} activeOpacity={0.85}>
           <Text style={styles.submitTxt}>🚀  Publish Product</Text>
         </TouchableOpacity>
       </ScrollView>

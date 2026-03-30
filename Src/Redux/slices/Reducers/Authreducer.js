@@ -10,7 +10,12 @@ import {
   GetSeller,
   UserProfile,
   UpdateProfile,
-  UpdateSellerProfile
+  UpdateSellerProfile,
+  UpdateProfilepic,
+  AllUsers,
+  AllSellers,
+  ToggleBlock,
+  SellerStatus
   
 } from '../Action/Authaction.js';
 
@@ -21,7 +26,17 @@ const initialState = {
   loading: false,
   accesstoken: null,
   resetToken:null,
-  seller:null
+  seller:null,
+  allusers:[],
+  allSellers:[],
+  currentPage: 1,
+  totalPages: 1,
+  isfetchMore:false,
+  scurrentpage:1,
+  stotalpage:1,
+  sisfetchmore:false,
+  
+
 };
 
 const userslice = createSlice({
@@ -203,6 +218,116 @@ const userslice = createSlice({
         state.error=action.payload||"some think is wrong"
         
       })
+       .addCase(UpdateProfilepic.pending,(state,action)=>{
+        state.loading=true;
+        state.error=null
+      })
+      .addCase(UpdateProfilepic.fulfilled,(state,action)=>{
+        state.loading=false;
+        state.error=null;
+        state.user=action.payload
+      })
+      .addCase(UpdateProfilepic.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload||"some think is wrong"
+        
+      })
+      .addCase(AllUsers.pending,(state,action)=>{
+        if(action.meta.arg.page === 1){
+        state.loading=true;
+        }else{
+          state.isfetchMore=true
+        }
+      })
+      .addCase(AllUsers.fulfilled,(state,action)=>{
+        const { docs, page, totalPages } = action.payload;
+         if (page === 1) {
+    state.allusers = docs; 
+  } else {
+     const newUsers = docs.filter(
+      newUser => !state.allusers.some(u => u._id === newUser._id)
+    );
+    state.allusers = [...state.allusers, ...newUsers]; 
+  }
+
+  state.currentPage = page;
+  state.totalPages = totalPages;
+
+  state.loading = false;
+  state.isfetchMore = false;
+      })
+      .addCase(AllUsers.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload||"some think is wrong"
+        
+      })
+      .addCase(AllSellers.pending,(state,action)=>{
+        if(action.meta.arg.page === 1){
+        state.loading=true;
+        }else{
+          state.sisfetchmore=true
+        }
+      })
+      .addCase(AllSellers.fulfilled,(state,action)=>{
+                const { docs, page, totalPages } = action.payload;
+                 if (page === 1) {
+    state.allSellers = docs; 
+  } else {
+     const newUsers = docs.filter(
+      newUser => !state.allSellers.some(u => u._id === newUser._id)
+    );
+  
+    state.allSellers = [...state.allSellers, ...newUsers];
+  }
+    state.scurrentpage=page
+    state.stotalpage=totalPages
+        state.loading=false;
+        state.error=null;
+
+       
+      })
+      .addCase(AllSellers.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload||"some think is wrong"
+        
+      })
+
+      .addCase(ToggleBlock.pending,(state,action)=>{
+        state.loading=true;
+
+      })
+      .addCase(ToggleBlock.fulfilled,(state,action)=>{
+        state.loading=false;
+        const updatedUser=action.payload;
+        state.allusers = state.allusers.map(user =>
+    user._id === updatedUser._id ? updatedUser : user
+  );
+        state.error=null
+      })
+      .addCase(ToggleBlock.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload||"somethink going to be wrong"
+
+      })
+      .addCase(SellerStatus.pending, (state) => {
+  state.loading = true;
+})
+
+.addCase(SellerStatus.fulfilled, (state, action) => {
+  state.loading = false;
+
+  const updatedSeller = action.payload;
+
+
+  state.allSellers = state.allSellers.map(item =>
+    item._id === updatedSeller._id ? updatedSeller : item
+  );
+})
+
+.addCase(SellerStatus.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+})
 
   },
 });
