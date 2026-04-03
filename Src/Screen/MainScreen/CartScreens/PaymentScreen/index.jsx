@@ -19,9 +19,37 @@ import PaymentModel from '../../../../Component/PaymentModel';
 import ReviewModel from '../../../../Component/ReviewModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomModel from '../../../../Component/CustomModel';
+import { initializePaymentSheet } from '../../../../Redux/slices/Action/Productaction';
+import { useDispatch,useSelector } from 'react-redux';
+import { useStripe } from '@stripe/stripe-react-native';
+
 
 const PaymentScreen = ({navigation,route}) => {
   const { product,cartItems} = route.params || {};
+  const dispatch = useDispatch();
+  const { clientSecret,loading,error,cart,currentorder} = useSelector((state) => state.product);
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const openPaymentSheet = async () => {
+  const { error } = await initPaymentSheet({
+    paymentIntentClientSecret: clientSecret,
+    merchantDisplayName: "My Shop",
+  });
+
+  if (error) {
+    console.log("Init error:", error);
+    return;
+  }
+
+  const { error: presentError } = await presentPaymentSheet();
+
+  if (presentError) {
+    console.log("Payment failed:", presentError);
+  } else {
+    console.log("✅ Payment success");
+  }
+};
+
+
   const [model, setmodel] = useState(false);
   const [paymentmodel, setpaymentmodel] = useState(false);
   const [vouchermodel, setvouchermodel] = useState(false);
@@ -228,7 +256,7 @@ const PaymentScreen = ({navigation,route}) => {
         title={'Pay'}
         btnstyle={{ backgroundColor: colors.darkblack }}
         txtstyle={{ color: colors.DarkWhite }}
-        onPress={handlePayment}
+        onPress={openPaymentSheet}
         price={`$${calculateTotal().toFixed(2)}`} 
       />
     </View>

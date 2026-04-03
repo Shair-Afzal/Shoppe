@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,58 +6,63 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors } from '../../../Constant';
 import CartItem from '../../../Component/Cartitem';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllProducts,DeleteProduct } from '../../../Redux/slices/Action/Productaction.js';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import Loader from '../../../Component/Loader/Loader.js';
 
 // ─── Custom Seller Product Data ───────────────────────────────────────────────
-const sellerProducts = [
-  {
-    id: 'sp-1',
-    title: 'Nike Air Max 270 - Breathable Running Shoe',
-    price: 120,
-    color: 'Midni Blue',
-    size: 'M',
-    quantity: 5,
-    image: require('../../../assets/Images/shoe.png'),
-    status: 'In Stock',
-    sold: 38,
-  },
-  {
-    id: 'sp-2',
-    title: 'Casual Cotton T-Shirt - Premium Quality',
-    price: 17,
-    color: 'Light Gray',
-    size: 'M',
-    quantity: 12,
-    image: require('../../../assets/Images/cloth1.png'),
-    status: 'In Stock',
-    sold: 74,
-  },
-  {
-    id: 'sp-3',
-    title: 'Formal Slim-Fit Shirt - Office Wear',
-    price: 32,
-    color: 'White',
-    size: 'L',
-    quantity: 0,
-    image: require('../../../assets/Images/cloth4.png'),
-    status: 'Out of Stock',
-    sold: 21,
-  },
-  {
-    id: 'sp-4',
-    title: 'Classic Running Shoes - Lightweight Design',
-    price: 89,
-    color: 'Black',
-    size: 'M',
-    quantity: 3,
-    image: require('../../../assets/Images/shoes2.png'),
-    status: 'Low Stock',
-    sold: 56,
-  },
-];
+// const sellerProducts = [
+//   {
+//     id: 'sp-1',
+//     title: 'Nike Air Max 270 - Breathable Running Shoe',
+//     price: 120,
+//     color: 'Midni Blue',
+//     size: 'M',
+//     quantity: 5,
+//     image: require('../../../assets/Images/shoe.png'),
+//     status: 'In Stock',
+//     sold: 38,
+//   },
+//   {
+//     id: 'sp-2',
+//     title: 'Casual Cotton T-Shirt - Premium Quality',
+//     price: 17,
+//     color: 'Light Gray',
+//     size: 'M',
+//     quantity: 12,
+//     image: require('../../../assets/Images/cloth1.png'),
+//     status: 'In Stock',
+//     sold: 74,
+//   },
+//   {
+//     id: 'sp-3',
+//     title: 'Formal Slim-Fit Shirt - Office Wear',
+//     price: 32,
+//     color: 'White',
+//     size: 'L',
+//     quantity: 0,
+//     image: require('../../../assets/Images/cloth4.png'),
+//     status: 'Out of Stock',
+//     sold: 21,
+//   },
+//   {
+//     id: 'sp-4',
+//     title: 'Classic Running Shoes - Lightweight Design',
+//     price: 89,
+//     color: 'Black',
+//     size: 'M',
+//     quantity: 3,
+//     image: require('../../../assets/Images/shoes2.png'),
+//     status: 'Low Stock',
+//     sold: 56,
+//   },
+// ];
 
 const stats = [
   { id: 's1', label: 'Products', value: '24', color: colors.sellerPrimary, bg: colors.sellerLight },
@@ -74,33 +79,82 @@ const STATUS_CFG = {
 
 const SellerHome = ({ navigation }) => {
   const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
+  const {allproducts,currentPage,totalPages,isfetchMore,loading,error}=useSelector(state=>state.product)
+  const {seller}=useSelector(state=>state.user)
+  const sellerProducts = allproducts.filter(p => p.sellerId === seller.userId);
+  console.log('products',sellerProducts)
+ 
+  const FetchProducts= async ()=>{
+    try {
+      const res=await dispatch(GetAllProducts({page:1,limit:3})).unwrap();
+      console.log('Fetched products:', res);
+      showSuccessToast('Products fetched successfully!');
+      return res;
+    } catch (err) {
+      console.log('Error fetching products:', err);
+      showErrorToast(err || 'Failed to fetch products');
+    }
+  }
+  const DeleteProductHandler= async (id)=>{
+    try {
+        const res=await dispatch(DeleteProduct(id)).unwrap();
+        showSuccessToast('Product deleted successfully!');
+        return res;
+    } catch (err) {
+
+      showErrorToast(err || 'Failed to delete product');
+    }
+  }
+
+  useEffect(() => {
+    FetchProducts()
+  }, []);
+
+  const FetchMore= async ()=>{
+    if(!isfetchMore && currentPage<totalPages){
+    try {
+      const res=await dispatch(GetAllProducts({page:currentPage+1,limit:3})).unwrap();
+      console.log('Fetched more products:', res);
+      showSuccessToast('More products fetched successfully!');
+      return res;
+    } catch (err) {
+      console.log('Error fetching more products:', err);
+      showErrorToast(err || 'Failed to fetch more products');
+    }
+  }
+
+}
 
   const renderProduct = ({ item }) => {
     const sc = STATUS_CFG[item.status] || STATUS_CFG['In Stock'];
     return (
       <View style={styles.productCard}>
         <CartItem
-          productImage={item.image}
-          title={item.title}
-          price={`$${item.price}`}
-          color={item.color}
-          size={item.size}
-          quantity={item.quantity}
+          productImage={{ uri: item?.image?.[0] }}
+          title={item?.description}
+          price={`$${item?.price}`}
+          color={item?.color}
+          size={item?.size}
+          quantity={item?.quantity||1}
           // addcart
           onQuantityChange={qty => console.log(`${item.id} qty=${qty}`)}
-          onDelete={() => console.log(`delete ${item.id}`)}
+          onDelete={() =>console.log('Delete',item.id) || DeleteProductHandler(item._id)}
         />
         {/* Status & Edit Row */}
         <View style={styles.cardFooter}>
           <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
             <View style={[styles.statusDot, { backgroundColor: sc.dot }]} />
-            <Text style={[styles.statusTxt, { color: sc.color }]}>{item.status}</Text>
+            <Text style={[styles.statusTxt, { color: sc.color }]}>{item?.stock||0}</Text>
           </View>
           <View style={styles.footerActions}>
-            <Text style={styles.soldTxt}>Sold: {item.sold}</Text>
+            <Text style={styles.soldTxt}>Sold: {item.sold||0}</Text>
             <TouchableOpacity
               style={styles.editBtn}
-              onPress={() => navigation.navigate('EditProduct', { product: item })}>
+              onPress={() => navigation.navigate('EditProduct', {  product: {
+        ...item,
+        image: item.image?.map(img => ({ uri: img })) || [],
+      }, })}>
               <Text style={styles.editBtnTxt}>✏️ Edit</Text>
             </TouchableOpacity>
           </View>
@@ -111,12 +165,27 @@ const SellerHome = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {
+        loading&&<Loader/>
+      }
       <FlatList
         data={sellerProducts}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         renderItem={renderProduct}
+        onEndReached={FetchMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+        
+          <View style={{ paddingVertical: hp('2%'), alignItems: 'center' }}>
+          {isfetchMore && 
+            <ActivityIndicator size={'small'}/>
+        }
+          </View>
+
+        
+        }
         ListHeaderComponent={
           <View>
             {/* ── Header ── */}

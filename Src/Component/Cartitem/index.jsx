@@ -22,6 +22,8 @@ const CartItem = ({
   onQuantityChange, // Add this prop
   size,
   color,
+  dec,
+  inc
 }) => {
   const TrashIcon = () => <Deleteicon height={RF(20)} width={RF(20)} />;
 
@@ -114,7 +116,7 @@ const CartItem = ({
                   borderWidth: 1,
                   borderRadius: RF(100),
                 }}
-                onPress={handleDecrement}
+                onPress={dec} 
               >
                 <Text style={{ ...GST.subdescription, color: colors.blue, marginBottom: RF(5) }}>
                   -
@@ -144,7 +146,7 @@ const CartItem = ({
                   justifyContent:"center",
                   alignItems:"center"
                 }}
-                onPress={handleIncrement}
+                onPress={inc}
               >
                 <Text style={{ ...GST.subdescription, color: colors.blue,marginBottom: RF(5) }}>
                   +

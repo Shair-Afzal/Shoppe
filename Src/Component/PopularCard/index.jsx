@@ -18,17 +18,17 @@ const PopularCard = ({ data, onpress }) => {
     <TouchableOpacity
       style={styles.hotItemContainer}
       activeOpacity={0.9}
-      onPress={() => navigation.navigate('Details', { product: item })}
+      onPress={() => navigation.navigate('Details', { id:item._id })}
     >
-      <Image source={item.img} style={styles.hotItemImage} />
+      <Image source={{ uri: item?.image?.[0] }} style={styles.hotItemImage} />
       <View style={GST.CENTERCONTAINER}>
         <View style={GST.ROW}>
           <Text style={styles.txt}>
-            {item.likes}
+            {item?.likes||0} 
           </Text>
           <Blueheart />
         </View>
-        <Text style={GST.subdescription}>{item.tag}</Text>
+        <Text style={GST.subdescription}>{item?.tag||'New'}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -36,7 +36,7 @@ const PopularCard = ({ data, onpress }) => {
     <FlatList
       data={data}
       renderItem={renderHotPopularItem}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item._id}
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.hotPopularList}

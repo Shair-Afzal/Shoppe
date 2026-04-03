@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GST, { colors, RF } from '../../../../Constant';
 import CustomHeader from '../../../../Component/CustomHeader';
 import Select from '../../../../assets/SVG/Select.svg';
@@ -9,8 +9,24 @@ import NewItem from '../../../../Component/NewItem';
 import { newItemsData } from '../../../../utils/Dummydata';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './style';   // ✅ Imported stylesheet
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllProducts } from '../../../../Redux/slices/Action/Productaction';
 
 const RecentlyView = () => {
+  const dispatch=useDispatch();
+  const {allproducts,loading}=useSelector(state =>state .product)
+  const FetchProducts= async()=>{
+    try{
+      await dispatch(GetAllProducts({page:1,limit:3})).unwrap();
+      showSuccessToast('Products fetched successfully!');
+    }catch(err){
+      console.log('Error fetching products:',err);
+      showErrorToast(err || 'Failed to fetch products');
+    }
+  }
+  useEffect(()=>{
+    FetchProducts()
+  },[])
   const [model, setmodel] = useState(false);
   const [select, setselect] = useState('today');
   const { width, height } = Dimensions.get('window');
@@ -58,7 +74,7 @@ const RecentlyView = () => {
 
       {/* Items */}
       <NewItem
-        data={newItemsData}
+        data={allproducts}
         justfor
         numofcolumn={2}
         contentContainerStyle={styles.newItemContainer}

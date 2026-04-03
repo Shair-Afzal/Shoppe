@@ -32,12 +32,72 @@ import Like from '../../../../assets/SVG/Like.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import VariationModal from '../../../../Component/VaritaionModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Productdetails,GetAllProducts,AddtoCart,toggleFavourite } from '../../../../Redux/slices/Action/Productaction';
+import { useDispatch, useSelector } from 'react-redux';
+import { showErrorToast, showSuccessToast } from '../../../../utils/Toast';
+import Loader from '../../../../Component/Loader/Loader';
+
 
 const DetailsScreen = ({ navigation,route }) => {
-  const { product } = route.params;
+  const dispatch=useDispatch();
+   const {product,loading,error,allproducts,cart,favourites}=useSelector(state=>state.product)
+  const { id } = route.params;
+  const AddtoCartfun = async () => {
+    try {
+      const result = await dispatch(AddtoCart({productId:id,quantity: 1})).unwrap();
+      showSuccessToast('Product added to cart successfully!');
+      console.log('Add to cart result:', result);
+          navigation.navigate("home", { screen: "CartTab" });
+          return result;
+
+    } catch (err) {
+      console.log('Error adding product to cart:', err);
+      showErrorToast(err || 'Failed to add product to cart');
+    }
+  };
+    const FetchProductDetails= async ()=>{
+      try{
+        await dispatch(Productdetails(id)).unwrap();
+        showSuccessToast('Product details fetched successfully!');
+        
+
+      }catch(err){
+        console.log('Error fetching product details:',err);
+        showErrorToast(err || 'Failed to fetch product details');
+      }
+    }
+    const FetchAllProducts= async ()=>{
+      try{
+        await dispatch(GetAllProducts({page:1,limit:3})).unwrap();
+        showSuccessToast('Products fetched successfully!');
+      }catch(err){
+        console.log('Error fetching products:',err);
+        showErrorToast(err || 'Failed to fetch products');
+      }
+    }
+
+    useEffect(()=>{
+      FetchProductDetails()
+      FetchAllProducts()
+   
+    },[])
+    const handleFav = async () => {
+      try{
+         await dispatch(toggleFavourite({ productId:product._id })).unwrap();
+         showSuccessToast('Product added to favourites successfully!');
+      }catch(err){
+        showErrorToast(err || 'Failed to add product to favourites');
+
+      }
+ 
+};
+
   const [rating, setRating] = useState(4);
   const [fav, setfav] = useState(false);
   const [model,setmodel]=useState(false)
+ const isFav = Array.isArray(favourites) && product?._id
+  ? favourites.includes(product._id)
+  : false;
 
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
@@ -55,10 +115,10 @@ const DetailsScreen = ({ navigation,route }) => {
           dotStyle={styles.dot}
           activeDotStyle={styles.activeDot}
         >
-          {arr.map((item, i) => (
+          {product?.image?.map((item, i) => (
             <Image
               key={i}
-              source={product.img}
+              source={{ uri: item }}
               style={{
                 height: '100%',
                 width: '100%',
@@ -77,26 +137,25 @@ const DetailsScreen = ({ navigation,route }) => {
       >
         <View style={{ ...GST.CENTERCONTAINER, marginTop: RF(10) }}>
           <Text style={{ ...GST.description, fontFamily: 'Raleway-Bold' }}>
-            $17,00
+            ${product?.price||'Unknown'}
           </Text>
           <Share height={RF(30)} width={RF(30)} />
         </View>
         <Text style={GST.subdescription}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam arcu
-          mauris, scelerisque eu mauris id, pretium pulvinar sapien.
+          {product?.description||'No description available.'}
         </Text>
         <SectionHeader titile={'Variations'} txt btn onpress={()=>setmodel(true)} />
         <View style={{ ...GST.ROW, gap: RF(8) }}>
           <Image
-            source={require('../../../../assets/Images/variationsimg.png')}
+            source={{uri: product?.image?.[0]}}
             style={styles.img}
           />
           <Image
-            source={require('../../../../assets/Images/variationsimg.png')}
+            source={{uri: product?.image?.[1]}}
             style={styles.img}
           />
           <Image
-            source={require('../../../../assets/Images/variationsimg.png')}
+            source={{uri: product?.image?.[2]}}
             style={styles.img}
           />
         </View>
@@ -201,13 +260,13 @@ const DetailsScreen = ({ navigation,route }) => {
         <SectionHeader titile={'Most Popular'} />
       </View>
       <View style={{ paddingLeft: RF(15), backgroundColor: colors.DarkWhite }}>
-        <PopularCard data={hotPopularData} />
+        <PopularCard data={allproducts} />
         <Text style={{ ...GST.description, fontFamily: 'Raleway-Bold' }}>
           You might like
         </Text>
         <View style={{ paddingRight: RF(15) }}>
           <NewItem
-            data={newItemsData}
+            data={allproducts}
             justfor
             numofcolumn={2}
             contentContainerStyle={{ marginTop: RF(12) }}
@@ -254,45 +313,48 @@ const DetailsScreen = ({ navigation,route }) => {
     // Navigate to cart tab
     navigation.navigate("home", { screen: "CartTab" });
   };
- const toggleFavourite = async () => {
-  const storedFav = await AsyncStorage.getItem("favouriteItems");
-  let favItems = storedFav ? JSON.parse(storedFav) : [];
+//  const toggleFavourite = async () => {
+//   const storedFav = await AsyncStorage.getItem("favouriteItems");
+//   let favItems = storedFav ? JSON.parse(storedFav) : [];
 
-  if (!fav) {
-    // ✅ Add product safely (store only serializable data)
-    const exists = favItems.some((item) => item.id === product.id);
-    if (!exists) {
-      favItems.push({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        img: product.imgUri || product.img,
-        size: product.size || 'M',     // ✅ add size
-      color: product.color || 'Pink' // use a string path or remote URL, not require()
-      });
-    }
-  } else {
-    // Remove from favourites
-    favItems = favItems.filter((item) => item.id !== product.id);
-  }
+//   if (!fav) {
+//     // ✅ Add product safely (store only serializable data)
+//     const exists = favItems.some((item) => item._id === product.id);
+//     if (!exists) {
+//       favItems.push({
+//         id: product.id,
+//         title: product.title,
+//         price: product.price,
+//         img: product.imgUri || product.img,
+//         size: product.size || 'M',     // ✅ add size
+//       color: product.color || 'Pink' // use a string path or remote URL, not require()
+//       });
+//     }
+//   } else {
+//     // Remove from favourites
+//     favItems = favItems.filter((item) => item.id !== product.id);
+//   }
 
-  await AsyncStorage.setItem("favouriteItems", JSON.stringify(favItems));
-  setfav(!fav);
-};
-useEffect(() => {
-  const checkFav = async () => {
-    const storedFav = await AsyncStorage.getItem("favouriteItems");
-    if (storedFav) {
-      const favItems = JSON.parse(storedFav);
-      const exists = favItems.some((item) => item.id === product.id);
-      setfav(exists);
-    }
-  };
-  checkFav();
-}, [product]);
+//   await AsyncStorage.setItem("favouriteItems", JSON.stringify(favItems));
+//   setfav(!fav);
+// };
+// useEffect(() => {
+//   const checkFav = async () => {
+//     const storedFav = await AsyncStorage.getItem("favouriteItems");
+//     if (storedFav) {
+//       const favItems = JSON.parse(storedFav);
+//       const exists = favItems.some((item) => item.id === product.id);
+//       setfav(exists);
+//     }
+//   };
+//   checkFav();
+// }, [product]);
 
   return (
     <View style={{ ...GST.FLEX }}>
+      {
+        loading&&<Loader/>
+      }
       <StatusBar translucent backgroundColor={'transparent'}  />
       <VariationModal visible={model} buypress={buyerfunction} cartpress={cartfunction}/>
       <FlatList
@@ -314,8 +376,8 @@ useEffect(() => {
           paddingVertical: RF(10),
         }}
       >
-        <TouchableOpacity onPress={toggleFavourite}>
-          {!fav ? (
+        <TouchableOpacity onPress={handleFav}>
+          {!isFav ? (
             <UnLike height={RF(40)} width={RF(40)} />
           ) : (
             <Like height={RF(40)} width={RF(40)} />
@@ -330,7 +392,7 @@ useEffect(() => {
               backgroundColor: colors.darkblack,
             }}
             txtstyle={{ ...GST.subdescription, color: colors.DarkWhite }}
-            onPress={cartfunction}
+            onPress={AddtoCartfun}
           />
         </View>
         <View style={{ width: '35%', paddingHorizontal: RF(5) }}>

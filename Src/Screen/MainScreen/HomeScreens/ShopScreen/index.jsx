@@ -9,41 +9,45 @@ import NewItem from '../../../../Component/NewItem';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styles from './style'; // ⬅️ external stylesheet
 import Model from '../../../../Component/ImageModel';
+import { useSelector } from 'react-redux';
 
 const ShopeScreen = ({ navigation, route }) => {
+  
+  const {allproducts,loading}=useSelector(state =>state .product)
   const filters=route?.params?.filters||null;
   const Searchvalue = route?.params?.Searchvalue || '';
   const [search, setsearch] = useState(Searchvalue || '');
-  const [filtered, setFiltered] = useState(newItemsData);
+  const [filtered, setFiltered] = useState(allproducts);
   const [show,setShow]=useState(false)
+ 
 
 useEffect(() => {
-  let newData = newItemsData;
+  let newData = allproducts;
 
   if (search) {
-    newData = newData.filter(item =>
+    newData = allproducts.filter(item =>
       item.name.toLowerCase().includes(search.toLowerCase())
     );
   }
 
   if (filters?.name) {
-    newData = newData.filter(item =>
+    newData = allproducts.filter(item =>
       item.name.toLowerCase().includes(filters.name.toLowerCase())
     );
   }
 
   if (filters?.size) {
-    newData = newData.filter(item => item.size.toUpperCase() === filters.size.toUpperCase());
+    newData = allproducts.filter(item => item.size.toUpperCase() === filters.size.toUpperCase());
   }
 
   if (filters?.color) {
-    newData = newData.filter(item => item.color === filters.color);
+    newData = allproducts.filter(item => item.color === filters.color);
   }
 
-  if (filters?.range) {
-    const { low, high } = filters.range;
-    newData = newData.filter(item => item.price >= low && item.price <= high);
-  }
+  // if (filters?.range) {
+  //   const { low, high } = filters.range;
+  //   newData = newData.filter(item => item.price >= low && item.price <= high);
+  // }
 
   if (filters?.sort) {
     if (filters.sort === 'Low to High') {
@@ -85,7 +89,7 @@ useEffect(() => {
 
       <View style={styles.topProductWrapper}>
         <TopProduct
-          data={ProductsData}
+          data={allproducts}
           txt={true}
           numColumns={5}
           stylerow={styles.topProductRow}

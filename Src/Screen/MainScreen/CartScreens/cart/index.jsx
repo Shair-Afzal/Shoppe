@@ -12,10 +12,70 @@ import PaymentFooter from '../../../../Component/PaymentFooter';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ShippingAddressModal from '../../../../Component/ShippingModel';
 import CartItem from '../../../../Component/Cartitem';
-
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../../../Component/Loader/Loader';
+import { GetAllProducts,GetCart,DeleteCartItem,UpdateCartItem } from '../../../../Redux/slices/Action/Productaction';
+import { showErrorToast,showSuccessToast } from '../../../../utils/Toast';
 const STORAGE_KEY = "cartItems";   // key for AsyncStorage
 
+
 const Cart = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const { cart,loading,error,allproducts } = useSelector(state => state.product);
+  const FetchProducts = async () => {
+    try {
+      await dispatch(GetAllProducts({ page: 1, limit: 3 })).unwrap();
+      showSuccessToast('Products fetched successfully!');
+    } catch (err) {
+      console.log('Error fetching products:', err);
+      showErrorToast(err || 'Failed to fetch products');
+    }
+  };
+  const Fetchcart= async ()=>{
+    try{
+      await dispatch(GetCart()).unwrap();
+      showSuccessToast('Cart fetched successfully!');
+    }catch(err){
+      console.log('Error fetching cart:',err);
+      showErrorToast(err || 'Failed to fetch cart');
+    }
+  }
+  useEffect(() => {
+    FetchProducts();
+    Fetchcart();
+  }, []);
+  const mergedCartData = cart.map(cartItem => {
+  const product = allproducts.find(
+    p => p._id === cartItem.productId
+  );
+
+
+  return {
+    ...product,              // name, image, etc
+    ...cartItem,             // quantity, price, totalprice
+    _id: cartItem._id        // cart item id (important for delete/update)
+  };
+});
+const UpdateChange=async(id,action)=>{
+  try{
+    const newQuantity=action==="increment"?1:-1
+    await dispatch(UpdateCartItem({ id, action })).unwrap();
+    showSuccessToast('Cart updated successfully!');
+  }catch(err){
+    console.log('Error updating cart item:', err);
+    showErrorToast(err || 'Failed to update cart');
+  }
+}
+const handleDeletecart = async (id) => {
+  try {
+    await dispatch(DeleteCartItem(id)).unwrap();
+    showSuccessToast('Item removed from cart successfully!');
+  }
+    catch (err) {
+      console.log('Error deleting cart item:', err);
+      showErrorToast(err || 'Failed to remove item from cart');
+     }
+};
   const [model, setmodel] = useState(false);
   const newProduct = route?.params?.product;
   const [cartItems, setCartItems] = useState([]);
@@ -83,6 +143,9 @@ const calculateTotal = () => {
 
   return (
     <View style={GST.FLEX}>
+      {
+        loading&&<Loader/>
+      }
       <ShippingAddressModal add visible={model} onclose={() => setmodel(false)} />
       <View style={{ ...GST.MAIN, paddingTop: insert.top,paddingBottom:insert.bottom}}>
         <View style={styles.txtcontainer}>
@@ -104,21 +167,23 @@ const calculateTotal = () => {
           </View>
         </View>
 
-        {cartItems.length !== 0 ? (
-         <FlatList
-  data={cartItems}
+        {cart.length !== 0 ? (
+         <FlatList 
+  data={mergedCartData}  // use merged data for display
   showsVerticalScrollIndicator={false}
-  keyExtractor={(item) => item.id.toString()}
+  keyExtractor={(item) => item._id.toString()}
   contentContainerStyle={{ paddingBottom: RF(66) }}
   renderItem={({ item }) => (
     <CartItem
       addcart={true}
-      productImage={item.img}
-      title={item.title}   // ✅ keep title normal
+      productImage={{ uri: item.image?.[0] }}
+      title={item.name}   // ✅ keep title normal
       price={item.price}
       quantity={item.quantity}  // ✅ pass quantity
-      onDelete={() => handleDelete(item.id)}
-      onQuantityChange={(newQty) => handleQuantityChange(item.id, newQty)} // ✅ update parent state
+      onDelete={() => handleDeletecart(item._id)}
+      // onQuantityChange={(newQty) => UpdateChange(item._id, newQty)} // ✅ update parent state
+      inc={()=>UpdateChange(item._id, "increment")}
+      dec={()=>UpdateChange(item._id, "decrement")}
       size={item.size}
       color={item.color}
     />
@@ -143,7 +208,7 @@ const calculateTotal = () => {
                 />
               </View>
               <View>
-                <PopularCard data={newItemsData} />
+                <PopularCard data={allproducts} />
               </View>
             </View>
           </>
@@ -152,8 +217,8 @@ const calculateTotal = () => {
 
       <PaymentFooter
         title={"Checkout"}
-        onPress={() => navigation.navigate("Payment", { cartItems })}
-        disbale={cartItems.length==0?true:false}
+        onPress={() => navigation.navigate("Order", { cartItems })}
+        disbale={cart.length==0?true:false}
         style={styles.Paymentfooter}
         btnstyle={{
           backgroundColor: cartItems.length !== 0 ? colors.blue : colors.DarkWhite,

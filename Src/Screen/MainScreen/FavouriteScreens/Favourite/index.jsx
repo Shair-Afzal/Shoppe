@@ -10,10 +10,28 @@ import styles from './style';
 import CartItem from '../../../../Component/Cartitem';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavourite } from '../../../../Redux/slices/Action/Productaction';
+import { showSuccessToast } from '../../../../utils/Toast';
+import Loader from '../../../../Component/Loader/Loader';
+
 
 const Favourite = ({ navigation }) => {
   const [cartItems, setCartItems] = useState([]);
+  const dispatch=useDispatch()
+  const {favourites,loading,allproducts}=useSelector((state)=>state.product)
   const insert = useSafeAreaInsets();
+  const productswithfav=allproducts.filter((item)=>favourites?.includes(item._id))
+  const handleFav = async (item) => {
+        try{
+           await dispatch(toggleFavourite({ productId:item._id })).unwrap();
+           showSuccessToast('Product deleted to favourite !');
+        }catch(err){
+          showErrorToast(err || 'Failed to add product to favourites');
+  
+        }
+   
+  };
 
   // ✅ Load favorites function
   useEffect(() => {
@@ -36,13 +54,14 @@ const Favourite = ({ navigation }) => {
 
   // ✅ Delete function
   const handleDelete = async (id) => {
-    const updated = cartItems.filter((it) => it.id !== id);
+    const updated = cartItems.filter((it) => it._id !== _id);
     setCartItems(updated);
     await AsyncStorage.setItem("favouriteItems", JSON.stringify(updated));
   };
 
   return (
     <View style={{ ...GST.FLEX, paddingTop: insert.top,paddingBottom:insert.bottom }}>
+      {loading&&<Loader/>}
       <View style={styles.container}>
         <Text style={GST.subHeading}>Wishlist</Text>
         
@@ -54,23 +73,25 @@ const Favourite = ({ navigation }) => {
         
         <View style={styles.listconatiner}>
           <TopProduct 
-            data={topProductsData} 
+            data={allproducts} 
             onPress={() => navigation.navigate('Home', { screen: 'Shop' })} 
           />
         </View>
         
-        {cartItems.length > 0 ? (
+        {productswithfav.length > 0 ? (
           <FlatList 
-            data={cartItems}
+            data={productswithfav}
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item._id}
             contentContainerStyle={{paddingBottom: RF(10)}}
             renderItem={({item}) => (
               <CartItem 
-                title={item.title}
-                productImage={item.img}
-                price={item.price}
-                onDelete={() => handleDelete(item.id)}
+                title={item.name
+
+                }
+                productImage={{uri:item?.image?.[0]}}
+                price={item?.price}
+                onDelete={() =>handleFav(item)}
                 color={item.color}
                 size={item.size}
               />
@@ -85,7 +106,7 @@ const Favourite = ({ navigation }) => {
         )}
       </View>
       
-      {cartItems.length === 0 && (
+      {productswithfav.length === 0 && (
         <View style={styles.bottomcontainer}>
           <View style={styles.sectioncontainer}>
             <SectionHeader 
@@ -93,7 +114,7 @@ const Favourite = ({ navigation }) => {
               onpress={() => navigation.navigate('Home', { screen: 'Shop' })} 
             />
           </View>
-          <PopularCard data={hotPopularData} />
+          <PopularCard data={allproducts} />
         </View>
       )}
     </View>

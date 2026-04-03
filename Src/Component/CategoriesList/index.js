@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View,FlatList,Image, Dimensions,TouchableOpacity} from 'react-native'
 import React from 'react'
-import GST, { colors, RF } from '../../Constant';
+import GST, { colors, hp, RF } from '../../Constant';
 import { useNavigation } from '@react-navigation/native';
  const { width, height } = Dimensions.get("window");
  const aspectRatio = height / width;
@@ -25,12 +25,18 @@ import { useNavigation } from '@react-navigation/native';
     }}
     >
        <FlatList
-       data={item.items}
+       data={item.products.slice(0, 4)}
        numColumns={2}
        columnWrapperStyle={{justifyContent:"space-between"}}
-       renderItem={({item:subitem,i})=>(
-        <Image key={i}source={subitem.image} style={[styles.categoryImage,catimg]} />
-       )}
+       renderItem={({ item: subitem, index }) => (
+  <Image
+    key={index}
+    source={{ uri: subitem.image?.[0] }}
+    style={[styles.categoryImage, catimg,{
+    width: item.products.length === 1 ? "98%" : "49%",
+  },]}
+  />
+)}
        />
         
       
@@ -79,7 +85,7 @@ const styles = StyleSheet.create({
   },
   categoryImage: {
     width:"49%",
-    height:isTablet? RF(95):RF(70),
+    height:isTablet? RF(95):hp(12),
     borderRadius: RF(5),
     marginTop:RF(4),
     resizeMode:"cover",

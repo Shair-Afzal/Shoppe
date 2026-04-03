@@ -18,6 +18,8 @@ import VariationModal from './Src/Component/VaritaionModal';
 import SellerStack from './Src/Navigation/MainStack/SellerStack';
 import AdminStack from './Src/Navigation/MainStack/AdminStack';
 import Route from './Src/Navigation/Route.js';
+import { StripeProvider } from '@stripe/stripe-react-native';
+
 
 
 
@@ -25,6 +27,7 @@ import Route from './Src/Navigation/Route.js';
 const App = () => {
   
   return (
+    <StripeProvider publishableKey="pk_test_51SzdnO0FSgUPRJCbtVjpHPA3MHbggIbanOaOKGpQvHKBGGLw7ZTOsT8Vz7L28DZQcL7w3Gebri1AR33oiRESJyrH00sQ8WeNhn">
     <SafeAreaProvider>
     <Provider store={store}>
      
@@ -59,6 +62,7 @@ const App = () => {
     </NavigationContainer>
     </Provider>
    </SafeAreaProvider>
+   </StripeProvider>
   )
 }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -28,12 +28,53 @@ import FlashCard from '../../../../Component/FlashCard';
 import styles from './style';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StoriesCard from '../../../../Component/StoriesCard/index,';
+import { useSelector,useDispatch } from 'react-redux';
+import { GetAllProducts,GetAllCategories } from '../../../../Redux/slices/Action/Productaction';
+import { showErrorToast,showSuccessToast } from '../../../../utils/Toast';
+import Loader from '../../../../Component/Loader/Loader';
 
 const Profile = ({ navigation }) => {
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
   const isTablet = aspectRatio < 1.6;
   const insert = useSafeAreaInsets();
+    const dispatch=useDispatch();
+    const {allproducts,loading,allcategories}=useSelector(state=>state.product)
+
+    const FetchProducts= async ()=>{
+     try{
+       await dispatch(GetAllProducts({page:1,limit:3})).unwrap();
+       showSuccessToast('Products fetched successfully!');
+     }catch(err){
+       console.log('Error fetching products:',err);
+       showErrorToast(err || 'Failed to fetch products');
+     }
+    }
+    const FetchCategories= async ()=>{
+     try{
+       await dispatch(GetAllCategories()).unwrap();
+        showSuccessToast('Categories fetched successfully!');
+      }catch(err){
+        console.log('Error fetching categories:',err);
+        showErrorToast(err || 'Failed to fetch categories');
+      }
+    }
+
+    useEffect(()=>{
+      FetchProducts()
+      FetchCategories()
+    },[])
+     const categoryWithProducts = allcategories.map(cat => {
+  const relatedProducts = allproducts.filter(
+    prod => prod.categoryId === cat._id
+  );
+  return {
+    ...cat,
+    products: relatedProducts,
+    count: relatedProducts.length,
+  };
+});
+  
 
   const sumbit = index => {
     if (index === 1) {
@@ -47,6 +88,7 @@ const Profile = ({ navigation }) => {
 
   return (
     <View style={{ ...styles.container, paddingTop: insert.top }}>
+      {loading && <Loader />}
       <FlatList
         data={[]} // no list data, only using header for scroll
         keyExtractor={(item, idx) => String(idx)}
@@ -77,7 +119,7 @@ const Profile = ({ navigation }) => {
 
             <Text style={styles.sectionTitle}>Recently viewed</Text>
             <TopProduct
-              data={topProductsData}
+              data={allproducts.slice(0,4)}
               style={{ marginTop: 0 }}
               onPress={() =>
                 navigation.navigate('FavouriteTab', {
@@ -100,13 +142,13 @@ const Profile = ({ navigation }) => {
               ))}
             </View>
 
-            <Text style={styles.sectionTitle}>Stories</Text>
+            {/* <Text style={styles.sectionTitle}>Stories</Text> */}
           </View>
         }
         // Render footer (rest of the page) so components that expect full width work fine
         ListFooterComponent={
           <>
-            <StoriesCard data={topProductsData} />
+            {/* <StoriesCard data={topProductsData} /> */}
             <View style={{ paddingLeft: RF(15) }}>
               <View style={styles.rightcontainer}>
                 <SectionHeader
@@ -119,7 +161,7 @@ const Profile = ({ navigation }) => {
                 />
               </View>
 
-              <NewItem data={newItemsData} />
+              <NewItem data={allproducts} />
 
               <View style={styles.rightcontainer}>
                 <SectionHeader
@@ -132,7 +174,7 @@ const Profile = ({ navigation }) => {
                 />
               </View>
 
-              <PopularCard data={newItemsData} />
+              <PopularCard data={allproducts} />
             </View>
 
             <View style={{ paddingHorizontal: RF(15) }}>
@@ -142,7 +184,7 @@ const Profile = ({ navigation }) => {
               />
 
               <FlatList
-                data={categoriesData}
+                data={categoryWithProducts}
                 renderItem={({ item }) => <CategoriesList item={item} press />}
                 keyExtractor={item => String(item.id)}
                 numColumns={2}
@@ -160,7 +202,7 @@ const Profile = ({ navigation }) => {
                 Top Products
               </Text>
               <TopProduct
-                data={ProductsData}
+                data={allproducts.slice(0,4)}
                 onPress={() =>
                   navigation.navigate('HomeTab', {
                     screen: 'Shop',
@@ -173,7 +215,7 @@ const Profile = ({ navigation }) => {
               </Text>
 
               <NewItem
-                data={newItemsData}
+                data={allproducts}
                 justfor
                 numofcolumn={2}
                 contentContainerStyle={{ marginTop: RF(12) }}

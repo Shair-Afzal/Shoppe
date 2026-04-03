@@ -29,10 +29,10 @@ const NewItem = ({
     <TouchableOpacity
       style={[styles.newItemContainer, style]}
       activeOpacity={0.9}
-      onPress={() => navigation.navigate('Details', { product: item })}
+      onPress={() => navigation.navigate('Details', { id: item._id })}
     >
       <View style={[styles.imgcontainer, imgstyle]}>
-        <Image source={item.img} style={[styles.newItemImage, img]} />
+        <Image source={{ uri: item?.image?.[0] }} style={[styles.newItemImage, img]} />
         {discount && (
           <LinearGradient
             colors={['rgba(255, 87, 144, 1)', 'rgba(248, 17, 64, 1)']}
@@ -42,7 +42,7 @@ const NewItem = ({
           </LinearGradient>
         )}
       </View>
-      <Text style={styles.desctxt}>{item.desc}</Text>
+      <Text style={styles.desctxt}>{item?.description||'Unknown'}</Text>
       <Text style={{ ...GST.subdescription, fontFamily: 'Raleway-Bold' }}>
         {item.price}{' '}
         {dstxt && (
@@ -63,7 +63,7 @@ const NewItem = ({
     <FlatList
       data={data}
       renderItem={renderNewItem}
-      keyExtractor={item => item.id}
+      keyExtractor={item => item._id}
       horizontal={justfor ? false : true}
       numColumns={numofcolumn}
       showsHorizontalScrollIndicator={false}

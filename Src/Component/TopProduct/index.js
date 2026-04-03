@@ -8,7 +8,7 @@ const { width, height } = Dimensions.get("window");
 
   const TopProduct=({data,style,contentContainerStyle,txt,numColumns,stylerow,check,onPress,})=>{
     const sumbit=(item)=>{
-    setSetlect(item.id)
+    setSetlect(item._id)
   }
     const [select, setSetlect]=useState(null)
      const renderTopProductItem = ({ item,i}) => (
@@ -22,7 +22,7 @@ const { width, height } = Dimensions.get("window");
       }}
     >
       
-    <Image source={item.image} style={styles.topProductImage} />
+    <Image source={{ uri: item?.image?.[0] }} style={styles.topProductImage} />
      {check && select === item.id && (
       
     <Select height={RF(20)} width={RF(20)} style={{position:"absolute",top:0,right:0}}/>
@@ -37,7 +37,7 @@ const { width, height } = Dimensions.get("window");
 <FlatList
           data={data}
           renderItem={renderTopProductItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item._id}
           numColumns={numColumns}
           horizontal={numColumns?false:true}
           columnWrapperStyle={stylerow}

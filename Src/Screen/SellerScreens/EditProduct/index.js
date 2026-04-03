@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -12,6 +12,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import { wp, hp, colors } from '../../../Constant';
+import { useDispatch, useSelector } from 'react-redux';
+import { UpdateProduct,GetAllCategories,DeleteProduct } from '../../../Redux/slices/Action/Productaction';
+import Loader from '../../../Component/Loader/Loader';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+
 
 const CATEGORIES = ['Clothing', 'Shoes', 'Bags', 'Accessories', 'Electronics', 'Sportswear'];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -26,20 +31,72 @@ const STATUS_CLR = {
 const EditProduct = ({ route, navigation }) => {
     const insets = useSafeAreaInsets();
     const product = route?.params?.product ?? {};
+    const dispatch = useDispatch();
+    const {loading,error,allcategories} = useSelector(state => state.product);
+    const fetchdata=async()=>{
+        try{
+          const res=await dispatch(GetAllCategories()).unwrap()
+          showSuccessToast("all data is fetch successfully")
+         console.log(res)
+          return res
+        }catch(err){
+          console.log(err)
+          showErrorToast(err)
+    
+        }
+      }
+      useEffect(()=>{
+        fetchdata()
+      },[])
+      const DeleteProductHandler= async (id)=>{
+          try {
+             await dispatch(DeleteProduct(id)).unwrap();
+              showSuccessToast('Product deleted successfully!');
+              navigation.goBack()
+           
+          } catch (err) {
+      
+            showErrorToast(err || 'Failed to delete product');
+          }
+        }
+      
+
 
     // Pre-fill from route params
-    const [name, setName] = useState(product.title ?? '');
+    const [name, setName] = useState(product.name ?? '');
     const [price, setPrice] = useState(product.price?.toString() ?? '');
     const [description, setDescription] = useState(product.description ?? '');
-    const [stock, setStock] = useState(product.quantity?.toString() ?? '');
-    const [selectedCat, setSelectedCat] = useState(product.category ?? '');
+    const [stock, setStock] = useState(product.stock?.toString() ?? '');
+    const [selectedCat, setSelectedCat] = useState(product.categoryId ?? '');
     const [selectedSizes, setSelectedSizes] = useState(product.size ? [product.size] : []);
     const [status, setStatus] = useState(product.status ?? 'In Stock');
     const [images, setImages] = useState(
-        product.image ? [{ uri: null, local: product.image }] : [],
-    );
+  product.image ? product.image.map(img => ({ uri: img.uri, local: null })) : []
+);
+const [color,setcolor]=useState(product.color??'N/A')
+const handlesumbit=async()=>{
+        try {
+           const res= await dispatch(UpdateProduct({
+                id:product._id,
+                name,
+                price,
+                description,
+                color:color,
+                size:selectedSizes[0]||'N/A',
+                image:images.map(img=>img),
+                stock,
+                category:selectedCat,
+            })).unwrap();
+            showSuccessToast('Product updated successfully!');
+            navigation.goBack();
+            return res;
+        } catch (error) {
+            // console.error('Error updating product:', error);
+            showErrorToast(error || 'Failed to update product. Please try again.');
+        }
+    };
 
-    const MAX_IMAGES = 6;
+    const MAX_IMAGES = 4;
 
     const pickGallery = () => {
         const remaining = MAX_IMAGES - images.length;
@@ -104,14 +161,17 @@ const EditProduct = ({ route, navigation }) => {
         ]);
     };
 
-    const getImgSource = img => {
-        if (img.uri) return { uri: img.uri };
-        if (img.local) return img.local;
-        return null;
-    };
+   const getImgSource = img => {
+  if (img.uri) return { uri: img.uri };
+  if (img.local) return img.local; // keep as-is for local files
+  return null;
+};
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
+            {
+                loading && <Loader />
+            }
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
@@ -226,13 +286,13 @@ const EditProduct = ({ route, navigation }) => {
                 {/* ── Category ── */}
                 <Text style={styles.label}>Category</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
-                    {CATEGORIES.map(cat => (
+                    {allcategories.map(cat => (
                         <TouchableOpacity
-                            key={cat}
-                            style={[styles.chip, selectedCat === cat && styles.chipActive]}
-                            onPress={() => setSelectedCat(cat)}>
-                            <Text style={[styles.chipTxt, selectedCat === cat && styles.chipTxtActive]}>
-                                {cat}
+                            key={cat._id}
+                            style={[styles.chip, selectedCat === cat._id && styles.chipActive]}
+                            onPress={() => setSelectedCat(cat._id)}>
+                            <Text style={[styles.chipTxt, selectedCat === cat._id && styles.chipTxtActive]}>
+                                {cat.name}
                             </Text>
                         </TouchableOpacity>
                     ))}
@@ -265,13 +325,24 @@ const EditProduct = ({ route, navigation }) => {
                     numberOfLines={5}
                     textAlignVertical="top"
                 />
+                <View style={styles.halfField}>
+                            <Text style={styles.label}>Colors</Text>
+                            <TextInput
+                              style={styles.input}
+                              value={color}
+                              onChangeText={setcolor}
+                              placeholder="Color"
+                              placeholderTextColor={colors.sellerSubText}
+                              
+                            />
+                          </View>
 
                 {/* ── Actions ── */}
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.85}>
+                <TouchableOpacity style={styles.saveBtn} onPress={handlesumbit} activeOpacity={0.85}>
                     <Text style={styles.saveTxt}>💾  Save Changes</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete} activeOpacity={0.85}>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => DeleteProductHandler(product._id)} activeOpacity={0.85}>
                     <Text style={styles.deleteTxt}>🗑️  Delete Product</Text>
                 </TouchableOpacity>
             </ScrollView>
