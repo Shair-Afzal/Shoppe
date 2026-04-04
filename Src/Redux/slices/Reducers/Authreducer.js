@@ -35,7 +35,8 @@ const initialState = {
   scurrentpage:1,
   stotalpage:1,
   sisfetchmore:false,
-  
+  totalusers:0,
+  totalsellers:0
 
 };
 
@@ -240,7 +241,7 @@ const userslice = createSlice({
         }
       })
       .addCase(AllUsers.fulfilled,(state,action)=>{
-        const { docs, page, totalPages } = action.payload;
+        const { docs, page, totalPages,totalDocs} = action.payload;
          if (page === 1) {
     state.allusers = docs; 
   } else {
@@ -249,7 +250,7 @@ const userslice = createSlice({
     );
     state.allusers = [...state.allusers, ...newUsers]; 
   }
-
+state.totalusers=totalDocs
   state.currentPage = page;
   state.totalPages = totalPages;
 
@@ -269,7 +270,7 @@ const userslice = createSlice({
         }
       })
       .addCase(AllSellers.fulfilled,(state,action)=>{
-                const { docs, page, totalPages } = action.payload;
+                const { docs, page, totalPages,totalDocs } = action.payload;
                  if (page === 1) {
     state.allSellers = docs; 
   } else {
@@ -279,6 +280,7 @@ const userslice = createSlice({
   
     state.allSellers = [...state.allSellers, ...newUsers];
   }
+  state.totalsellers=totalDocs
     state.scurrentpage=page
     state.stotalpage=totalPages
         state.loading=false;

@@ -78,7 +78,7 @@ const Profile = ({ navigation }) => {
 
   const sumbit = index => {
     if (index === 1) {
-      navigation.navigate('Recive');
+      navigation.navigate('Chat');
     } else if(index==0){
       navigation.navigate('CartTab',{screen:'Payment'})
     }else{

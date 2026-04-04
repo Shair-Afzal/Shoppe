@@ -283,15 +283,27 @@ const DetailsScreen = ({ navigation,route }) => {
       </View>
     </>
   );
- const buyerfunction = () => {
-  setmodel(false);
-  navigation.navigate('home', {
-    screen: 'CartTab',
-    params: {
-      screen: 'Payment',
-      params: { product }, // ✅ pass product to payment screen
-    },
-  });
+const buyerfunction = async () => {
+  try {
+    setmodel(false);
+
+ 
+    await dispatch(AddtoCart({ productId: id, quantity: 1 })).unwrap();
+
+    showSuccessToast("Added to cart");
+
+    
+    navigation.navigate('home', {
+      screen: 'CartTab',
+      params: {
+        screen: 'Order', 
+      },
+    });
+
+  } catch (err) {
+    console.log("Buy now error:", err);
+    showErrorToast(err?.message || "Something went wrong");
+  }
 };
   const cartfunction = async () => {
     setmodel(false);

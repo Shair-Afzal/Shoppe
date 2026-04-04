@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -11,192 +11,226 @@ import {
   Platform,
   SafeAreaView,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
-import GST, { wp, hp, colors, fontSize, radius } from '../../../Constant';
+import GST, {wp, hp, colors, fontSize, radius, RF} from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
-import Add from '../../../assets/SVG/Add.svg';
-import Check from '../../../assets/SVG/Check.svg';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getMessages,
+  sendMessage,
+} from '../../../Redux/slices/Action/Chatslice';
+import {setCurrentChat} from '../../../Redux/slices/Reducers/chatReducer';
+import {showErrorToast} from '../../../utils/Toast';
 
-const AdminChatScreen = ({ route, navigation }) => {
-  const { chatData } = route.params;
-  const [messages, setMessages] = useState([]);
+const AdminChatScreen = ({route, navigation}) => {
+  const {conversationId, participantName, participantImage, participantRole, participantId} =
+    route.params;
+  const dispatch = useDispatch();
+  const {user} = useSelector(state => state.user);
+  const {messages, loading} = useSelector(state => state.chat);
   const [inputText, setInputText] = useState('');
   const flatListRef = useRef(null);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     loadMessages();
   }, []);
 
-  const loadMessages = () => {
-    // Sample messages data
-    const dummyMessages = [
-      {
-        id: '1',
-        sender: 'user',
-        text: 'Hello, I have a question about my order',
-        timestamp: '10:15 AM',
-        isSendByAdmin: false,
-      },
-      {
-        id: '2',
-        sender: 'admin',
-        text: 'Hi! Thank you for contacting us. How can I help you?',
-        timestamp: '10:20 AM',
-        isSendByAdmin: true,
-      },
-      {
-        id: '3',
-        sender: 'user',
-        text: "I ordered a product yesterday but I haven't received a confirmation yet",
-        timestamp: '10:22 AM',
-        isSendByAdmin: false,
-      },
-      {
-        id: '4',
-        sender: 'admin',
-        text: 'Let me check that for you. Could you please provide your order ID?',
-        timestamp: '10:25 AM',
-        isSendByAdmin: true,
-      },
-      {
-        id: '5',
-        sender: 'user',
-        text: "Sure, it's #12345",
-        timestamp: '10:27 AM',
-        isSendByAdmin: false,
-      },
-      {
-        id: '6',
-        sender: 'admin',
-        text: 'Perfect! I found your order. Your confirmation email will be sent within 5 minutes.',
-        timestamp: '10:30 AM',
-        isSendByAdmin: true,
-      },
-    ];
-    setMessages(dummyMessages);
+  const loadMessages = async () => {
+    try {
+      setInitialLoad(true);
+      await dispatch(getMessages(conversationId)).unwrap();
+    } catch (err) {
+      console.log('Error loading messages:', err);
+    } finally {
+      setInitialLoad(false);
+    }
   };
 
-  const handleSendMessage = () => {
+  // Auto scroll when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({animated: true});
+      }, 200);
+    }
+  }, [messages]);
+
+  const handleSendMessage = async () => {
     if (inputText.trim().length === 0) return;
 
-    const newMessage = {
-      id: Math.random().toString(),
-      sender: 'admin',
-      text: inputText,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      isSendByAdmin: true,
-    };
-
-    setMessages([...messages, newMessage]);
-    setInputText('');
-
-    // Scroll to bottom
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
+    try {
+      await dispatch(
+        sendMessage({
+          message: inputText.trim(),
+          conversationId: conversationId,
+          receiverId: participantId,
+        }),
+      ).unwrap();
+      setInputText('');
+    } catch (err) {
+      console.log('Error sending message:', err);
+      showErrorToast(err || 'Failed to send message');
+    }
   };
 
-  const renderMessage = ({ item }) => (
-    <View
-      style={[
-        styles.messageContainer,
-        item.isSendByAdmin
-          ? styles.adminMessageContainer
-          : styles.userMessageContainer,
-      ]}
-    >
-      {!item.isSendByAdmin && (
-        <Image
-          source={
-            typeof chatData.userImage === 'number'
-              ? chatData.userImage
-              : { uri: chatData.userImage }
-          }
-          style={styles.messageAvatar}
-          resizeMode="cover"
-        />
-      )}
+  const formatTime = dateStr => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  };
+
+  const getInitials = name => {
+    if (!name) return '?';
+    return name
+      .split(' ')
+      .map(w => w[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const renderMessage = ({item}) => {
+    const isAdmin =
+      item.senderId?._id === user?._id || item.senderId === user?._id;
+
+    return (
       <View
         style={[
-          styles.messageBubble,
-          item.isSendByAdmin ? styles.adminBubble : styles.userBubble,
-        ]}
-      >
-        <Text
+          styles.messageContainer,
+          isAdmin ? styles.adminMessageContainer : styles.userMessageContainer,
+        ]}>
+        {!isAdmin && (
+          <View style={styles.msgAvatarContainer}>
+            {participantImage ? (
+              <Image
+                source={{uri: participantImage}}
+                style={styles.messageAvatar}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={[styles.messageAvatar, styles.msgAvatarPlaceholder]}>
+                <Text style={styles.msgAvatarText}>
+                  {getInitials(participantName)}
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+        <View
           style={[
-            styles.messageText,
-            item.isSendByAdmin
-              ? styles.adminMessageText
-              : styles.userMessageText,
-          ]}
-        >
-          {item.text}
-        </Text>
-        <Text
-          style={[
-            styles.timestamp,
-            item.isSendByAdmin ? styles.adminTimestamp : styles.userTimestamp,
-          ]}
-        >
-          {item.timestamp}
-        </Text>
+            styles.messageBubble,
+            isAdmin ? styles.adminBubble : styles.userBubble,
+          ]}>
+          <Text
+            style={[
+              styles.messageText,
+              isAdmin ? styles.adminMessageText : styles.userMessageText,
+            ]}>
+            {item.message}
+          </Text>
+          <Text
+            style={[
+              styles.timestamp,
+              isAdmin ? styles.adminTimestamp : styles.userTimestamp,
+            ]}>
+            {formatTime(item.createdAt)}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.sellerBg} />
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.flex}
-      >
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        style={styles.flex}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
-            style={styles.backButton}
-          >
+            style={styles.backButton}>
             <LeftArrow width={wp('6%')} height={wp('6%')} />
           </TouchableOpacity>
 
           <View style={styles.headerInfo}>
-            <Image
-              source={
-                typeof chatData.userImage === 'number'
-                  ? chatData.userImage
-                  : { uri: chatData.userImage }
-              }
-              style={styles.headerAvatar}
-              resizeMode="cover"
-            />
+            {participantImage ? (
+              <Image
+                source={{uri: participantImage}}
+                style={styles.headerAvatar}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={[styles.headerAvatar, styles.headerAvatarPlaceholder]}>
+                <Text style={styles.headerAvatarText}>
+                  {getInitials(participantName)}
+                </Text>
+              </View>
+            )}
             <View style={styles.headerTextContainer}>
-              <Text style={styles.headerUserName}>{chatData.userName}</Text>
-              <Text style={styles.headerStatus}>
-                {chatData.online ? 'Active now' : 'Inactive'}
-              </Text>
+              <Text style={styles.headerUserName}>{participantName}</Text>
+              <View style={styles.headerRoleRow}>
+                <View
+                  style={[
+                    styles.headerRoleBadge,
+                    {
+                      backgroundColor:
+                        participantRole === 'seller'
+                          ? 'rgba(245, 158, 11, 0.15)'
+                          : 'rgba(6, 182, 212, 0.15)',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.headerRoleText,
+                      {
+                        color:
+                          participantRole === 'seller'
+                            ? colors.sellerWarning
+                            : colors.sellerAccent,
+                      },
+                    ]}>
+                    {participantRole === 'seller' ? '🏪 Seller' : '👤 Customer'}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
-
-          <TouchableOpacity style={styles.callButton}>
-            <Check width={wp('5%')} height={wp('5%')} />
-          </TouchableOpacity>
         </View>
 
         {/* Messages List */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={item => item.id}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
-          contentContainerStyle={styles.messagesList}
-          showsVerticalScrollIndicator={true}
-          scrollIndicatorInsets={{ right: 1 }}
-        />
+        {initialLoad ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.sellerPrimary} />
+            <Text style={styles.loadingText}>Loading messages...</Text>
+          </View>
+        ) : messages.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <View style={styles.emptyIcon}>
+              <Text style={{fontSize: RF(35)}}>💬</Text>
+            </View>
+            <Text style={styles.emptyTitle}>Start the Conversation</Text>
+            <Text style={styles.emptySubtitle}>
+              Send a message to {participantName}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={(item, index) => item._id || index.toString()}
+            onContentSizeChange={() =>
+              flatListRef.current?.scrollToEnd({animated: true})
+            }
+            contentContainerStyle={styles.messagesList}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
 
         {/* Input Area */}
         <View style={styles.inputContainer}>
@@ -210,9 +244,6 @@ const AdminChatScreen = ({ route, navigation }) => {
               multiline
               maxHeight={hp('8%')}
             />
-            <TouchableOpacity style={styles.attachButton} activeOpacity={0.7}>
-              <Add width={wp('6%')} height={wp('6%')} />
-            </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={[
@@ -220,8 +251,7 @@ const AdminChatScreen = ({ route, navigation }) => {
               !inputText.trim() && styles.sendButtonDisabled,
             ]}
             onPress={handleSendMessage}
-            disabled={!inputText.trim()}
-          >
+            disabled={!inputText.trim()}>
             <Text style={styles.sendButtonText}>✓</Text>
           </TouchableOpacity>
         </View>
@@ -240,17 +270,21 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: wp('4%'),
     paddingVertical: hp('1.5%'),
     backgroundColor: colors.sellerCard,
     borderBottomWidth: 1,
     borderBottomColor: colors.sellerBorder,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
   },
   backButton: {
     padding: wp('2%'),
-    marginRight: wp('2%'),
+    marginRight: wp('1%'),
   },
   headerInfo: {
     flex: 1,
@@ -261,7 +295,18 @@ const styles = StyleSheet.create({
     width: wp('10%'),
     height: wp('10%'),
     borderRadius: wp('5%'),
-    marginRight: wp('2%'),
+    marginRight: wp('3%'),
+    backgroundColor: colors.sellerBorder,
+  },
+  headerAvatarPlaceholder: {
+    backgroundColor: colors.sellerPrimary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerAvatarText: {
+    color: colors.white,
+    fontSize: fontSize.avgSmall,
+    fontWeight: '700',
   },
   headerTextContainer: {
     flex: 1,
@@ -271,16 +316,54 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.sellerText,
   },
-  headerStatus: {
-    fontSize: fontSize.extraSmall,
-    color: colors.sellerSuccess,
+  headerRoleRow: {
+    flexDirection: 'row',
+    marginTop: hp('0.3%'),
   },
-  callButton: {
-    padding: wp('2%'),
-    marginLeft: wp('2%'),
+  headerRoleBadge: {
+    paddingHorizontal: wp('2%'),
+    paddingVertical: hp('0.2%'),
+    borderRadius: radius.radius2,
   },
-  callButtonText: {
-    fontSize: fontSize.large,
+  headerRoleText: {
+    fontSize: RF(10),
+    fontWeight: '600',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: hp('1%'),
+    fontSize: fontSize.avgSmall,
+    color: colors.sellerSubText,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: wp('10%'),
+  },
+  emptyIcon: {
+    width: wp('18%'),
+    height: wp('18%'),
+    borderRadius: wp('9%'),
+    backgroundColor: colors.sellerLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: hp('2%'),
+  },
+  emptyTitle: {
+    fontSize: fontSize.small,
+    fontWeight: '600',
+    color: colors.sellerText,
+    marginBottom: hp('0.5%'),
+  },
+  emptySubtitle: {
+    fontSize: fontSize.avgSmall,
+    color: colors.sellerSubText,
+    textAlign: 'center',
   },
   messagesList: {
     flexGrow: 1,
@@ -289,7 +372,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     flexDirection: 'row',
-    marginVertical: hp('0.8%'),
+    marginVertical: hp('0.5%'),
     alignItems: 'flex-end',
   },
   adminMessageContainer: {
@@ -298,21 +381,40 @@ const styles = StyleSheet.create({
   userMessageContainer: {
     justifyContent: 'flex-start',
   },
+  msgAvatarContainer: {
+    marginRight: wp('2%'),
+  },
   messageAvatar: {
     width: wp('8%'),
     height: wp('8%'),
     borderRadius: wp('4%'),
-    marginRight: wp('2%'),
+    backgroundColor: colors.sellerBorder,
+  },
+  msgAvatarPlaceholder: {
+    backgroundColor: colors.sellerAccent,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  msgAvatarText: {
+    color: colors.white,
+    fontSize: RF(10),
+    fontWeight: '700',
   },
   messageBubble: {
     maxWidth: wp('70%'),
-    paddingHorizontal: wp('3%'),
+    paddingHorizontal: wp('3.5%'),
     paddingVertical: hp('1%'),
     borderRadius: radius.radius3,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowOffset: {width: 0, height: 1},
+    shadowRadius: 2,
   },
   adminBubble: {
     backgroundColor: colors.sellerPrimary,
     borderBottomRightRadius: radius.radius1,
+    alignSelf: 'flex-end',
   },
   userBubble: {
     backgroundColor: colors.sellerCard,
@@ -321,7 +423,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: radius.radius1,
   },
   messageText: {
-    fontSize: fontSize.small,
+    fontSize: fontSize.avgSmall,
+    lineHeight: RF(20),
   },
   adminMessageText: {
     color: colors.white,
@@ -332,9 +435,10 @@ const styles = StyleSheet.create({
   timestamp: {
     fontSize: fontSize.extraSmall,
     marginTop: hp('0.3%'),
+    alignSelf: 'flex-end',
   },
   adminTimestamp: {
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: 'rgba(255, 255, 255, 0.6)',
   },
   userTimestamp: {
     color: colors.sellerSubText,
@@ -343,7 +447,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     paddingHorizontal: wp('4%'),
-    paddingVertical: hp('1.5%'),
+    paddingVertical: hp('1.2%'),
     backgroundColor: colors.sellerCard,
     borderTopWidth: 1,
     borderTopColor: colors.sellerBorder,
@@ -357,33 +461,37 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.sellerBorder,
     marginRight: wp('2%'),
-    paddingHorizontal: wp('2%'),
+    paddingHorizontal: wp('3%'),
   },
   input: {
     flex: 1,
     paddingVertical: hp('1%'),
-    fontSize: fontSize.small,
+    fontSize: fontSize.avgSmall,
     color: colors.sellerText,
     maxHeight: hp('8%'),
   },
-  attachButton: {
-    padding: wp('2%'),
-  },
   sendButton: {
     backgroundColor: colors.sellerPrimary,
-    width: wp('10%'),
-    height: wp('10%'),
-    borderRadius: wp('5%'),
+    width: wp('11%'),
+    height: wp('11%'),
+    borderRadius: wp('5.5%'),
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 3,
+    shadowColor: colors.sellerPrimary,
+    shadowOpacity: 0.3,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
   },
   sendButtonDisabled: {
     backgroundColor: colors.sellerBorder,
     opacity: 0.5,
+    elevation: 0,
   },
   sendButtonText: {
     fontSize: fontSize.large,
     color: colors.white,
+    fontWeight: '700',
   },
 });
 

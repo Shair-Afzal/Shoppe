@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -27,53 +27,14 @@ import OrdersIcon from '../../../assets/SVG/Activecart.svg';
 import ProductsIcon from '../../../assets/SVG/ImageIcon.svg';
 import ManageIcon from '../../../assets/SVG/TopMenu.svg';
 import FilterIcon from '../../../assets/SVG/Filter.svg';
-import { AllUsers } from '../../../Redux/slices/Action/Authaction';
-import { useSelector } from 'react-redux';
+import {AllUsers,AllSellers } from '../../../Redux/slices/Action/Authaction';
+import { GetAllProducts,GetAllCategories } from '../../../Redux/slices/Action/Productaction';
+import { useDispatch,useSelector } from 'react-redux';
+import { showSuccessToast,showErrorToast } from '../../../utils/Toast';
 
 
 // ── Static Data ──────────────────────────────────────────────────────────────
-const statsData = [
-  {
-    id: 's1',
-    title: 'Total Users',
-    count: '4,821',
-    icon: UsersIcon,
-    color: colors.sellerPrimary,
-    bg: colors.sellerLight,
-    change: '+12%',
-    positive: true,
-  },
-  {
-    id: 's2',
-    title: 'Total Sellers',
-    count: '348',
-    icon: SellersIcon,
-    color: colors.sellerAccent,
-    bg: '#CFFAFE',
-    change: '+5%',
-    positive: true,
-  },
-  {
-    id: 's3',
-    title: 'Total Products',
-    count: '1,294',
-    icon: ProductsIcon,
-    color: colors.sellerWarning,
-    bg: '#FEF3C7',
-    change: '+8%',
-    positive: true,
-  },
-  {
-    id: 's4',
-    title: 'Total Orders',
-    count: '9,570',
-    icon: OrdersIcon,
-    color: colors.sellerSuccess,
-    bg: '#D1FAE5',
-    change: '+21%',
-    positive: true,
-  },
-];
+
 
 const quickActions = [
   {
@@ -141,9 +102,92 @@ const recentActivity = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const AdminDashboard = ({ navigation }) => {
-    
-  const {user}=useSelector(state => state.user)
+    const dispatch=useDispatch()
+  const {user,allusers, allSellers,totalusers,totalsellers}=useSelector(state => state.user)
+  const {allproducts,loading, order,totalproducts}=useSelector(state => state.product)
   const insets = useSafeAreaInsets();
+  const fetchProducts = async () => {
+  try {
+    const res = await dispatch(GetAllProducts({ page: 1, limit: 3 })).unwrap();
+    console.log("products", res);
+    return res;
+  } catch (err) {
+    showErrorToast(err);
+  }
+};
+  const fetch = async ()=>{
+        try{
+         const res=await dispatch(AllUsers({ page: 1, limit: 3 })).unwrap()
+         showSuccessToast("data is fectch successfully")
+         console.log(allusers)
+         return res
+ 
+ 
+        }catch(err){
+         showErrorToast(err)
+ 
+ 
+        }
+     }
+       const fetchdata=async ()=>{
+             try{
+                 const res=await dispatch(AllSellers({page:1,limit:3})).unwrap()
+      showSuccessToast("data is fectch successfully")
+             console.log("data",allSellers)
+             return res
+     
+     
+            }catch(err){
+             showErrorToast(err)
+             }
+         }
+         useEffect(()=>{
+          fetch()
+          fetchdata()
+          fetchProducts()
+         },[])
+  const statsData = [
+  {
+    id: 's1',
+    title: 'Total Users',
+    count: totalusers,
+    icon: UsersIcon,
+    color: colors.sellerPrimary,
+    bg: colors.sellerLight,
+    change: '+12%',
+    positive: true,
+  },
+  {
+    id: 's2',
+    title: 'Total Sellers',
+    count:  totalsellers,
+    icon: SellersIcon,
+    color: colors.sellerAccent,
+    bg: '#CFFAFE',
+    change: '+5%',
+    positive: true,
+  },
+  {
+    id: 's3',
+    title: 'Total Products',
+    count: totalproducts||0,
+    icon: ProductsIcon,
+    color: colors.sellerWarning,
+    bg: '#FEF3C7',
+    change: '+8%',
+    positive: true,
+  },
+  {
+    id: 's4',
+    title: 'Total Orders',
+    count: order.length,
+    icon: OrdersIcon,
+    color: colors.sellerSuccess,
+    bg: '#D1FAE5',
+    change: '+21%',
+    positive: true,
+  },
+];
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>

@@ -303,3 +303,20 @@ export const getFavourites = createAsyncThunk(
     }
   }
 );
+
+export const AllordersGet=createAsyncThunk(
+  'order/all',
+  async (_,{rejectWithValue})=>{
+    try{
+      const res=await Api.get("/orders/allorders");
+      return res.data.data
+
+    }catch(err){
+         const message=
+      err.response?.data?.message ||
+      err.message ||
+      "Failed to create order";
+      return rejectWithValue(message);
+    }
+  }
+)

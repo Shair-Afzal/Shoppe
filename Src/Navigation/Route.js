@@ -1,15 +1,30 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import AppStack from './AppStack'
 import AuthStack from './Authstack'
 import SellerStack from './MainStack/SellerStack'
 import AdminStack from './MainStack/AdminStack'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import RootSellerStack from './MainStack/RootSellerStack'
+import { connectSocket } from '../utils/socket/socket'
+import { addMessageRealtime } from '../Redux/slices/Reducers/chatReducer'
 
 
 const Route = () => {
   const {accesstoken,user}=useSelector(state=>state.user)
+  const dispatch = useDispatch()
+  
+  useEffect(() => {
+  if (!user?._id) return;
+
+  const socket = connectSocket(user._id);
+
+  socket.on("newMessage", (msg) => {
+    dispatch(addMessageRealtime(msg));
+  });
+
+  return () => socket.disconnect();
+}, [user]);
   return (
     
     

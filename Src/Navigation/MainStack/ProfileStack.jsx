@@ -46,6 +46,7 @@ const ProfileStack = () => {
       <Stack.Screen name='Live' component={Live}/>
     <Stack.Screen name='Story' component={StoryScreen}/>
     <Stack.Screen name='Termcondition' component={TermCondition}/>
+    <Stack.Screen name='Chat' component={ChatScreen}/>
     </Stack.Navigator>
   );
 };

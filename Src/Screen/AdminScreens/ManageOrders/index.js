@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -12,6 +12,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors } from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
 import OrderIcon from '../../../assets/SVG/Activecart.svg';
+import { GetAllProducts,AllordersGet } from '../../../Redux/slices/Action/Productaction';
+import { AllSellers } from '../../../Redux/slices/Action/Authaction';
+import { showErrorToast,showSuccessToast } from '../../../utils/Toast';
+import { useDispatch,useSelector } from 'react-redux';
 
 const ordersData = [
     { id: 'o1', orderId: '#ORD-5821', buyer: 'Ali Hassan', seller: 'TechShop PK', amount: '$120', status: 'Delivered', date: 'Mar 10, 2025', items: 2 },
@@ -32,10 +36,27 @@ const STATUS_CFG = {
 const FILTERS = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
 const ManageOrders = ({ navigation }) => {
+    const dispatch=useDispatch();
+    const {loading,order}=useSelector(state => state.product)
     const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
+    const Fetched=async()=>{
+        try{
+            const res=await dispatch(AllordersGet()).unwrap()
+            showSuccessToast("data is fetched ")
+            console.log("order",res)
+            return res
 
+        }catch(err){
+            console.log("order",err)
+            showErrorToast(err)
+
+        }
+    }
+useEffect(()=>{
+    Fetched()
+},[])
     const filtered = ordersData.filter(o => {
         const matchSearch =
             o.orderId.toLowerCase().includes(search.toLowerCase()) ||

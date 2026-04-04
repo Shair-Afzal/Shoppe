@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import React from 'react';
 import InactiveHome from '../../assets/SVG/InactiveHome.svg';
 import Activehome from '../../assets/SVG/Activehome.svg';
@@ -87,14 +88,22 @@ const Bottomtab = () => {
       <Tab.Screen
         name="ProfileTab"
         component={ProfileStack}
-        options={{
+        options={({ route }) => ({
+          tabBarStyle: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+            // Hide bottom tab bar if currently in Chat screen
+            if (routeName === 'Chat') {
+              return { display: 'none' };
+            }
+            return styles.tabbarstyle;
+          })(route),
           tabBarIcon: ({ focused }) =>
             focused ? (
               <Activeprofile height={RF(30)} width={RF(30)} />
             ) : (
               <InactiveProfile height={RF(30)} width={RF(20)} />
             ),
-        }}
+        })}
       />
     </Tab.Navigator>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -13,7 +13,11 @@ import { wp, hp, colors } from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
 import ProductIcon from '../../../assets/SVG/ImageIcon.svg';
 import DeleteIcon from '../../../assets/SVG/Deleteicon.svg';
-
+import { GetAllProducts } from '../../../Redux/slices/Action/Productaction';
+import { AllSellers } from '../../../Redux/slices/Action/Authaction';
+import { showErrorToast,showSuccessToast } from '../../../utils/Toast';
+import { useDispatch,useSelector } from 'react-redux';
+import Loader from '../../../Component/Loader/Loader';
 const productsData = [
     { id: 'p1', name: 'Nike Air Max 270', seller: 'TechShop PK', price: '$120', category: 'Shoes', stock: 15, status: 'Active', added: 'Mar 8, 2025' },
     { id: 'p2', name: 'Casual Cotton T-Shirt', seller: 'FashionZone', price: '$17', category: 'Clothing', stock: 42, status: 'Active', added: 'Mar 7, 2025' },
@@ -32,82 +36,110 @@ const STATUS_CFG = {
 const FILTERS = ['All', 'Active', 'Flagged', 'Removed'];
 
 const ManageProducts = ({ navigation }) => {
+    const dispatch=useDispatch()
+    const {allproducts,loading,error,isfetchMore,totalPages,currentPage}=useSelector(state=>state.product)
+    const {allSellers}=useSelector(state => state.user)
     const insets = useSafeAreaInsets();
+    const fetchProducts=async()=>{
+        try{
+            const res=await dispatch(GetAllProducts({page:1,limit:3})).unwrap()
+            console.log("product",res)
+            showSuccessToast("data is fetch suucessfully ")
+            return res
+        }catch(err){
+            showErrorToast(err)
+
+        }
+    }
+    const fetchuser=async()=>{
+        try{
+            const res=await dispatch(AllSellers({page:1,limit:3})).unwrap()
+            console.log("seller",res)
+            showSuccessToast(" seller data is fetch suucessfully ")
+            return res
+
+        }catch(err){
+            showErrorToast(err)
+
+        }
+    }
+    useEffect(()=>{
+    fetchProducts()
+    fetchuser()
+    },[])
+     const loadMore = async () => {
+      if (currentPage <totalPages && isfetchMore) {
+        await dispatch(GetAllProducts({ page: currentPage + 1, limit: 3 }));
+      }
+    };
+    const mergedProducts = allproducts.map(product => {
+  const seller = allSellers.find(
+    s => s._id === product.sellerId
+  );
+
+  return {
+    _id: product._id,
+    name: product.name,
+    price: product.price,
+    stock: product.stock,
+    category: product.category?.name,
+    shopName: seller?.shopName || "Unknown Shop",
+  };
+});
+
     const [search, setSearch] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
-    const [products, setProducts] = useState(productsData);
+    // const [products, setProducts] = useState(productsData);
+    // const products=allproducts
+    const products = filtered;
 
-    const filtered = products.filter(p => {
-        const matchSearch =
-            p.name.toLowerCase().includes(search.toLowerCase()) ||
-            p.seller.toLowerCase().includes(search.toLowerCase());
-        const matchFilter = activeFilter === 'All' || p.status === activeFilter;
-        return matchSearch && matchFilter;
-    });
+   const filtered = mergedProducts.filter(p => {
+  return (
+    p.name?.toLowerCase().includes(search.toLowerCase()) ||
+    p.shopName?.toLowerCase().includes(search.toLowerCase())
+  );
+});
 
-    const changeStatus = (id, newStatus) => {
-        setProducts(prev =>
-            prev.map(p => (p.id === id ? { ...p, status: newStatus } : p)),
-        );
-    };
+    
 
-    const renderProduct = ({ item }) => {
-        const sc = STATUS_CFG[item.status] || STATUS_CFG.Active;
-        return (
-            <View style={styles.card}>
-                <View style={styles.cardTop}>
-                    <View style={styles.productIconWrap}>
-                        <ProductIcon width={wp('7%')} height={wp('7%')} />
-                    </View>
-                    <View style={styles.productInfo}>
-                        <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
-                        <Text style={styles.sellerTxt}>By: {item.seller}</Text>
-                        <Text style={styles.metaTxt}>{item.category} • Added {item.added}</Text>
-                    </View>
-                    <View style={styles.rightBlock}>
-                        <Text style={styles.priceLabel}>{item.price}</Text>
-                        <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
-                            <Text style={[styles.statusTxt, { color: sc.color }]}>{item.status}</Text>
-                        </View>
-                        <Text style={[styles.stockTxt, { color: item.stock === 0 ? colors.sellerError : colors.sellerSubText }]}>
-                            Stock: {item.stock}
-                        </Text>
-                    </View>
-                </View>
+ const renderProduct = ({ item }) => {
+  return (
+    <View style={{paddingHorizontal:wp(4)}}>
+    <View style={styles.card}>
+      
+      <View style={styles.cardTop}>
+        <View style={styles.productIconWrap}>
+          <ProductIcon width={wp('7%')} height={wp('7%')} />
+        </View>
 
-                <View style={styles.actionRow}>
-                    {item.status !== 'Active' && (
-                        <TouchableOpacity
-                            style={[styles.actionBtn, { backgroundColor: '#D1FAE5', borderColor: colors.sellerSuccess }]}
-                            onPress={() => changeStatus(item.id, 'Active')}
-                            activeOpacity={0.8}>
-                            <Text style={[styles.actionBtnTxt, { color: colors.sellerSuccess }]}>✓ Activate</Text>
-                        </TouchableOpacity>
-                    )}
-                    {item.status !== 'Flagged' && (
-                        <TouchableOpacity
-                            style={[styles.actionBtn, { backgroundColor: '#FEF3C7', borderColor: colors.sellerWarning }]}
-                            onPress={() => changeStatus(item.id, 'Flagged')}
-                            activeOpacity={0.8}>
-                            <Text style={[styles.actionBtnTxt, { color: colors.sellerWarning }]}>⚑ Flag</Text>
-                        </TouchableOpacity>
-                    )}
-                    {item.status !== 'Removed' && (
-                        <TouchableOpacity
-                            style={[styles.actionBtn, { backgroundColor: '#FEE2E2', borderColor: colors.sellerError }]}
-                            onPress={() => changeStatus(item.id, 'Removed')}
-                            activeOpacity={0.8}>
-                            <DeleteIcon width={wp('4%')} height={wp('4%')} />
-                            <Text style={[styles.actionBtnTxt, { color: colors.sellerError }]}> Remove</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-        );
-    };
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={styles.sellerTxt}>{item.shopName}</Text>
+          <Text style={styles.metaTxt}>{item.category}</Text>
+        </View>
+
+        <View style={styles.rightBlock}>
+          <Text style={styles.priceLabel}>${item.price}</Text>
+          <Text style={styles.stockTxt}>Stock: {item.stock}</Text>
+        </View>
+      </View>
+
+      {/* 🔥 Bottom button */}
+      <TouchableOpacity style={{flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,gap:wp(2)}}>
+        <DeleteIcon width={wp('4%')} height={wp('4%')} />
+        <Text style={styles.removeTxt}>Remove</Text>
+      </TouchableOpacity>
+
+    </View>
+    </View>
+  );
+};
 
     return (
         <View style={[styles.root, { paddingTop: insets.top }]}>
+            {
+                loading&&<Loader/>
+            }
             <StatusBar barStyle="light-content" backgroundColor={colors.sellerDark} />
 
             <View style={styles.header}>
@@ -116,7 +148,7 @@ const ManageProducts = ({ navigation }) => {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Manage Products</Text>
                 <View style={styles.countPill}>
-                    <Text style={styles.countTxt}>{products.length}</Text>
+                    <Text style={styles.countTxt}>{mergedProducts.length}</Text>
                 </View>
             </View>
 
@@ -150,12 +182,18 @@ const ManageProducts = ({ navigation }) => {
             />
 
             <FlatList
-                data={filtered}
-                keyExtractor={item => item.id}
-                renderItem={renderProduct}
-                contentContainerStyle={styles.list}
-                showsVerticalScrollIndicator={false}
-            />
+  data={filtered}
+  keyExtractor={item => item._id}
+  renderItem={renderProduct}
+  showsVerticalScrollIndicator={false}
+  contentContainerStyle={{ paddingBottom: hp('4%') }}
+  ItemSeparatorComponent={() => <View style={{ height: hp('1.5%') }} />}
+  onEndReached={loadMore}
+  onEndReachedThreshold={0.5}
+    ListFooterComponent={
+                    isfetchMore ? <ActivityIndicator size="small" /> : null
+                  }
+/>
         </View>
     );
 };
@@ -212,12 +250,12 @@ const styles = StyleSheet.create({
 
     filterRow: {
         paddingHorizontal: wp('4%'),
-        paddingVertical: hp('1.5%'),
+        paddingVertical: hp('0.2%'),
         gap: wp('2%'),
     },
     filterChip: {
         paddingHorizontal: wp('4%'),
-        paddingVertical: hp('0.7%'),
+        paddingVertical: hp('0.3%'),
         borderRadius: wp('5%'),
         backgroundColor: colors.sellerCard,
         borderWidth: 1,
@@ -240,6 +278,7 @@ const styles = StyleSheet.create({
         shadowRadius: 7,
         borderLeftWidth: 3,
         borderLeftColor: colors.sellerWarning,
+        marginTop:5
     },
     cardTop: { flexDirection: 'row', gap: wp('3%'), marginBottom: hp('1.2%') },
     productIconWrap: {

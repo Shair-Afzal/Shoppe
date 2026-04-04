@@ -4,17 +4,19 @@ import { persistReducer } from 'redux-persist';
 import authReducer from './userslice';
 import userreducer from './Reducers/Authreducer.js';
 import productreducer from "./Reducers/Productreducer.js"
+import chatreducer from "./Reducers/chatReducer.js"
 
 const rootReducer = combineReducers({
   user: userreducer,
   product:productreducer,
+  chat:chatreducer
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   // 🔥 Complete user slice ko persist نہ کریں تاکہ loading ہمیشہ false سے شروع ہو
-  blacklist: ['user'],
+  blacklist: ['user', 'chat'],
   timeout: 0,
 };
 

@@ -1,225 +1,165 @@
-import { StyleSheet } from "react-native";
-import GST, { colors, fontSize, RF } from "../../../../Constant";
+import {StyleSheet} from 'react-native';
+import GST, {wp, hp, colors, fontSize, RF} from '../../../../Constant';
 
 const styles = StyleSheet.create({
   main: {
     paddingHorizontal: 0,
   },
   headerContainer: {
-    gap: RF(10),
+    gap: wp('2.5%'),
     alignItems: 'center',
-    paddingHorizontal: RF(15),
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1.5%'),
+    backgroundColor: colors.DarkWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightblue,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
+  },
+  backBtn: {
+    paddingRight: wp('1%'),
+    paddingVertical: hp('1%'),
   },
   iconWrapper: {
-    height: RF(60),
-    width: RF(60),
+    height: wp('11%'),
+    width: wp('11%'),
     backgroundColor: colors.DarkWhite,
-    borderRadius: RF(100),
-    padding: RF(5),
-    elevation: 5,
+    borderRadius: wp('5.5%'),
+    padding: wp('0.8%'),
+    elevation: 3,
+    shadowColor: colors.blue,
+    shadowOpacity: 0.15,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
   },
   iconInner: {
     backgroundColor: colors.lightblue,
     height: '100%',
     width: '100%',
-    borderRadius: RF(100),
+    borderRadius: wp('5.5%'),
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     color: colors.blue,
     fontFamily: 'Raleway-Bold',
-    fontSize: fontSize.medium,
+    fontSize: fontSize.avgSmall,
   },
   bodyContainer: {
-    backgroundColor: colors.white,
-    marginTop: RF(10),
-    padding: RF(15),
+    backgroundColor: colors.grey,
     flex: 1,
   },
 
   /** Chat Messages */
   messageList: {
-    paddingBottom: RF(80),
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1.5%'),
+    paddingBottom: hp('2%'),
   },
   messageBubble: {
-    padding: RF(10),
-    borderRadius: RF(12),
-    marginVertical: RF(4),
-    maxWidth: '70%',
+    paddingHorizontal: wp('3.5%'),
+    paddingVertical: hp('1.2%'),
+    borderRadius: wp('4%'),
+    marginVertical: hp('0.5%'),
+    maxWidth: '78%',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: {width: 0, height: 1},
+    shadowRadius: 2,
   },
   userBubble: {
     alignSelf: 'flex-end',
     backgroundColor: colors.blue,
+    borderBottomRightRadius: wp('1%'),
   },
   botBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.lightblue,
+    backgroundColor: colors.white,
+    borderBottomLeftRadius: wp('1%'),
   },
   userText: {
-    color: colors.DarkWhite,
+    color: '#FFFFFF',
+    fontSize: fontSize.avgSmall,
+    fontFamily: 'NunitoSans-Regular',
+    lineHeight: RF(20),
   },
   botText: {
-    ...GST.smallesttxt,
     color: colors.Black,
-    fontSize:fontSize.avgSmall
-
+    fontSize: fontSize.avgSmall,
+    fontFamily: 'NunitoSans-Regular',
+    lineHeight: RF(20),
   },
-
-  /** Bottom Sheet */
-  bottomSheetWrapper: {
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    left: RF(15),
-  },
-  bottomSheetHeader: {
-    backgroundColor: colors.lightblue,
-    padding: RF(15),
-    width: '100%',
-    paddingVertical: RF(25),
-    borderTopLeftRadius: RF(10),
-    borderTopRightRadius: RF(10),
-  },
-  bottomSheetTitle: {
-    fontFamily: 'Raleway-Bold',
-    fontSize: fontSize.medium,
-    color: colors.Black,
-  },
-  bottomSheetBody: {
-    backgroundColor: colors.DarkWhite,
-    padding: RF(15),
-    paddingVertical: RF(10),
-    height: RF(300),
-  },
-  issueButton: {
-    alignSelf: 'flex-start',
-    padding: RF(10),
-    borderRadius: RF(10),
-    borderWidth: 1,
-    borderColor: colors.blue,
-    marginTop: RF(5),
-  },
-  issueRow: {
-    gap: RF(5),
-    flexDirection: 'row',
-  },
-  issueText: {
-    fontSize: RF(12),
-  },
-  bottomActions: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: RF(5),
-    left: RF(15),
-    backgroundColor: colors.DarkWhite,
-    width: '100%',
-    gap: RF(10),
-  },
-  nextButton: {
-    paddingVertical: RF(14),
-    width: '85%',
+  timeText: {
+    fontSize: RF(10),
+    marginTop: hp('0.5%'),
+    alignSelf: 'flex-end',
+    fontFamily: 'NunitoSans-Regular',
   },
 
   /** Input Section */
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    position: "absolute",
-    bottom: RF(0),
-    left: 0,
-    right: 0,
-    paddingHorizontal: RF(12),
-    backgroundColor: colors.lightblue,
-    height: RF(60),
+    paddingHorizontal: wp('3%'),
+    paddingVertical: hp('1%'),
+    backgroundColor: colors.DarkWhite,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightblue,
   },
   inputContainer: {
-    width: "65%",
-    fontSize: fontSize.medium,
+    flex: 1,
+    fontSize: fontSize.avgSmall,
+    backgroundColor: colors.grey,
+    borderRadius: wp('5%'),
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1.2%'),
+    maxHeight: hp('12%'),
+    color: colors.Black,
+    fontFamily: 'NunitoSans-Regular',
   },
-  sendButton: {
-    alignSelf: 'flex-end',
-    marginTop: RF(10),
+  sendBtn: {
+    marginLeft: wp('2%'),
     backgroundColor: colors.blue,
-    paddingHorizontal: RF(15),
-    paddingVertical: RF(15),
-    borderRadius: RF(10),
+    paddingHorizontal: wp('4.5%'),
+    paddingVertical: hp('1.5%'),
+    borderRadius: wp('5%'),
+    elevation: 2,
+    shadowColor: colors.blue,
+    shadowOpacity: 0.3,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 4,
   },
-  sendButtonText: {
-    color: colors.DarkWhite,
+  sendBtnText: {
+    color: '#FFFFFF',
+    fontSize: fontSize.avgSmall,
+    fontFamily: 'Raleway-Bold',
   },
-  flatlistContainer: {
-    paddingBottom: RF(20),
-  },
-  card: {
-    marginTop: RF(10),
-    width: '100%',
-    flexDirection: 'row',
+
+  /** Center/Loading/Empty states */
+  centerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  catImg: {
-    height: RF(40),
-    width: '48%',
-    resizeMode: 'cover',
-  },
-  catStyle: {
-    width: '30%',
-  },
-  detailsContainer: {
-    height: RF(90),
-    width: '67%',
-  },
-  orderInfo: {
-    justifyContent: 'space-between',
-    height: '100%',
-    width: '100%',
-  },
-  orderRow: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  orderLeft: {
-    width: '60%',
-  },
-  orderNumber: {
-    fontFamily: 'Raleway-Bold',
-    fontSize: RF(14),
-    color: colors.Black,
-  },
-  shippedText: {
-    fontFamily: 'Raleway-Bold',
-    color: colors.Black,
-  },
-  itemBox: {
-    padding: RF(6),
-    backgroundColor: colors.lightblue,
-    borderRadius: RF(5),
-    alignSelf: 'flex-end',
-  },
-  itemText: {
-    fontSize: fontSize.regSmall,
-  },
-  trackBtn: {
-    padding: RF(8),
-    width: '40%',
-    borderRadius: RF(10),
-    borderColor: colors.blue,
+  loadingContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconRow: {
-    flexDirection: 'row',
-    gap: RF(5),
+  noMessagesContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: wp('8%'),
   },
-  profileImage: {
-    height: "100%",
-    width: "100%",
-    borderRadius: RF(5),
+  noMessagesText: {
+    fontSize: fontSize.small,
+    color: colors.dimBlack,
+    textAlign: 'center',
+    fontFamily: 'NunitoSans-Regular',
   },
 });
 

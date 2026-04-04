@@ -4,350 +4,250 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
-  Image,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import React, { useState } from 'react';
-import GST, { colors, fontSize, radius, RF } from '../../../../Constant';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
+import GST, {wp, hp, colors, fontSize, RF} from '../../../../Constant';
 import Icon from '../../../../assets/SVG/Icon.svg';
-import { categoriesData, orderIssuesData } from '../../../../utils/Dummydata';
-import CustomButton from '../../../../Component/Custombutton';
-import Cancle from '../../../../assets/SVG/Cancle.svg';
-import Check from '../../../../assets/SVG/Check.svg';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import LeftArrow from '../../../../assets/SVG/Leftarrow.svg';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import styles from './style';
-import CustomInput, { pickImage } from '../../../../Component/Custominput';
-import Galleryicon from '../../../../assets/SVG/Galleryicon.svg';
-import Copy from '../../../../assets/SVG/Copy.svg';
-import CategoriesList from '../../../../Component/CategoriesList';
-import ProfilePic from '../../../../assets/SVG/ProfilePic.svg';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  createConversation,
+  getConversations,
+  getMessages,
+  sendMessage,
+} from '../../../../Redux/slices/Action/Chatslice';
+import {setCurrentChat} from '../../../../Redux/slices/Reducers/chatReducer';
+import {showErrorToast, showSuccessToast} from '../../../../utils/Toast';
+import {AllUsers} from '../../../../Redux/slices/Action/Authaction';
 
-// Step 2 options
-const orderIssueOptions = [
-  { id: 'oio-1', title: 'I didnt recieve my parcel' },
-  { id: 'oio-2', title: 'I want to cancel my order' },
-  { id: 'oio-3', title: 'I want to return my order' },
-  { id: 'oio-4', title: 'Package was damaged' },
-  { id: 'oio-5', title: 'Other' },
-];
-const actionOptions = [
-  { id: 'act-1', title: 'Track My Order' },
-  { id: 'act-2', title: 'Cancel My Order' },
-  { id: 'act-3', title: 'Replace Item' },
-  { id: 'act-4', title: 'Refund Request' },
-];
-
-const ChatScreen = ({ navigation }) => {
-  const [step, setStep] = useState(1);
-  const [select, setSelect] = useState(null);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      id: 'bot-1',
-      text: 'Hello, Amanda! Welcome to Customer Care Service. We will be happy to help you. Please, provide us more details about your issue before we can start.',
-      sender: 'bot',
-    },
-  ]);
-  const [selectorder, setselectorder] = useState(null);
+const ChatScreen = ({navigation}) => {
   const insert = useSafeAreaInsets();
+  const dispatch = useDispatch();
+  const flatListRef = useRef(null);
 
-  const [pendingSelections, setPendingSelections] = useState([]); // 🔹 temporary store
+  const {user} = useSelector(state => state.user);
+  const {messages, currentChat, loading} = useSelector(state => state.chat);
+  const [messageText, setMessageText] = useState('');
+  const [initializing, setInitializing] = useState(true);
 
-  const handleNext = () => {
-    if (step === 1 && !select) return;
-    if (step === 2 && !select) return;
-    if (step === 3 && selectorder === null) return;
+  // Admin ID - find admin to chat with
+  // On mount: create/get conversation with admin
+  useEffect(() => {
+    initChat();
+  }, []);
 
-    if (step === 1) {
-      // save Step 1 in pending
-      setPendingSelections(prev => [...prev, select]);
-      setStep(2);
-      setSelect(null);
-    } else if (step === 2) {
-      // save Step 2 in pending
-      setPendingSelections(prev => [...prev, select]);
-      setStep(3);
-      setSelect(null);
-    } else if (step === 3) {
-      // Get the selected order text
-      const selectedOrderText = `Selected Order: #${
-        categoriesData[selectorder]?.id || 'Unknown'
-      }`;
-
-      // save Step 3 + flush all selections at once
-      const allSelections = [...pendingSelections, selectedOrderText];
-      setMessages(prev => [
-        ...prev,
-        ...allSelections.map(text => ({
-          id: Date.now().toString() + text,
-          text,
-          sender: 'user',
-        })),
-      ]);
-      setPendingSelections([]); // clear
-      setStep(4); // unlock input
-      setSelect(null);
-      setselectorder(null);
+  const initChat = async () => {
+    try {
+      setInitializing(true);
+      // The backend will find/create conversation between user and admin
+      // We need admin's ID. Typically there's one admin.
+      // We'll use a hardcoded admin approach or the backend handles it
+      // For now, we pass the admin participantId
+      // The user's profile screen navigates here, and conversation is auto-created
+      
+      // First try to get existing conversations
+      const convResult = await dispatch(getConversations()).unwrap();
+      
+      if (convResult && convResult.length > 0) {
+        // Find conversation with admin for customer
+        const adminConv = convResult.find(conv => 
+          conv.participants?.some(p => p.role === 'admin') && conv.roomType === 'customer'
+        );
+        
+        if (adminConv) {
+          dispatch(setCurrentChat(adminConv));
+          await dispatch(getMessages(adminConv._id)).unwrap();
+        } else {
+          dispatch(setCurrentChat(null));
+        }
+      } else {
+        dispatch(setCurrentChat(null));
+      }
+    } catch (err) {
+      console.log('Chat init error:', err);
+    } finally {
+      setInitializing(false);
     }
   };
 
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMsg = {
-        id: Date.now().toString(),
-        text: message,
-        sender: 'user',
-      };
-      setMessages(prev => [...prev, newMsg]);
-      setMessage('');
+  // Auto scroll to bottom when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({animated: true});
+      }, 200);
+    }
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!messageText.trim()) return;
+
+    let targetConv = currentChat;
+    let targetAdminId = targetConv?.participants?.find(
+      p => p._id !== user._id,
+    )?._id;
+
+    try {
+      if (!targetConv) {
+        // Need to create conversation first
+        const usersResult = await dispatch(AllUsers({page: 1, limit: 100})).unwrap();
+        const adminUser = usersResult?.docs?.find(u => u.role === 'admin');
+        if (!adminUser) {
+          showErrorToast('Could not find support team');
+          return;
+        }
+        targetAdminId = adminUser._id;
+        targetConv = await dispatch(createConversation({ participantId: targetAdminId, roomType: 'customer' })).unwrap();
+        dispatch(setCurrentChat(targetConv));
+      }
+
+      await dispatch(
+        sendMessage({
+          message: messageText.trim(),
+          conversationId: targetConv._id,
+          receiverId: targetAdminId,
+        }),
+      ).unwrap();
+      setMessageText('');
+    } catch (err) {
+      console.log('Send message error:', err);
+      showErrorToast(err || 'Failed to send message');
     }
   };
 
-  const currentOptions =
-    step === 1
-      ? orderIssuesData
-      : step === 2
-      ? orderIssueOptions
-      : step === 3
-      ? [] // Empty array for step 3 since we'll show FlatList instead
-      : [];
+  const formatTime = dateStr => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  };
 
-  const renderMessage = ({ item }) => (
-    <View
-      style={[
-        styles.messageBubble,
-        item.sender === 'user' ? styles.userBubble : styles.botBubble,
-        { alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start' },
-      ]}
-    >
-      <Text style={item.sender === 'user' ? styles.userText : styles.botText}>
-        {item.text}
-      </Text>
-    </View>
-  );
+  const renderMessage = ({item}) => {
+    const isMe = item.senderId?._id === user?._id || item.senderId === user?._id;
+    return (
+      <View
+        style={[
+          styles.messageBubble,
+          isMe ? styles.userBubble : styles.botBubble,
+          {alignSelf: isMe ? 'flex-end' : 'flex-start'},
+        ]}>
+        <Text style={isMe ? styles.userText : styles.botText}>
+          {item.message}
+        </Text>
+        <Text
+          style={[
+            styles.timeText,
+            {color: isMe ? 'rgba(255,255,255,0.6)' : colors.dimBlack},
+          ]}>
+          {formatTime(item.createdAt)}
+        </Text>
+      </View>
+    );
+  };
+
+  // Get admin name from conversation
+  const adminParticipant = currentChat?.participants?.find(p => p.role === 'admin');
+  const adminName = adminParticipant?.username || 'Customer Care Service';
+
+  if (initializing) {
+    return (
+      <View style={[GST.MAIN, styles.main, styles.centerContainer]}>
+        <ActivityIndicator size="large" color={colors.blue} />
+        <Text style={[GST.subdescription, {marginTop: RF(10), color: colors.dimBlack}]}>
+          Connecting to support...
+        </Text>
+      </View>
+    );
+  }
+
 
   return (
-    <View
-      style={[
-        GST.MAIN,
-        styles.main,
-        { paddingTop: insert.top, paddingBottom: insert.bottom },
-      ]}
-    >
-      {/* Header */}
-      <View style={[GST.ROW, styles.headerContainer]}>
-        <View style={styles.iconWrapper}>
-          <View style={[GST.CENTER, styles.iconInner]}>
-            {step === 4 ? (
-              <Image
-                source={require('../../../../assets/Images/Reviewimg.png')}
-                style={styles.profileImage}
-              />
-            ) : (
-              <Icon height={RF(25)} width={RF(25)} />
-            )}
-          </View>
-        </View>
-        <View>
-          <Text style={[GST.description, styles.headerTitle]}>
-            {step === 4 ? 'Maggy Lee' : 'Chat Bot'}
-          </Text>
-          <Text style={GST.subdescription}>Customer Care Service</Text>
-        </View>
-      </View>
-
-      {/* Chat Body */}
-      <View style={[GST.FLEX, styles.bodyContainer]}>
-        <FlatList
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.messageList}
-          showsVerticalScrollIndicator={false}
-        />
-
-        {/* Options OR Input */}
-        {step !== 4 && (
-          <View style={styles.bottomSheetWrapper}>
-            <View style={styles.bottomSheetHeader}>
-              <Text style={[GST.description, styles.bottomSheetTitle]}>
-                {step === 1
-                  ? "What's your issue?"
-                  : step === 2
-                  ? 'Order issue'
-                  : 'Select one of your orders'}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      style={{flex: 1}}>
+      <View
+        style={[
+          GST.MAIN,
+          styles.main,
+          {paddingTop: insert.top, paddingBottom: insert.bottom},
+        ]}>
+        {/* Header */}
+        <View style={[GST.ROW, styles.headerContainer]}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backBtn}>
+            <LeftArrow width={wp('6%')} height={wp('6%')} />
+          </TouchableOpacity>
+          <View style={styles.iconWrapper}>
+            <View style={[GST.CENTER, styles.iconInner]}>
+              <Text style={styles.avatarText}>
+                {adminParticipant?.username?.charAt(0)?.toUpperCase() || 'C'}
               </Text>
             </View>
-
-            <View style={styles.bottomSheetBody}>
-              {/* Show options for steps 1 and 2 */}
-              {step !== 3 &&
-                currentOptions.map(item => (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={[
-                      styles.issueButton,
-                      {
-                        backgroundColor:
-                          select === item.title
-                            ? colors.blue
-                            : colors.DarkWhite,
-                      },
-                    ]}
-                    onPress={() => setSelect(item.title)}
-                  >
-                    <View style={styles.issueRow}>
-                      {select === item.title && (
-                        <Check height={RF(15)} width={RF(15)} />
-                      )}
-                      <Text
-                        style={[
-                          GST.subdescription,
-                          styles.issueText,
-                          {
-                            color:
-                              select === item.title
-                                ? colors.DarkWhite
-                                : colors.blue,
-                          },
-                        ]}
-                      >
-                        {item.title}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-
-              {/* Show FlatList for step 3 */}
-              {step === 3 && (
-                <FlatList
-                  data={categoriesData}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={styles.flatlistContainer}
-                  renderItem={({ item, index }) => (
-                    <View style={styles.card}>
-                      <CategoriesList
-                        item={item}
-                        catimg={styles.catImg}
-                        style={styles.catStyle}
-                        txt
-                        num
-                        disabled={true}
-                      />
-
-                      <View style={styles.detailsContainer}>
-                        <View style={styles.orderInfo}>
-                          <View style={styles.orderRow}>
-                            <View style={styles.orderLeft}>
-                              <Text style={styles.orderNumber}>
-                                Order {item.id}
-                              </Text>
-                              <Text style={GST.smallesttxt}>
-                                Standard Delivery
-                              </Text>
-                            </View>
-                            <View style={styles.itemBox}>
-                              <Text style={styles.itemText}>3 items</Text>
-                            </View>
-                          </View>
-
-                          <View style={GST.CENTERCONTAINER}>
-                            <Text style={styles.shippedText}>Shipped</Text>
-
-                            <TouchableOpacity
-                              style={[
-                                styles.trackBtn,
-                                {
-                                  backgroundColor:
-                                    selectorder === index
-                                      ? colors.blue
-                                      : colors.DarkWhite,
-                                  borderWidth: 1,
-                                },
-                              ]}
-                              onPress={() => setselectorder(index)}
-                            >
-                              <Text
-                                style={[
-                                  GST.smallesttxt,
-                                  {
-                                    color:
-                                      selectorder === index
-                                        ? colors.white
-                                        : colors.blue,
-                                  },
-                                ]}
-                              >
-                                {selectorder === index ? 'Selected' : 'Select'}
-                              </Text>
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                />
-              )}
-
-              {/* Bottom Actions */}
-              <View style={styles.bottomActions}>
-                <CustomButton
-                  style={styles.nextButton}
-                  btnTitle={'Next'}
-                  onPress={handleNext}
-                  disabled={
-                    ((step === 1 || step === 2) && !select) ||
-                    (step === 3 && selectorder === null)
-                  }
-                />
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <Cancle height={RF(20)} width={RF(20)} />
-                </TouchableOpacity>
-              </View>
-            </View>
           </View>
-        )}
-      </View>
-
-      {step === 4 && (
-        <View style={styles.inputWrapper}>
-          <TextInput
-            placeholder="Message"
-            placeholderTextColor={colors.blue}
-            style={styles.inputContainer}
-            value={message}
-            onChangeText={setMessage}
-            onSubmitEditing={handleSend}
-          />
-          <View style={styles.iconRow}>
-            <TouchableOpacity
-              onPress={async () => {
-                try {
-                  const image = await pickImage();
-                  if (image) {
-                    console.log('Picked Image Path:', image.path);
-                    setMessages(prev => [
-                      ...prev,
-                      {
-                        id: Date.now().toString(),
-                        text: `[Image: ${image.path}]`,
-                        sender: 'user',
-                      },
-                    ]);
-                  }
-                } catch (err) {
-                  console.log('Image pick error:', err);
-                }
-              }}
-            >
-              <Galleryicon height={RF(20)} width={RF(20)} />
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Copy height={RF(20)} width={RF(20)} />
-            </TouchableOpacity>
+          <View style={{flex: 1}}>
+            <Text style={[GST.description, styles.headerTitle]}>
+              {adminName}
+            </Text>
+            <Text style={GST.subdescription}>Customer Care Service</Text>
           </View>
         </View>
-      )}
-    </View>
+
+        {/* Chat Body */}
+        <View style={[GST.FLEX, styles.bodyContainer]}>
+          {loading && messages.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={colors.blue} />
+            </View>
+          ) : messages.length === 0 ? (
+            <View style={styles.noMessagesContainer}>
+              <Text style={styles.noMessagesText}>
+                Say hello to start the conversation! 👋
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              renderItem={renderMessage}
+              keyExtractor={(item, index) => item._id || index.toString()}
+              contentContainerStyle={styles.messageList}
+              showsVerticalScrollIndicator={false}
+              onContentSizeChange={() =>
+                flatListRef.current?.scrollToEnd({animated: true})
+              }
+            />
+          )}
+        </View>
+
+        {/* Input */}
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="Type a message..."
+            placeholderTextColor={colors.dimBlack}
+            style={styles.inputContainer}
+            value={messageText}
+            onChangeText={setMessageText}
+            onSubmitEditing={handleSend}
+            multiline
+          />
+          <TouchableOpacity
+            style={[
+              styles.sendBtn,
+              {opacity: messageText.trim() ? 1 : 0.4},
+            ]}
+            onPress={handleSend}
+            disabled={!messageText.trim()}>
+            <Text style={styles.sendBtnText}>Send</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

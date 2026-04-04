@@ -238,7 +238,7 @@ const OrderScreen = ({ navigation }) => {
         </View>
 
         {/* Order Summary Section */}
-        <View style={styles.summarySection}>
+        {/* <View style={styles.summarySection}>
           <Text style={styles.summaryTitle}>Order Summary</Text>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
@@ -253,7 +253,7 @@ const OrderScreen = ({ navigation }) => {
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalValue}>PKR 5,298</Text>
           </View>
-        </View>
+        </View> */}
 
         {/* Submit Button */}
         <View style={styles.buttonContainer}>

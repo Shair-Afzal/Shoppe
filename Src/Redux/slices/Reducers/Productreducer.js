@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Createproduct,GetAllCategories,GetAllProducts,UpdateProduct,DeleteProduct,Productdetails,AddtoCart,GetCart ,DeleteCartItem,UpdateCartItem,CreateOrder,initializePaymentSheet,toggleFavourite,getFavourites} from "../Action/Productaction";
+import { Createproduct,GetAllCategories,GetAllProducts,UpdateProduct,DeleteProduct,Productdetails,AddtoCart,GetCart ,DeleteCartItem,UpdateCartItem,CreateOrder,initializePaymentSheet,toggleFavourite,getFavourites,AllordersGet} from "../Action/Productaction";
 
 const initialState = {
   loading: false,
@@ -15,6 +15,8 @@ const initialState = {
   order:[],
   clientSecret: null,
   favourites: [],
+  totalproducts:0,
+  
 
 
 
@@ -67,12 +69,13 @@ const productSlice = createSlice({
       })
 
       .addCase(GetAllProducts.fulfilled, (state, action) => {
-                const { docs, page, totalPages } = action.payload;
+                const { docs, page, totalPages,totalDocs  } = action.payload;
 
         state.loading = false;
         state.currentPage = page;
         state.totalPages = totalPages;
         state.isfetchMore = false;
+        state.totalproducts=totalDocs
         if(page===1){
           state.allproducts=docs
           
@@ -272,6 +275,18 @@ const productSlice = createSlice({
     .addCase(getFavourites.rejected,(state,action)=>{
       state.loading=false;
       state.error=action.payload;
+    })
+    .addCase(AllordersGet.pending,(state)=>{
+      state.loading=true;
+      state.error=null
+    })
+    .addCase(AllordersGet.fulfilled,(state,action)=>{
+      state.loading=false;
+      state.order=action.payload
+    })
+    .addCase(AllordersGet.rejected,(state,action)=>{
+      state.loading=false;
+      state.error=action.payload
     })
 
 

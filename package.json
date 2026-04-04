@@ -58,6 +58,7 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "rn-range-slider": "^2.2.2",
+    "socket.io-client": "^4.8.3",
     "yup": "^1.7.0"
   },
   "devDependencies": {
