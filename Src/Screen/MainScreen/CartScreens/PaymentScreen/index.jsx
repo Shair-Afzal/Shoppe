@@ -22,12 +22,14 @@ import CustomModel from '../../../../Component/CustomModel';
 import { initializePaymentSheet } from '../../../../Redux/slices/Action/Productaction';
 import { useDispatch,useSelector } from 'react-redux';
 import { useStripe } from '@stripe/stripe-react-native';
-
+import {GetCart,MyordersGet} from '../../../../Redux/slices/Action/Productaction';
+import { showErrorToast,showSuccessToast } from '../../../../utils/Toast';
 
 const PaymentScreen = ({navigation,route}) => {
-  const { product,cartItems} = route.params || {};
+  const { orderId } = route.params|| {};
   const dispatch = useDispatch();
-  const { clientSecret,loading,error,cart,currentorder} = useSelector((state) => state.product);
+  const { clientSecret,loading,error,cart,currentorder,allproducts,order} = useSelector((state) => state.product);
+  const {user}= useSelector(state => state.user);
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const openPaymentSheet = async () => {
   const { error } = await initPaymentSheet({
@@ -46,8 +48,38 @@ const PaymentScreen = ({navigation,route}) => {
     console.log("Payment failed:", presentError);
   } else {
     console.log("✅ Payment success");
+    setTimeout(() => {
+    Fetchorder(); // delay me call karo
+    navigation.navigate('Cart');
+  }, 1000);
+
   }
 };
+const Fetchorder = async () => {
+  try {
+    const res = await dispatch(MyordersGet(user?._id)).unwrap();
+    console.log(user?._id);
+    console.log("API RESPONSE:", res); 
+    showSuccessToast('Orders fetched successfully!');
+    return res;
+  } catch (err) {
+    console.log('Error fetching orders:', err);
+    showErrorToast(err || 'Failed to fetch orders');
+  }
+};
+  useEffect(() => {
+    Fetchorder();
+    if (orderId) {
+    dispatch(initializePaymentSheet({ orderId }));
+  }
+
+  },[]);
+  const latestOrder = order[order.length - 1];
+  const selectedOrder = order.find(o => o._id === orderId);
+  const filteredCartItems = cart.filter(item => item.productId === allproducts?._id);
+  console.log('Filtered Cart Items:', filteredCartItems);
+  console.log('All Products:', allproducts);
+  console.log('Cart:', cart);
 
 
   const [model, setmodel] = useState(false);
@@ -168,6 +200,7 @@ const PaymentScreen = ({navigation,route}) => {
                     onPress={() => setvouchermodel(true)}
                   />
                 </View>
+
               </View>
             </View>
           </>
@@ -246,10 +279,10 @@ const PaymentScreen = ({navigation,route}) => {
             </View>
           </View>
         }
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.flatlistContainer}
+        // renderItem={renderItem}
+        // keyExtractor={(item, index) => index.toString()}
+        // showsVerticalScrollIndicator={false}
+        // contentContainerStyle={styles.flatlistContainer}
       />
       
       <PaymentFooter
@@ -257,8 +290,7 @@ const PaymentScreen = ({navigation,route}) => {
         btnstyle={{ backgroundColor: colors.darkblack }}
         txtstyle={{ color: colors.DarkWhite }}
         onPress={openPaymentSheet}
-        price={`$${calculateTotal().toFixed(2)}`} 
-      />
+price={`$${selectedOrder?.total || 0}`}      />
     </View>
   );
 };

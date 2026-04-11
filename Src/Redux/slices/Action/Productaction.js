@@ -196,7 +196,7 @@ export const GetCart=createAsyncThunk(
   'cart/get',
   async(_,{rejectWithValue})=>{
     try{
-      const res=await Api.get('/cart/getcart');
+      const res=await Api.get(`/cart/getcartitems`);
       return res.data.data;
     }
     catch(err){
@@ -319,4 +319,22 @@ export const AllordersGet=createAsyncThunk(
       return rejectWithValue(message);
     }
   }
+)
+
+export const MyordersGet=createAsyncThunk(
+  'order/myorders',
+  async (id,{rejectWithValue})=>{
+    try{
+      const res=await Api.get(`/orders/myorders/${id}`);
+      return res.data.data
+    }catch(err){
+      const message=
+      err.response?.data?.message ||
+      err.message ||
+      "Failed to fetch orders";
+      return rejectWithValue(message);
+    }
+
+  }
+
 )

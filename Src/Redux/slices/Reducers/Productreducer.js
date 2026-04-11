@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Createproduct,GetAllCategories,GetAllProducts,UpdateProduct,DeleteProduct,Productdetails,AddtoCart,GetCart ,DeleteCartItem,UpdateCartItem,CreateOrder,initializePaymentSheet,toggleFavourite,getFavourites,AllordersGet} from "../Action/Productaction";
+import { Createproduct,GetAllCategories,GetAllProducts,UpdateProduct,DeleteProduct,Productdetails,AddtoCart,GetCart ,DeleteCartItem,UpdateCartItem,CreateOrder,initializePaymentSheet,toggleFavourite,getFavourites,AllordersGet, MyordersGet} from "../Action/Productaction";
 
 const initialState = {
   loading: false,
@@ -16,6 +16,7 @@ const initialState = {
   clientSecret: null,
   favourites: [],
   totalproducts:0,
+  MyordersGet
   
 
 
@@ -238,6 +239,20 @@ const productSlice = createSlice({
         state.loading=false;
         state.error=action.payload;
       })
+      .addCase(MyordersGet.pending,(state)=>{
+        state.loading=true;
+        state.error=null;
+      })
+      .addCase(MyordersGet.fulfilled,(state,action)=>{
+        state.loading=false;
+        state.order=action.payload;
+      }
+    )
+    .addCase(MyordersGet.rejected,(state,action)=>{
+      state.loading=false;
+      state.error=action.payload;
+    }
+  )
       .addCase(initializePaymentSheet.pending,(state)=>{
         state.loading=true;
         state.error=null;

@@ -83,18 +83,30 @@ const OrderScreen = ({ navigation }) => {
     postalCode: '',
     country: '',
   });
-  const handleCreateOrder=async()=>{
-    try{
-      await dispatch(CreateOrder({ cartId: cart?.[0]?.cartId, shippingAddress: formData })).unwrap();
-        await dispatch(initializePaymentSheet({ orderId: currentorder?._id })).unwrap();
-        showSuccessToast('Order created successfully!');
-        // console.log(clientSecret)
-        navigation.navigate('Payment')
-    }catch(err){
-      console.log('Error creating order:',err);
-      showErrorToast(err || 'Failed to create order');
-    }
-}
+  const handleCreateOrder = async () => {
+  try {
+    // 1️⃣ Create order
+    const orderRes = await dispatch(
+      CreateOrder({ cartId: cart?.[0]?.cartId, shippingAddress: formData })
+    ).unwrap();
+
+    console.log("✅ NEW ORDER:", orderRes);
+
+    // 2️⃣ Use DIRECT response (NOT Redux state)
+    await dispatch(
+      initializePaymentSheet({ orderId: orderRes._id })
+    ).unwrap();
+
+    showSuccessToast('Order created successfully!');
+    navigation.navigate('Payment',{
+  orderId: orderRes._id,
+});
+
+  } catch (err) {
+    console.log('Error creating order:', err);
+    showErrorToast(err || 'Failed to create order');
+  }
+};
 
   const [errors, setErrors] = useState({});
 

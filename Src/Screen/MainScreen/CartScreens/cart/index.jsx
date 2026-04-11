@@ -42,7 +42,7 @@ const Cart = ({ navigation, route }) => {
   }
   useEffect(() => {
     FetchProducts();
-    Fetchcart();
+    // Fetchcart();
   }, []);
   const mergedCartData = cart.map(cartItem => {
   const product = allproducts.find(
@@ -171,7 +171,7 @@ const calculateTotal = () => {
          <FlatList 
   data={mergedCartData}  // use merged data for display
   showsVerticalScrollIndicator={false}
-  keyExtractor={(item) => item._id.toString()}
+  keyExtractor={(item) => item._id}
   contentContainerStyle={{ paddingBottom: RF(66) }}
   renderItem={({ item }) => (
     <CartItem
