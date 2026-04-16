@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,11 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors } from '../../../Constant';
+import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { AllordersGet, MyordersGet } from '../../../Redux/slices/Action/Productaction';
+
+
 
 const ordersData = [
   {
@@ -57,6 +62,8 @@ const summaryCounts = status => ordersData.filter(o => o.status === status).leng
 
 // ─── Order Card ────────────────────────────────────────────────────────────────
 const OrderCard = ({ item }) => {
+  const firstItem = item.itemsWithProduct?.[0];
+  if (!firstItem) return null;
   const cfg = STATUS_CFG[item.status] || STATUS_CFG.Pending;
   return (
     <View style={styles.card}>
@@ -65,7 +72,7 @@ const OrderCard = ({ item }) => {
 
       {/* Row 1: Order # + Status Badge */}
       <View style={styles.cardRow1}>
-        <Text style={styles.orderNum}>{item.orderNumber}</Text>
+        <Text style={styles.orderNum}>{item.orderNumber||"ORD-1775896856123"}</Text>
         <View style={[styles.badge, { backgroundColor: cfg.bg }]}>
           <Text style={[styles.badgeIcon, { color: cfg.color }]}>{cfg.icon} </Text>
           <Text style={[styles.badgeTxt, { color: cfg.color }]}>{item.status}</Text>
@@ -77,11 +84,11 @@ const OrderCard = ({ item }) => {
 
       {/* Row 2: Product image + details + price */}
       <View style={styles.productRow}>
-        <Image source={item.image} style={styles.productImg} resizeMode="cover" />
+        <Image source={{ uri: firstItem.productImage }} style={styles.productImg} resizeMode="cover" />
         <View style={styles.productDetails}>
-          <Text style={styles.productName} numberOfLines={2}>{item.product}</Text>
+          <Text style={styles.productName} numberOfLines={2}>{firstItem.productName}</Text>
           <Text style={styles.customerTxt}>👤 {item.customer}</Text>
-          <Text style={styles.itemsTxt}>📦 {item.items} item{item.items > 1 ? 's' : ''}</Text>
+          <Text style={styles.itemsTxt}>📦 {firstItem.quantity} item{firstItem.quantity > 1 ? 's' : ''}</Text>
         </View>
         <View style={styles.priceCol}>
           <Text style={styles.priceLbl}>Total</Text>
@@ -92,7 +99,7 @@ const OrderCard = ({ item }) => {
 
       {/* Row 3: Date + Actions */}
       <View style={[styles.cardRow1, styles.cardFooter]}>
-        <Text style={styles.dateTxt}>📅 {item.date}</Text>
+        <Text style={styles.dateTxt}>📅 {item.createdAt}</Text>
         <View style={styles.actions}>
           <TouchableOpacity style={styles.detailsBtn}>
             <Text style={styles.detailsBtnTxt}>Details</Text>
@@ -108,15 +115,70 @@ const OrderCard = ({ item }) => {
   );
 };
 
-// ─── Main Screen ───────────────────────────────────────────────────────────────
+// ─── Main Screen ──────────────────────────── ───────────────────────────────────
 const OrderHistory = () => {
+  const dispatch=useDispatch()
+  const {user,seller}=useSelector(state => state.user)
+  const {order,loading,allproducts}=useSelector(state => state.product)
   const insets = useSafeAreaInsets();
   const [activeFilter, setActiveFilter] = useState('All');
+   const Fetched=async()=>{
+          try{
+              const res=await dispatch(AllordersGet()).unwrap()
+              showSuccessToast("data is fetched ")
+              console.log("order",res)
+              return res
+  
+          }catch(err){
+              console.log("order",err)
+              showErrorToast(err)
+  
+          }
+      }
+      useEffect(()=>{
+        Fetched()
+    },[])
+const validOrders = order?.filter(o => o.orderItems && o.orderItems.length > 0);
+const sellerId = seller?.userId;
+
+const sellerOrders = validOrders?.filter(o =>
+  o.orderItems?.some(item => {
+    return item.SellerId=== sellerId;
+  })
+);
+const formattedOrders = sellerOrders?.map(o => {
+  const itemsWithProduct = o.orderItems.map(item => {
+    let product;
+
+    if (item.productId && typeof item.productId === 'object') {
+      product = item.productId; // already populated
+    } else {
+      product = allproducts?.find(p => p._id === item.productId);
+    }
+
+    return {
+      ...item,
+      productName: product?.name || "Unknown",
+      productImage: product?.image?.[0] || null,
+      price: product?.price || item.price,
+      sellerId: product?.sellerId,
+    };
+  });
+
+  return {
+    ...o,
+    itemsWithProduct
+  };
+});
 
   const filtered =
     activeFilter === 'All'
-      ? ordersData
-      : ordersData.filter(o => o.status === activeFilter);
+      ? formattedOrders
+      : formattedOrders.filter(o => o.status === activeFilter);
+      console.log("TOTAL ORDERS:", order?.length);
+console.log("VALID:", validOrders?.length);
+console.log("SELLER:", sellerOrders?.length);
+console.log("FINAL:", formattedOrders?.length);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -125,8 +187,8 @@ const OrderHistory = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Orders</Text>
         <View style={styles.countBadge}>
-          <Text style={styles.countTxt}>{ordersData.length}</Text>
-        </View>
+<Text style={styles.countTxt}>{filtered?.length || 0}</Text>      
+  </View>
       </View>
 
       {/* ── Summary Row ── */}
@@ -165,7 +227,7 @@ const OrderHistory = () => {
       {/* ── Orders List ── */}
       <FlatList
         data={filtered}
-        keyExtractor={o => o.id}
+        keyExtractor={o => o._id}
         renderItem={({ item }) => <OrderCard item={item} />}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}

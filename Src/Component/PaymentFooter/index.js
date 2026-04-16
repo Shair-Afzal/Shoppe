@@ -11,9 +11,16 @@ const PaymentFooter = ({ title, price, btnstyle, txtstyle, onPress,style,disbale
       style={[styles.footerstyle,style]}
     >
       <View style={GST.CENTERCONTAINER}>
+        {
+
+        price?
         <Text style={styles.totattxt}>
           Totat<Text style={GST.description}>{price}</Text>
-        </Text>
+        </Text>:
+        <View>
+
+        </View>
+}
         {/* <CustomButton btnTitle={title} style={[styles.btn,btnstyle]} txtstyle={colors.darkblack}/> */}
         <TouchableOpacity style={[styles.btn, btnstyle]} onPress={onPress}
         disabled={disbale}

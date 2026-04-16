@@ -17,6 +17,8 @@ import { AllSellers } from '../../../Redux/slices/Action/Authaction';
 import { showErrorToast,showSuccessToast } from '../../../utils/Toast';
 import { useDispatch,useSelector } from 'react-redux';
 
+
+
 const ordersData = [
     { id: 'o1', orderId: '#ORD-5821', buyer: 'Ali Hassan', seller: 'TechShop PK', amount: '$120', status: 'Delivered', date: 'Mar 10, 2025', items: 2 },
     { id: 'o2', orderId: '#ORD-5820', buyer: 'Sara Khan', seller: 'FashionZone', amount: '$48', status: 'Processing', date: 'Mar 10, 2025', items: 1 },
@@ -38,6 +40,8 @@ const FILTERS = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 const ManageOrders = ({ navigation }) => {
     const dispatch=useDispatch();
     const {loading,order}=useSelector(state => state.product)
+      const {user,allSellers}= useSelector(state => state.user);
+    
     const insets = useSafeAreaInsets();
     const [search, setSearch] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
@@ -54,13 +58,42 @@ const ManageOrders = ({ navigation }) => {
 
         }
     }
+     const fetchdata=async ()=>{
+            try{
+                const res=await dispatch(AllSellers({page:1,limit:3})).unwrap()
+     showSuccessToast("data is fectch successfully")
+            console.log("data",allSellers)
+            return res
+    
+    
+           }catch(err){
+            showErrorToast(err)
+            }
+        }
 useEffect(()=>{
     Fetched()
+    fetchdata()
 },[])
-    const filtered = ordersData.filter(o => {
+const getSellerNames = (orderItems) => {
+    if (!orderItems || orderItems.length === 0) return "N/A";
+    if (!allSellers || allSellers.length === 0) return "Loading...";
+
+    const sellerIds = orderItems.map(i => String(i.SellerId));
+
+    const names = allSellers
+        .filter(s => sellerIds.includes(String(s.userId))) // 🔥 CHANGE HERE
+        .map(s => s.shopName || s.name);
+
+    console.log("sellerIds", sellerIds);
+    console.log("allSellers", allSellers);
+    console.log("names", names);
+
+    return names.length > 0 ? names.join(", ") : "Unknown Seller";
+};
+    const filtered = order?.filter(o => {
         const matchSearch =
-            o.orderId.toLowerCase().includes(search.toLowerCase()) ||
-            o.buyer.toLowerCase().includes(search.toLowerCase());
+            o._id.toLowerCase().includes(search.toLowerCase()) ||
+            o.orderNumber.toLowerCase().includes(search.toLowerCase());
         const matchFilter = activeFilter === 'All' || o.status === activeFilter;
         return matchSearch && matchFilter;
     });
@@ -74,8 +107,8 @@ useEffect(()=>{
                         <OrderIcon width={wp('6%')} height={wp('6%')} />
                     </View>
                     <View style={styles.orderInfo}>
-                        <Text style={styles.orderId}>{item.orderId}</Text>
-                        <Text style={styles.orderDate}>{item.date}</Text>
+                        <Text style={styles.orderId}>{item.orderNumber||'ORD-17758968561234'}</Text>
+                        <Text style={styles.orderDate}>{item.createdAt || 'N/A'}</Text>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: sc.bg }]}>
                         <Text style={[styles.statusTxt, { color: sc.color }]}>{item.status}</Text>
@@ -87,19 +120,19 @@ useEffect(()=>{
                 <View style={styles.detailRow}>
                     <View style={styles.detailCol}>
                         <Text style={styles.detailLabel}>Buyer</Text>
-                        <Text style={styles.detailVal}>{item.buyer}</Text>
+                        <Text style={styles.detailVal}>{item?.userId?.username||'ali'}</Text>
                     </View>
                     <View style={styles.detailCol}>
                         <Text style={styles.detailLabel}>Seller</Text>
-                        <Text style={styles.detailVal}>{item.seller}</Text>
+                        <Text style={styles.detailVal}>{getSellerNames(item.orderItems)}</Text>
                     </View>
                     <View style={styles.detailCol}>
                         <Text style={styles.detailLabel}>Items</Text>
-                        <Text style={styles.detailVal}>{item.items}</Text>
+                        <Text style={styles.detailVal}>{item.orderItems.length}</Text>
                     </View>
                     <View style={styles.detailCol}>
                         <Text style={styles.detailLabel}>Amount</Text>
-                        <Text style={[styles.detailVal, { color: colors.sellerPrimary }]}>{item.amount}</Text>
+                        <Text style={[styles.detailVal, { color: colors.sellerPrimary }]}>{item.total}</Text>
                     </View>
                 </View>
             </View>
@@ -116,7 +149,7 @@ useEffect(()=>{
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Manage Orders</Text>
                 <View style={styles.countPill}>
-                    <Text style={styles.countTxt}>{ordersData.length}</Text>
+                    <Text style={styles.countTxt}>{order.length}</Text>
                 </View>
             </View>
 
@@ -152,7 +185,7 @@ useEffect(()=>{
 
             <FlatList
                 data={filtered}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={renderOrder}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}

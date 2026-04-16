@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GST, { colors, RF } from '../../../../Constant';
 import CustomHeader from '../../../../Component/CustomHeader';
 import styles from './style';
@@ -8,7 +8,30 @@ import { orderHistoryData } from '../../../../utils/Dummydata';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomModel from '../../../../Component/CustomModel';
 import ReviewModel from '../../../../Component/ReviewModel';
+import { useDispatch,useSelector } from 'react-redux';
+import { useStripe } from '@stripe/stripe-react-native';
+import {GetCart,MyordersGet} from '../../../../Redux/slices/Action/Productaction';
+import { showErrorToast,showSuccessToast } from '../../../../utils/Toast';
+
 const OrderHistory = () => {
+  const dispatch = useDispatch();
+    const { clientSecret,loading,error,cart,currentorder,allproducts,order} = useSelector((state) => state.product);
+    const {user}= useSelector(state => state.user);
+    const Fetchorder = async () => {
+      try {
+        const res = await dispatch(MyordersGet(user?._id)).unwrap();
+        console.log(user?._id);
+        console.log("API RESPONSE:", res); 
+        showSuccessToast('Orders fetched successfully!');
+        return res;
+      } catch (err) {
+        console.log('Error fetching orders:', err);
+        showErrorToast(err || 'Failed to fetch orders');
+      }
+    };
+    useEffect(() => {
+      Fetchorder();
+    }, []);
   const [done,setdone]=useState(false)
   const [modal,setmodal]=useState(false)
     const insert=useSafeAreaInsets()

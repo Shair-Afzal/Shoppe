@@ -16,7 +16,7 @@ const initialState = {
   clientSecret: null,
   favourites: [],
   totalproducts:0,
-  MyordersGet
+  Myorders:[]
   
 
 
@@ -245,7 +245,7 @@ const productSlice = createSlice({
       })
       .addCase(MyordersGet.fulfilled,(state,action)=>{
         state.loading=false;
-        state.order=action.payload;
+        state.Myorders=action.payload;
       }
     )
     .addCase(MyordersGet.rejected,(state,action)=>{

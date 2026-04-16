@@ -175,8 +175,8 @@ const Home = ({ navigation }) => {
             <NewItem data={allproducts.slice(0,4)} />
 
             {/* Flash Sale */}
-            <SectionHeader titile={'Flash Sale'} clock={true} />
-            <FlashCard data={flashSaleData} />
+            {/* <SectionHeader titile={'Flash Sale'} clock={true} />
+            <FlashCard data={flashSaleData} /> */}
 
             {/* Most Popular */}
             <SectionHeader

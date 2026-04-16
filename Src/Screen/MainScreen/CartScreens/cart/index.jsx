@@ -226,7 +226,7 @@ const calculateTotal = () => {
         txtstyle={{
           color: cartItems.length !== 0 ? colors.DarkWhite : colors.darkblack,
         }}
-        price={`$${calculateTotal().toFixed(2)}`}
+        // price={`$${calculateTotal().toFixed(2)}`}
       />
     </View>
   );
