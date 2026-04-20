@@ -81,9 +81,9 @@ const SellerAccount = ({ navigation }) => {
                 try {
                   await dispatch(RegisterSellerAccount(values)).unwrap();
 
-                  showSuccessToast('Seller Account Created successfully');
+                  showSuccessToast('Seller Account Created successfully just wait for approval!');
 
-                  navigation.navigate('SellerTabs');
+                  // navigation.navigate('SellerTabs');
                 } catch (err) {
                   showErrorToast(err);
                 }

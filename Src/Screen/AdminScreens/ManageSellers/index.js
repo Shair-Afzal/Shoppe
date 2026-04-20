@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     StatusBar,
+    ActivityIndicator
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors, fontSize, fontFamily, radius } from '../../../Constant';
@@ -56,8 +57,8 @@ const ManageSellers = ({ navigation }) => {
         fetchdata()
     },[])
     const loadMore = async () => {
-      if (scurrentpage <stotalpage && sisfetchmore) {
-        await disptach(AllUsers({ page: scurrentpage + 1, limit: 3 }));
+      if (!sisfetchmore && scurrentpage <stotalpage )  {
+        await disptach(AllSellers({ page: scurrentpage + 1, limit: 3 }));
       }
     };
     const handleStatusChange = async (sellerId, status) => {

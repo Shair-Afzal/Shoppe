@@ -276,6 +276,8 @@ const CreateProduct = ({ navigation }) => {
 
         {/* ── Submit ── */}
         <TouchableOpacity style={styles.submitBtn} onPress={sumbit} activeOpacity={0.85}>
+          
+
           <Text style={styles.submitTxt}>🚀  Publish Product</Text>
         </TouchableOpacity>
       </ScrollView>

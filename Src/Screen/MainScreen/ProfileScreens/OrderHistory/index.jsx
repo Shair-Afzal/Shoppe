@@ -32,6 +32,37 @@ const OrderHistory = () => {
     useEffect(() => {
       Fetchorder();
     }, []);
+    const validOrders = order?.filter(o => o.orderItems && o.orderItems.length > 0);
+    console.log("Valid Orders:", validOrders);
+    const latestOrder = validOrders?.[validOrders.length - 1];
+    console.log("Latest Order:", latestOrder);
+  const formattedOrders = validOrders?.map(o => ({
+  ...o,
+  itemsWithProduct: o.orderItems.map(item => {
+    let product;
+
+    if (typeof item.productId === 'object') {
+      product = item.productId;
+    } else {
+      product = allproducts?.find(
+        p => String(p._id) === String(item.productId)
+      );
+    }
+
+    return {
+      ...item,
+      productName: product?.name || "Unknown",
+
+      // 👇 FIX: fallback add karo
+      productImage:
+        product?.image?.[0] ||
+        allproducts?.find(p => String(p._id) === String(item.productId))?.image?.[0] ||
+        "https://via.placeholder.com/150",
+    };
+  }),
+}));
+  console.log("Formatted Orders:", formattedOrders);
+
   const [done,setdone]=useState(false)
   const [modal,setmodal]=useState(false)
     const insert=useSafeAreaInsets()
@@ -55,20 +86,25 @@ const OrderHistory = () => {
       <CustomModel visible={done} onreviewdone  />
       <ReviewModel visible={modal} review  onclose={handlereview}/>
       <FlatList
-        data={orderHistoryData}
+        data={formattedOrders||[]}
         contentContainerStyle={{ paddingBottom: RF(10) }}
+          keyExtractor={(item) => item._id}
+
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
+        renderItem={({ item }) =>
+          
+           (
+            
           <View style={styles.cartItemContainer}>
             <View style={styles.imageContainer}>
               <Image
-                source={item.image}
+                source={{ uri: item.itemsWithProduct?.[0]?.productImage }}
                 style={styles.productImage}
                 resizeMode="cover"
               />
             </View>
             <View style={styles.productDetails}>
-              <Text style={styles.productTitle}>{item.title}</Text>
+              <Text style={styles.productTitle}>{item.itemsWithProduct?.[0]?.productName}</Text>
               <Text style={styles.productPrice}>order{item.orderNumber}</Text>
               <View style={styles.optionsContainer}>
                 <View style={styles.rowconatiner}>

@@ -95,9 +95,10 @@ const DetailsScreen = ({ navigation,route }) => {
   const [rating, setRating] = useState(4);
   const [fav, setfav] = useState(false);
   const [model,setmodel]=useState(false)
- const isFav = Array.isArray(favourites) && product?._id
-  ? favourites.includes(product._id)
-  : false;
+const isFav =
+  Array.isArray(favourites) && product && product._id
+    ? favourites.includes(product._id)
+    : false;
 
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;
@@ -115,7 +116,8 @@ const DetailsScreen = ({ navigation,route }) => {
           dotStyle={styles.dot}
           activeDotStyle={styles.activeDot}
         >
-          {product?.image?.map((item, i) => (
+          {Array.isArray(product?.image) &&
+  product.image.map((item, i) => (
             <Image
               key={i}
               source={{ uri: item }}

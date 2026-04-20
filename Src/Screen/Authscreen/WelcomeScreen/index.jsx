@@ -12,7 +12,7 @@ const WelcomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.ScreenContentWrapper}>
         <AppLogo />
-        <Text style={GST.heading}>Shoppe</Text>
+        <Text style={GST.heading}>NearBuy</Text>
         <Text style={styles.text}>
           Beautiful eCommerce UI Kit{'\n'}for your online store
         </Text>

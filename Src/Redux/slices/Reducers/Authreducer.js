@@ -51,6 +51,7 @@ const userslice = createSlice({
     state.user = null;
     state.accesstoken = null;
     state.authenticated = false;
+    state.seller=null;
   }
   },
 
@@ -141,6 +142,7 @@ const userslice = createSlice({
         state.user=null;
         state.authenticated=false;
         state.accesstoken=null
+        state.seller=null
       })
       .addCase(LogoutUser.rejected,(state,action)=>{
         state.loading=false;
@@ -285,6 +287,7 @@ state.totalusers=totalDocs
     state.stotalpage=totalPages
         state.loading=false;
         state.error=null;
+        state.sisfetchmore = false;
 
        
       })

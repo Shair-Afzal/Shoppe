@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import GST, { colors, RF } from '../../../../Constant';
+import GST, { colors, RF, wp } from '../../../../Constant';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 
   productDetails: {
     height: RF(110),
-    width: RF(180),
+    width: wp(50),
     justifyContent: 'space-between',
     borderRadius: RF(12),
   },

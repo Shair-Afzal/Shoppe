@@ -32,19 +32,39 @@ import { useDispatch,useSelector } from 'react-redux';
 import { GetAllProducts,GetAllCategories } from '../../../../Redux/slices/Action/Productaction';
 import { showErrorToast, showSuccessToast } from '../../../../utils/Toast';
 
+
 const Home = ({ navigation }) => {
   const dispatch=useDispatch();
-   const {allproducts,loading,allcategories}=useSelector(state=>state.product)
+   const {allproducts,loading,allcategories,currentPage,totalPages,isfetchMore}=useSelector(state=>state.product)
  
-   const FetchProducts= async ()=>{
-     try{
-       await dispatch(GetAllProducts({page:1,limit:3})).unwrap();
-       showSuccessToast('Products fetched successfully!');
-     }catch(err){
-       console.log('Error fetching products:',err);
-       showErrorToast(err || 'Failed to fetch products');
-     }
+   const FetchProducts = async () => {
+  try {
+    let page = 1;
+    let hasMore = true;
+
+    while (hasMore) {
+      const res = await dispatch(
+        GetAllProducts({ page, limit: 3 })
+      ).unwrap();
+
+      const { totalPages } = res;
+
+      if (page >= totalPages) {
+        hasMore = false;
+      } else {
+        page++;
+      }
+
+      
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
+
+    showSuccessToast("All products loaded ");
+  } catch (err) {
+    console.log("Pagination error:", err);
+    showErrorToast(err);
+  }
+};
     const FetchCategories= async ()=>{
      try{
        await dispatch(GetAllCategories()).unwrap();
@@ -63,17 +83,19 @@ const Home = ({ navigation }) => {
     const category=allcategories.find(cat=>cat._id===prod.category);
     return {...prod,categoryName:category?.name||'Unknown'}
    })
-   const categoryWithProducts = allcategories.map(cat => {
-  const relatedProducts = allproducts.filter(
-    prod => prod.categoryId === cat._id
-  );
+  const categoryWithProducts = allcategories
+  .map(cat => {
+    const relatedProducts = allproducts.filter(
+      prod => prod.categoryId === cat._id
+    );
 
-  return {
-    ...cat,
-    products: relatedProducts,
-    count: relatedProducts.length,
-  };
-});
+    return {
+      ...cat,
+      products: relatedProducts,
+      count: relatedProducts.length,
+    };
+  })
+  .filter(cat => cat.count > 0);
   const [show, setShow] = useState(false);
   const { width, height } = Dimensions.get('window');
   const aspectRatio = height / width;

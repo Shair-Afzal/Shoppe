@@ -21,9 +21,9 @@ import CustomInput from '../../../../Component/Custominput';
 import CustomButton from '../../../../Component/Custombutton';
 import Dropicon from '../../../../assets/SVG/Dropicon.svg';
 import UserIcon from '../../../../assets/SVG/Activeprofile.svg';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../../../Component/Loader/Loader';
-import { UpdateCartItem,CreateOrder,initializePaymentSheet} from '../../../../Redux/slices/Action/Productaction';
+import { UpdateCartItem, CreateOrder, initializePaymentSheet } from '../../../../Redux/slices/Action/Productaction';
 import { showErrorToast, showSuccessToast } from '../../../../utils/Toast';
 const InputField = ({
   label,
@@ -62,18 +62,18 @@ const InputField = ({
 
 const OrderScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
-  const dispatch=useDispatch();
-  const {cart,allproducts,currentorder,order,loading,clientSecret}=useSelector(state=>state.product)
+  const dispatch = useDispatch();
+  const { cart, allproducts, currentorder, order, loading, clientSecret } = useSelector(state => state.product)
   const cartItems = cart.map(cartItem => {
     const product = allproducts.find(p => p._id === cartItem.productId);;
     return {
       ...cartItem,
       name: product?.name || 'Unknown Product',
-        image: product?.image || null,
-        price: product?.price || 0,
+      image: product?.image || null,
+      price: product?.price || 0,
     };
   });
-  
+
 
 
   const [formData, setFormData] = useState({
@@ -84,29 +84,29 @@ const OrderScreen = ({ navigation }) => {
     country: '',
   });
   const handleCreateOrder = async () => {
-  try {
-    // 1️⃣ Create order
-    const orderRes = await dispatch(
-      CreateOrder({ cartId: cart?.[0]?.cartId, shippingAddress: formData })
-    ).unwrap();
+    try {
+      // 1️⃣ Create order
+      const orderRes = await dispatch(
+        CreateOrder({ cartId: cart?.[0]?.cartId, shippingAddress: formData })
+      ).unwrap();
 
-    console.log("✅ NEW ORDER:", orderRes);
+      console.log("✅ NEW ORDER:", orderRes);
 
-    // 2️⃣ Use DIRECT response (NOT Redux state)
-    await dispatch(
-      initializePaymentSheet({ orderId: orderRes._id })
-    ).unwrap();
+      // 2️⃣ Use DIRECT response (NOT Redux state)
+      await dispatch(
+        initializePaymentSheet({ orderId: orderRes._id })
+      ).unwrap();
 
-    showSuccessToast('Order created successfully!');
-    navigation.navigate('Payment',{
-  orderId: orderRes._id,
-});
+      showSuccessToast('Order created successfully!');
+      navigation.navigate('Payment', {
+        orderId: orderRes._id,
+      });
 
-  } catch (err) {
-    console.log('Error creating order:', err);
-    showErrorToast(err || 'Failed to create order');
-  }
-};
+    } catch (err) {
+      console.log('Error creating order:', err);
+      showErrorToast(err || 'Failed to create order');
+    }
+  };
 
   const [errors, setErrors] = useState({});
 
@@ -212,7 +212,7 @@ const OrderScreen = ({ navigation }) => {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-        
+
       <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
 
       <ScrollView
@@ -221,7 +221,7 @@ const OrderScreen = ({ navigation }) => {
         bounces={false}
       >
         {
-            loading&&<Loader/>
+          loading && <Loader />
         }
         {/* Header */}
         <View style={styles.header}>

@@ -7,17 +7,20 @@ import {
     TouchableOpacity,
     StyleSheet,
     StatusBar,
+    ActivityIndicator
+
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { wp, hp, colors } from '../../../Constant';
 import LeftArrow from '../../../assets/SVG/Leftarrow.svg';
 import ProductIcon from '../../../assets/SVG/ImageIcon.svg';
 import DeleteIcon from '../../../assets/SVG/Deleteicon.svg';
-import { GetAllProducts } from '../../../Redux/slices/Action/Productaction';
+import { DeleteProduct, GetAllProducts } from '../../../Redux/slices/Action/Productaction';
 import { AllSellers } from '../../../Redux/slices/Action/Authaction';
 import { showErrorToast,showSuccessToast } from '../../../utils/Toast';
 import { useDispatch,useSelector } from 'react-redux';
 import Loader from '../../../Component/Loader/Loader';
+
 const productsData = [
     { id: 'p1', name: 'Nike Air Max 270', seller: 'TechShop PK', price: '$120', category: 'Shoes', stock: 15, status: 'Active', added: 'Mar 8, 2025' },
     { id: 'p2', name: 'Casual Cotton T-Shirt', seller: 'FashionZone', price: '$17', category: 'Clothing', stock: 42, status: 'Active', added: 'Mar 7, 2025' },
@@ -68,8 +71,8 @@ const ManageProducts = ({ navigation }) => {
     fetchuser()
     },[])
      const loadMore = async () => {
-      if (currentPage <totalPages && isfetchMore) {
-        await dispatch(GetAllProducts({ page: currentPage + 1, limit: 3 }));
+if (!isfetchMore && currentPage < totalPages){
+            await dispatch(GetAllProducts({ page: currentPage + 1, limit: 3 }));
       }
     };
     const mergedProducts = allproducts.map(product => {
@@ -101,7 +104,17 @@ const ManageProducts = ({ navigation }) => {
 });
 
     
-
+const deleteproduct=async(id)=>{
+  try{
+    const res=await dispatch(DeleteProduct(id)).unwrap()
+    console.log("delete",res)
+    showSuccessToast("product is deleted successfully")
+    fetchProducts()
+    return res
+    }catch(err){
+        showErrorToast(err)
+    }
+ }
  const renderProduct = ({ item }) => {
   return (
     <View style={{paddingHorizontal:wp(4)}}>
@@ -125,7 +138,9 @@ const ManageProducts = ({ navigation }) => {
       </View>
 
       {/* 🔥 Bottom button */}
-      <TouchableOpacity style={{flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,gap:wp(2)}}>
+      <TouchableOpacity style={{flexDirection:"row",justifyContent:"center",alignItems:"center",borderTopWidth:1,gap:wp(2)}}
+      onPress={()=>deleteproduct(item._id)}
+      >
         <DeleteIcon width={wp('4%')} height={wp('4%')} />
         <Text style={styles.removeTxt}>Remove</Text>
       </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAllProducts,DeleteProduct } from '../../../Redux/slices/Action/Productaction.js';
 import { showErrorToast, showSuccessToast } from '../../../utils/Toast';
 import Loader from '../../../Component/Loader/Loader.js';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 // ─── Custom Seller Product Data ───────────────────────────────────────────────
 // const sellerProducts = [
@@ -107,9 +109,11 @@ const SellerHome = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    FetchProducts()
-  }, []);
+  useFocusEffect(
+  useCallback(() => {
+    FetchProducts();
+  }, [])
+);
 
   const FetchMore= async ()=>{
     if(!isfetchMore && currentPage<totalPages){

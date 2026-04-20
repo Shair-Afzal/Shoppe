@@ -4,8 +4,9 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  InteractionManager,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import GST, { colors, RF } from '../../../../Constant';
 import SectionHeader from '../../../../Component/SectionHeader';
 import styles from './style';
@@ -19,85 +20,105 @@ import PaymentModel from '../../../../Component/PaymentModel';
 import ReviewModel from '../../../../Component/ReviewModel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CustomModel from '../../../../Component/CustomModel';
-import { initializePaymentSheet } from '../../../../Redux/slices/Action/Productaction';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useStripe } from '@stripe/stripe-react-native';
-import {GetCart,MyordersGet} from '../../../../Redux/slices/Action/Productaction';
-import { showErrorToast,showSuccessToast } from '../../../../utils/Toast';
+import { showErrorToast } from '../../../../utils/Toast';
 
-const PaymentScreen = ({navigation,route}) => {
-  const { orderId } = route.params|| {};
+const PaymentScreen = ({ navigation, route }) => {
+  const { orderId } = route.params || {};
   const dispatch = useDispatch();
-  const { clientSecret,loading,error,cart,currentorder,allproducts,order} = useSelector((state) => state.product);
-  const {user}= useSelector(state => state.user);
-    const { initPaymentSheet, presentPaymentSheet } = useStripe();
-    const openPaymentSheet = async () => {
-  const { error } = await initPaymentSheet({
-    paymentIntentClientSecret: clientSecret,
-    merchantDisplayName: "My Shop",
-  });
+  const { clientSecret, loading, error, cart, currentorder, allproducts, order } = useSelector((state) => state.product);
+  const { user } = useSelector(state => state.user);
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-  if (error) {
-    console.log("Init error:", error);
-    return;
-  }
+  // ✅ Track mounted state to prevent state updates after unmount
+  const isMounted = useRef(true);
+  const [paymentInProgress, setPaymentInProgress] = useState(false);
 
-  const { error: presentError } = await presentPaymentSheet();
-
-  if (presentError) {
-    console.log("Payment failed:", presentError);
-  } else {
-    console.log("✅ Payment success");
-    setTimeout(() => {
-    Fetchorder(); // delay me call karo
-    navigation.navigate('Cart');
-  }, 1000);
-
-  }
-};
-const Fetchorder = async () => {
-  try {
-    const res = await dispatch(MyordersGet(user?._id)).unwrap();
-    console.log(user?._id);
-    console.log("API RESPONSE:", res); 
-    showSuccessToast('Orders fetched successfully!');
-    return res;
-  } catch (err) {
-    console.log('Error fetching orders:', err);
-    showErrorToast(err || 'Failed to fetch orders');
-  }
-};
-  useEffect(() => {
-    Fetchorder();
-    if (orderId) {
-    dispatch(initializePaymentSheet({ orderId }));
-  }
-
-  },[]);
-  const latestOrder = order[order.length - 1];
-  const selectedOrder = order.find(o => o._id === orderId);
-  const filteredCartItems = cart.filter(item => item.productId === allproducts?._id);
-  console.log('Filtered Cart Items:', filteredCartItems);
-  console.log('All Products:', allproducts);
-  console.log('Cart:', cart);
-
+  // ✅ Modal states — show pending animation → success animation → user taps to navigate
+  const [pending, setpending] = useState(false);
+  const [success, setsucces] = useState(false);
 
   const [model, setmodel] = useState(false);
   const [paymentmodel, setpaymentmodel] = useState(false);
   const [vouchermodel, setvouchermodel] = useState(false);
   const [select, setselct] = useState('standard');
   const insert = useSafeAreaInsets();
-  const [pending,setpending]=useState(false);
-  const [success,setsucces]=useState(false)
-  const calculateTotal = () => {
-    if (cartItems) {
-      return cartItems.reduce((total, item) => {
-        const price = Number(item.price) || 0;
-        return total + price * item.quantity;
-      }, 0);
+
+  const openPaymentSheet = async () => {
+    // ✅ Prevent double tap
+    if (paymentInProgress) return;
+
+    try {
+      if (!clientSecret) {
+        showErrorToast("Payment not initialized yet");
+        return;
+      }
+
+      if (!isMounted.current) return;
+      setPaymentInProgress(true);
+
+      // ✅ Handle initPaymentSheet errors
+      const { error: initError } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: "My Shop",
+      });
+
+      if (initError) {
+        console.log("Init error:", initError);
+        if (isMounted.current) setPaymentInProgress(false);
+        return;
+      }
+
+      const { error: presentError } = await presentPaymentSheet();
+
+      if (presentError) {
+        console.log("Payment cancelled/failed:", presentError);
+        if (isMounted.current) setPaymentInProgress(false);
+        return;
+      }
+
+      console.log("✅ Payment success");
+
+      // ✅ KEY FIX: Wait for Stripe's native Activity to fully close,
+      // then show success modal instead of navigating directly.
+      // This prevents the crash caused by navigating while Stripe UI is still dismissing.
+      if (isMounted.current) {
+        setpending(true);
+        setsucces(false);
+
+        // Show "pending" for 2 seconds, then show "success"
+        setTimeout(() => {
+          if (isMounted.current) {
+            setpending(false);
+            setsucces(true);
+          }
+        }, 2000);
+      }
+
+    } catch (e) {
+      console.log("Payment Crash:", e);
+      if (isMounted.current) {
+        setPaymentInProgress(false);
+        setpending(false);
+        setsucces(false);
+      }
     }
-    return Number(product?.price) || 0;
   };
+
+  useEffect(() => {
+    // ✅ OrderScreen already calls initializePaymentSheet before navigating here.
+    // Removed the duplicate call that was creating 2 payment intents.
+    // clientSecret is already set in Redux by the time this screen mounts.
+
+    return () => {
+      // ✅ Cleanup on unmount
+      isMounted.current = false;
+    };
+  }, []);
+
+  // ✅ Use currentorder as fallback
+  const selectedOrder = order?.find(o => o._id === orderId) || currentorder;
 
   const renderItem = ({ item }) => (
     <View style={styles.renderItemContainer}>
@@ -120,18 +141,11 @@ const Fetchorder = async () => {
       <Text style={styles.titletxt}>$17,00</Text>
     </View>
   );
- 
-  const handlePayment = () => {
-    setpending(true);
-    setsucces(false);
-    setTimeout(() => {
-      setpending(false);
-      setsucces(true);
-    }, 2000);
-  };
 
   return (
     <View style={{ ...GST.FLEX, paddingTop: insert.top }}>
+      {/* ✅ Success modal — shows after Stripe payment completes.
+          User taps "Track My Order" button → THEN we navigate (no auto-navigation = no crash) */}
       <CustomModel
         visible={pending || success}
         onprogress={pending}
@@ -139,9 +153,14 @@ const Fetchorder = async () => {
         onClose={() => {
           setsucces(false);
           setpending(false);
-          navigation.navigate('ProfileTab',{
-            screen:"Track"
-          })
+          // ✅ Wait for modal to close, then navigate safely
+          InteractionManager.runAfterInteractions(() => {
+            if (isMounted.current) {
+              navigation.navigate('ProfileTab', {
+                screen: "Track"
+              });
+            }
+          });
         }}
       />
       <FlatList
@@ -158,7 +177,7 @@ const Fetchorder = async () => {
               onclose={() => setpaymentmodel(false)}
             />
             <ShippingAddressModal visible={model} onclose={() => setmodel(false)} />
-            
+
             <View style={styles.sectioncontainer}>
               <Text style={GST.subHeading}>Payment</Text>
               <View style={styles.announcementCard}>
@@ -263,7 +282,7 @@ const Fetchorder = async () => {
                 $12,00
               </Text>
             </TouchableOpacity>
-            
+
             <SectionHeader
               titile={'Payment Method'}
               txt
@@ -271,7 +290,7 @@ const Fetchorder = async () => {
               select
               onpress={() => setpaymentmodel(true)}
             />
-            
+
             <View style={styles.paymentMethodBox}>
               <Text style={styles.paymentMethodTxt}>
                 Card
@@ -279,18 +298,19 @@ const Fetchorder = async () => {
             </View>
           </View>
         }
-        // renderItem={renderItem}
-        // keyExtractor={(item, index) => index.toString()}
-        // showsVerticalScrollIndicator={false}
-        // contentContainerStyle={styles.flatlistContainer}
+      // renderItem={renderItem}
+      // keyExtractor={(item, index) => index.toString()}
+      // showsVerticalScrollIndicator={false}
+      // contentContainerStyle={styles.flatlistContainer}
       />
-      
+
       <PaymentFooter
         title={'Pay'}
         btnstyle={{ backgroundColor: colors.darkblack }}
         txtstyle={{ color: colors.DarkWhite }}
         onPress={openPaymentSheet}
-price={`$${selectedOrder?.total || 0}`}      />
+        price={`$${selectedOrder?.total || 0}`}
+      />
     </View>
   );
 };

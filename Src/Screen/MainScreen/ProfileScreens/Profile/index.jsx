@@ -128,7 +128,7 @@ const Profile = ({ navigation }) => {
               }
             />
 
-            <Text style={styles.sectionTitle}>My Orders</Text>
+            {/* <Text style={styles.sectionTitle}>My Orders</Text>
             <View style={styles.ordersContainer}>
               {orderStatusData.map((order, index) => (
                 <TouchableOpacity
@@ -140,7 +140,7 @@ const Profile = ({ navigation }) => {
                   {order.hasNotification && <View style={styles.notificationDot} />}
                 </TouchableOpacity>
               ))}
-            </View>
+            </View> */}
 
             {/* <Text style={styles.sectionTitle}>Stories</Text> */}
           </View>
@@ -193,10 +193,10 @@ const Profile = ({ navigation }) => {
                 scrollEnabled={false} // make inner list non-scrollable
               />
 
-              <SectionHeader titile={'Flash Sale'} clock />
+              {/* <SectionHeader titile={'Flash Sale'} clock />
               <FlashCard data={flashSaleData} onPress={()=>navigation.navigate("HomeTab",{
                 screen:"FlashSales"
-              })}/>
+              })}/> */}
 
               <Text style={{ ...styles.sectionTitle, marginTop: RF(10) }}>
                 Top Products
